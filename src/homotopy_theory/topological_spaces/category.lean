@@ -42,6 +42,18 @@ subtype.eq (funext h)
 protected def hom_congr {X Y : Top} {f g : X ⟶ Y} : f = g → ∀ x, f x = g x :=
 by intros e x; rw e
 
+
+section terminal
+
+protected def point : Top := @Top.mk_ob punit ⊥
+notation `*` := Top.point
+
+protected def point_induced (A : Top) : A ⟶ * :=
+Top.mk_hom (λ _, punit.star) (by continuity)
+
+end terminal
+
+
 section product
 
 -- TODO: Generalize all the following definitions using a `has_product` class
