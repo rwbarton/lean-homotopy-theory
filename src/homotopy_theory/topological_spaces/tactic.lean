@@ -5,6 +5,8 @@ attribute [applicable]
   continuous_id
   continuous_subtype_val
   continuous_fst continuous_snd
+  continuous_inl continuous_inr continuous_sum_rec
+  continuous_top continuous_bot
 
 -- Applying continuous.comp is not always a good idea, so we have some
 -- extra logic here to try to avoid bad cases.
