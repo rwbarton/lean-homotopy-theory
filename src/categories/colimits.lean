@@ -1,5 +1,6 @@
 import categories.category
 import data.is_equiv
+import data.bij_on
 
 /-
 
@@ -29,7 +30,7 @@ For each notion X, we define three structures/classes:
 * `has_X`, a class for categories, which contains the data of a choice
   of `X` for each possible "input diagram". Thus an instance of
   `has_pushouts` is a category with a specified choice of pushout
-  cocone on each cospan. It is not a subsingleton for the same reason
+  cocone on each span. It is not a subsingleton for the same reason
   that `X` is not one.
 
 The `has_X` classes are of obvious importance, but the `Is_X`
@@ -127,7 +128,7 @@ parameters (f₀ f₁)
 structure Is_coproduct : Type (max u v) :=
 (universal : Π x, Is_equiv (coproduct_comparison x))
 
-instance Is_coproduct.singleton : subsingleton Is_coproduct :=
+instance Is_coproduct.subsingleton : subsingleton Is_coproduct :=
 ⟨by intros p p'; cases p; cases p'; congr⟩
 
 parameters {f₀ f₁}
@@ -181,11 +182,12 @@ def coequalizer_comparison (x : C) : (c ⟶ x) → {h : b ⟶ x // h ∘ f₀ = 
 
 parameters (f₀ f₁ g)
 -- The (constructive) property of being a coequalizer diagram.
+-- TODO: Rewrite this in the same way as Is_pushout, using Bij_on?
 structure Is_coequalizer : Type (max u v) :=
 (commutes : g ∘ f₀ = g ∘ f₁)
 (universal : Π x, Is_equiv (coequalizer_comparison commutes x))
 
-instance Is_coequalizer.singleton : subsingleton Is_coequalizer :=
+instance Is_coequalizer.subsingleton : subsingleton Is_coequalizer :=
 ⟨by intros p p'; cases p; cases p'; congr⟩
 
 parameters {f₀ f₁ g}
@@ -250,13 +252,16 @@ def pushout_comparison (x : C) : (c ⟶ x) → {p : (b₀ ⟶ x) × (b₁ ⟶ x)
 parameters (f₀ f₁ g₀ g₁)
 -- The (constructive) property of being a pushout.
 structure Is_pushout : Type (max u v) :=
-(commutes : g₀ ∘ f₀ = g₁ ∘ f₁)
-(universal : Π x, Is_equiv (pushout_comparison commutes x))
+(universal : Π x,
+  Bij_on (λ (k : c ⟶ x), (k ∘ g₀, k ∘ g₁)) set.univ {p | p.1 ∘ f₀ = p.2 ∘ f₁})
 
-instance Is_pushout.singleton : subsingleton Is_pushout :=
+instance Is_pushout.subsingleton : subsingleton Is_pushout :=
 ⟨by intros p p'; cases p; cases p'; congr⟩
 
 parameters {f₀ f₁ g₀ g₁}
+def Is_pushout.commutes (po : Is_pushout) : g₀ ∘ f₀ = g₁ ∘ f₁ :=
+by convert (po.universal c).maps_to (_ : 𝟙 c ∈ set.univ); simp
+
 -- Alternative verification of being a pushout.
 def Is_pushout.mk'
   (induced : Π {x} (h₀ : b₀ ⟶ x) (h₁ : b₁ ⟶ x), h₀ ∘ f₀ = h₁ ∘ f₁ → (c ⟶ x))
@@ -264,17 +269,16 @@ def Is_pushout.mk'
   (induced_commutes₁ : ∀ {x} (h₀ : b₀ ⟶ x) (h₁ : b₁ ⟶ x) (e), induced h₀ h₁ e ∘ g₁ = h₁)
   (uniqueness : ∀ {x} (k k' : c ⟶ x), k ∘ g₀ = k' ∘ g₀ → k ∘ g₁ = k' ∘ g₁ → k = k') :
   Is_pushout :=
-{ commutes := commutes,
-  universal := λ x,
-  { e :=
+{ universal := λ x,
+  Bij_on.mk_univ
     { to_fun := pushout_comparison commutes x,
       inv_fun := λ p, induced p.val.1 p.val.2 p.property,
       left_inv := assume h, by
         apply uniqueness; rw induced_commutes₀ <|> rw induced_commutes₁; refl,
       right_inv := assume p, subtype.eq $ prod.ext.mpr $
         ⟨induced_commutes₀ p.val.1 p.val.2 p.property,
-         induced_commutes₁ p.val.1 p.val.2 p.property⟩ },
-    h := rfl } }
+         induced_commutes₁ p.val.1 p.val.2 p.property⟩ }
+    (assume p, rfl) }
 
 end Is
 
