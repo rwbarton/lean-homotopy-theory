@@ -150,8 +150,7 @@ factor_through_incl k _ (subset_compl_comm.mp $ subset_compl_iff_disjoint.mpr hi
 
 theorem comp_embedding_of_embedding_of_disjoint : embedding (g ∘ k) :=
 show embedding (incl _ ∘ g'.morphism ∘ k'), from
-have embedding k', from
-  embedding_of_embedding_compose k'.property continuous_subtype_val hk,
+have embedding k', from embedding_of_embedding_comp (incl _) hk,
 embedding_compose this (embedding_compose g'.embedding (embedding_incl _))
 
 end

@@ -28,6 +28,9 @@ def I01 : Top := Top.mk_ob { t : ℝ // 0 ≤ t ∧ t ≤ 1 }
 instance : has_zero I01 := ⟨⟨0, by norm_num, by norm_num⟩⟩
 instance : has_one I01 := ⟨⟨1, by norm_num, by norm_num⟩⟩
 
+instance : t2_space I01 :=
+by dsimp [I01, Top.mk_ob]; apply_instance
+
 -- The endpoint of [0,1] corresponding to an abstract endpoint.
 def I01_of_endpoint : endpoint → I01
 | 0 := 0

@@ -31,7 +31,7 @@ def homeomorphism.equiv : X ≃ Y :=
 
 -- TODO: We could also use this to prove is_open_iff
 lemma homeomorphism.embedding : embedding h :=
-embedding_of_embedding_compose h.morphism.property h.symm.morphism.property
+embedding_of_embedding_comp h.symm.morphism
   (by convert embedding_id; change h.equiv.symm ∘ h.equiv = id; simp)
 
 lemma homeomorphism.is_open_iff (s : set Y) : is_open s ↔ is_open (h ⁻¹' s) :=

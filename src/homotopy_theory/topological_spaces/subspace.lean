@@ -24,5 +24,9 @@ Top.mk_hom (λ (w : W), ⟨f w, h (set.mem_range_self w)⟩) (by continuity)
   incl A ∘ factor_through_incl f A h = f :=
 by ext; refl
 
+lemma embedding_of_embedding_comp {X Y Z : Top} {f : X ⟶ Y} (g : Y ⟶ Z)
+  (hgf : embedding (g ∘ f)) : embedding f :=
+embedding_of_embedding_compose f.property g.property hgf
+
 end «Top»
 end homotopy_theory.topological_spaces
