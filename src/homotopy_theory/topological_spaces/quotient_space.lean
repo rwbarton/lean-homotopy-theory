@@ -2,6 +2,7 @@ import data.pfun
 
 import categories.colimits
 import .category
+import .homeomorphism
 import for_mathlib
 
 /-
@@ -329,6 +330,7 @@ def quotient_space.is_pushout :
 po i
 
 -- The complementary space X-A.
+-- TODO: Maybe use `subspace` for this and the next definition?
 def quotient_space.image_complement : Top := Top.mk_ob (XminusA i)
 
 -- The space X/A with its base point removed.
@@ -351,11 +353,13 @@ Top.mk_hom (q'_inv i)
     (assume h_closed, continuous_q'_inv_of_A_closed i h_closed)
     (assume h_open, continuous_q'_inv_of_A_open i h_open))
 
--- Verification that the above maps are inverses.
--- TODO: Use isomorphism in Top?
-def quotient_space.map_complement_equiv :
-  quotient_space.image_complement i ≃ quotient_space.minus_base_point i :=
-q'_equiv i
+-- The map X-A → X/A - {*} as a homeomorphism.
+def quotient_space.homeomorphism_complement :
+  Top.homeomorphism (quotient_space.image_complement i) (quotient_space.minus_base_point i) :=
+{ morphism := quotient_space.map_complement i,
+  inverse := quotient_space.map_complement_inverse i h,
+  witness_1 := Top.hom_eq (q'_equiv i).left_inv,
+  witness_2 := Top.hom_eq (q'_equiv i).right_inv }
 
 end inverse
 
