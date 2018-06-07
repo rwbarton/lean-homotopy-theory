@@ -39,6 +39,8 @@ Top.mk_hom
   (λ t, ⟨1 - t.val, sub_nonneg_of_le t.property.right, sub_le_self 1 t.property.left⟩)
   (by continuity)
 
+local attribute [extensionality] natural_transformation.NaturalTransformations_componentwise_equal
+
 instance : has_cylinder_with_involution Top :=
 { I := -×I01,
   i := λ ε, { components := λ X, Top.mk_hom (λ x, (x, I01_of_endpoint ε)) (by continuity) },
@@ -47,6 +49,11 @@ instance : has_cylinder_with_involution Top :=
 
   v := Top.product_by_trans I01.v,
   vi := assume ε, by cases ε; refl,
+  vv := begin
+    ext X p, rcases p with ⟨x, t, h⟩,
+    change (x, subtype.mk (1 - (1 - t)) _) = (x, subtype.mk t _),
+    simp
+  end,
   pv := rfl }
 
 end homotopy_theory.topological_spaces
