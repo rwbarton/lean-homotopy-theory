@@ -12,20 +12,20 @@ universe u
 namespace homotopy_theory.topological_spaces
 
 structure Top : Type (u+1) :=
-(set : Type u)
-(topology : topological_space set)
+(carrier : Type u)
+(topology : topological_space carrier)
 
 namespace Top
 
 local notation `Top` := Top.{u}
 
 instance : has_coe_to_sort Top :=
-{ S := Type u, coe := λ X, X.set }
+{ S := Type u, coe := λ X, X.carrier }
 
-instance (X : Top) : topological_space X.set := X.topology
+instance (X : Top) : topological_space X.carrier := X.topology
 
 def continuous_map (X Y : Top) : Type u :=
-{ f : X.set → Y.set // continuous f }
+{ f : X.carrier → Y.carrier // continuous f }
 
 instance {X Y : Top} : has_coe_to_fun (continuous_map X Y) :=
 { F := λ _, X → Y, coe := λ f, f.val }
@@ -59,7 +59,7 @@ section product
 -- TODO: Generalize all the following definitions using a `has_product` class
 
 protected def prod (X Y : Top) : Top :=
-Top.mk_ob (X.set × Y.set)
+Top.mk_ob (X.carrier × Y.carrier)
 
 protected def pr₁ {X Y : Top} : Top.prod X Y ⟶ X :=
 Top.mk_hom (λ p, p.1)
