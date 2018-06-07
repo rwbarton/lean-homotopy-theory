@@ -1,3 +1,5 @@
+import categories.isomorphism
+
 import .colimits
 
 /-
@@ -9,6 +11,7 @@ import .colimits
 -/
 
 open categories.category
+open categories.isomorphism
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
 namespace categories
@@ -108,5 +111,30 @@ def has_pushouts_of_has_coequalizers_and_coproducts [has_coequalizers.{u v} C] :
 
 end pushouts_from_coequalizers
 
+
+section uniqueness_of_pushouts
+
+parameters {C : Type u} [cat : category.{u v} C]
+include cat
+parameters {a b₀ b₁ c c' : C} {f₀ : a ⟶ b₀} {f₁ : a ⟶ b₁}
+parameters {g₀ : b₀ ⟶ c} {g₁ : b₁ ⟶ c} (po : Is_pushout f₀ f₁ g₀ g₁)
+parameters {g'₀ : b₀ ⟶ c'} {g'₁ : b₁ ⟶ c'} (po' : Is_pushout f₀ f₁ g'₀ g'₁)
+
+@[reducible] private def h : c ⟶ c' := po.induced g'₀ g'₁ po'.commutes
+@[reducible] private def h' : c' ⟶ c := po'.induced g₀ g₁ po.commutes
+
+def pushout.unique : Isomorphism c c' :=
+{ morphism := h,
+  inverse := h',
+  witness_1 := by apply po.uniqueness; {rw ←category.associativity, simp},
+  witness_2 := by apply po'.uniqueness; {rw ←category.associativity, simp} }
+
+@[simp] lemma pushout.unique_commutes₀ : ↑pushout.unique ∘ g₀ = g'₀ :=
+by apply po.induced_commutes₀
+
+@[simp] lemma pushout.unique_commutes₁ : ↑pushout.unique ∘ g₁ = g'₁ :=
+by apply po.induced_commutes₁
+
+end uniqueness_of_pushouts
 
 end categories

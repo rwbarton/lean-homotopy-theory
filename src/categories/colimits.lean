@@ -259,9 +259,6 @@ instance Is_pushout.subsingleton : subsingleton Is_pushout :=
 ⟨by intros p p'; cases p; cases p'; congr⟩
 
 parameters {f₀ f₁ g₀ g₁}
-def Is_pushout.commutes (po : Is_pushout) : g₀ ∘ f₀ = g₁ ∘ f₁ :=
-by convert (po.universal c).maps_to (_ : 𝟙 c ∈ set.univ); simp
-
 -- Alternative verification of being a pushout.
 def Is_pushout.mk'
   (induced : Π {x} (h₀ : b₀ ⟶ x) (h₁ : b₁ ⟶ x), h₀ ∘ f₀ = h₁ ∘ f₁ → (c ⟶ x))
@@ -279,6 +276,31 @@ def Is_pushout.mk'
         ⟨induced_commutes₀ p.val.1 p.val.2 p.property,
          induced_commutes₁ p.val.1 p.val.2 p.property⟩ }
     (assume p, rfl) }
+
+parameters (H : Is_pushout)
+include H
+
+def Is_pushout.commutes : g₀ ∘ f₀ = g₁ ∘ f₁ :=
+by convert (H.universal c).maps_to (_ : 𝟙 c ∈ set.univ); simp
+
+def Is_pushout.induced {x} (h₀ : b₀ ⟶ x) (h₁ : b₁ ⟶ x) (e : h₀ ∘ f₀ = h₁ ∘ f₁) : c ⟶ x :=
+(H.universal x).e.symm ⟨(h₀, h₁), e⟩
+
+private lemma Is_pushout.induced_commutes' {x} (h₀ : b₀ ⟶ x) (h₁ : b₁ ⟶ x) (e) :
+  (λ (k : c ⟶ x), (k ∘ g₀, k ∘ g₁)) (H.induced h₀ h₁ e) = (h₀, h₁) :=
+(H.universal x).right_inv ⟨(h₀, h₁), e⟩
+
+@[simp] lemma Is_pushout.induced_commutes₀ {x} (h₀ : b₀ ⟶ x) (h₁ : b₁ ⟶ x) (e) :
+  H.induced h₀ h₁ e ∘ g₀ = h₀ :=
+congr_arg prod.fst (Is_pushout.induced_commutes' h₀ h₁ e)
+
+@[simp] lemma Is_pushout.induced_commutes₁ {x} (h₀ : b₀ ⟶ x) (h₁ : b₁ ⟶ x) (e) :
+  H.induced h₀ h₁ e ∘ g₁ = h₁ :=
+congr_arg prod.snd (Is_pushout.induced_commutes' h₀ h₁ e)
+
+lemma Is_pushout.uniqueness {x} {k k' : c ⟶ x}
+  (e₀ : k ∘ g₀ = k' ∘ g₀) (e₁ : k ∘ g₁ = k' ∘ g₁) : k = k' :=
+(H.universal x).injective (prod.ext.mpr ⟨e₀, e₁⟩)
 
 end Is
 

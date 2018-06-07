@@ -34,6 +34,19 @@ instance (f : α → β) (a : set α) (b : set β) :
 lemma Bij_on.maps_to (h : Bij_on f a b) : maps_to f a b :=
 assume x hx, show f x ∈ b, by rw h.he' hx; exact (h.e _).property
 
+lemma Bij_on.inj_on (h : Bij_on f a b) : inj_on f a :=
+assume x x' hx hx' hh, begin
+  rw [h.he' hx, h.he' hx'] at hh,
+  have := subtype.eq hh,
+  simpa using this
+end
+
+lemma Bij_on.injective (h : Bij_on f univ b) : function.injective f :=
+injective_iff_inj_on_univ.mpr h.inj_on
+
+lemma Bij_on.right_inv (h : Bij_on f a b) (y) : f (h.e.symm y) = y :=
+by rw h.he; simp
+
 @[refl] def Bij_on.refl (a : set α) : Bij_on id a a :=
 { e := equiv.refl _, he := assume x, rfl }
 
