@@ -1,5 +1,6 @@
 import data.equiv
 import data.set.function
+import for_mathlib
 
 open set equiv
 
@@ -20,6 +21,10 @@ variables {f : α → β} {a : set α} {b : set β}
 def Bij_on.mk_univ (e : α ≃ b) (he : ∀ x, f x = e x) : Bij_on f univ b :=
 { e := (equiv.set.univ _).trans e,
   he := assume x, by rw [he x]; refl }
+
+-- Construct a bijection from an equivalence.
+def Bij_on.of_equiv (e : α ≃ β) : Bij_on e.to_fun univ univ :=
+Bij_on.mk_univ (e.trans (equiv.set.univ _).symm) (by intro x; refl)
 
 lemma Bij_on.he' (h : Bij_on f a b) {x : α} (hx : x ∈ a) : f x = h.e ⟨x, hx⟩ :=
 h.he ⟨x, hx⟩
@@ -99,6 +104,36 @@ def Bij_on.restrict (h : Bij_on f a b) (r : set β) : Bij_on f (f ⁻¹' r ∩ a
 -- Restriction of a total bijection to a subset.
 def Bij_on.restrict' (h : Bij_on f univ b) (r : set β) : Bij_on f (f ⁻¹' r) (r ∩ b) :=
 by convert Bij_on.restrict h r; simp
+
+def Bij_on.restrict'' (h : Bij_on f univ univ) (r : set β) : Bij_on f (f ⁻¹' r) r :=
+by convert Bij_on.restrict' h r; simp
+
+def Bij_on.restrict_equiv (e : α ≃ β) (r : set β) : Bij_on e.to_fun (e.to_fun ⁻¹' r) r :=
+(Bij_on.of_equiv e).restrict'' r
+
+-- Restriction of a bijection to a subtype on both sides.
+-- TODO: Reduce duplicated ugliness with Bij_on.restrict?
+def Bij_on.restrict_to_subtype (h : Bij_on f a b) (r : β → Prop) :
+  Bij_on (λ (x : subtype (f ⁻¹' r)), (⟨f x.val, x.property⟩ : subtype r))
+    {x | x.val ∈ a} {y | y.val ∈ b} :=
+{ e :=
+  { to_fun := λ p,
+      ⟨⟨h.e ⟨p.val.val, p.property⟩,
+       by rw ←h.he; exact p.val.property⟩,
+       (h.e _).property⟩,
+    inv_fun := λ p,
+      ⟨⟨h.e.symm ⟨p.val.val, p.property⟩,
+       show ↑(h.e.symm ⟨p.val.val, p.property⟩) ∈ f ⁻¹' r, from
+       by rw [mem_preimage_eq, h.he]; simpa using p.val.property⟩,
+       (h.e.symm _).property⟩,
+    left_inv := λ ⟨p, hp⟩, by simp,
+    right_inv := λ ⟨p, hp⟩, by simp },
+  he := λ ⟨p, hp⟩, by apply subtype.eq; change f p = _; rw h.he'; simpa }
+
+-- Bijection between a subtype and a propositionally equal one.
+def Bij_on.congr_subtype {r r' : set α} (h : r = r') :
+  Bij_on (λ (x : subtype r), (⟨x, _⟩ : subtype r')) univ univ :=
+Bij_on.of_equiv $ equiv.subtype_equiv_subtype h
 
 end Bij_on
 

@@ -241,12 +241,12 @@ section Is
 -- where f' is the pushout of f and g' is the pushout of g; that's
 -- "f₀ f₁ g₁ g₀" here.
 parameters {a b₀ b₁ c : C} {f₀ : a ⟶ b₀} {f₁ : a ⟶ b₁} {g₀ : b₀ ⟶ c} {g₁ : b₁ ⟶ c}
-variable (commutes : g₀ ∘ f₀ = g₁ ∘ f₁)
 
 -- The diagram above is a pushout diagram when giving a map c ⟶ x is
 -- the same as giving a map b₀ ⟶ x and a map b₁ ⟶ x whose pullbacks to
 -- a ⟶ x agree.
-def pushout_comparison (x : C) : (c ⟶ x) → {p : (b₀ ⟶ x) × (b₁ ⟶ x) // p.1 ∘ f₀ = p.2 ∘ f₁} :=
+def pushout_comparison (commutes : g₀ ∘ f₀ = g₁ ∘ f₁) (x : C) :
+  (c ⟶ x) → {p : (b₀ ⟶ x) × (b₁ ⟶ x) // p.1 ∘ f₀ = p.2 ∘ f₁} :=
 λ k, ⟨(k ∘ g₀, k ∘ g₁), have _ := commutes, by rw [←associativity, ←associativity, this]⟩
 
 parameters (f₀ f₁ g₀ g₁)
@@ -261,6 +261,7 @@ instance Is_pushout.subsingleton : subsingleton Is_pushout :=
 parameters {f₀ f₁ g₀ g₁}
 -- Alternative verification of being a pushout.
 def Is_pushout.mk'
+  (commutes : g₀ ∘ f₀ = g₁ ∘ f₁)
   (induced : Π {x} (h₀ : b₀ ⟶ x) (h₁ : b₁ ⟶ x), h₀ ∘ f₀ = h₁ ∘ f₁ → (c ⟶ x))
   (induced_commutes₀ : ∀ {x} (h₀ : b₀ ⟶ x) (h₁ : b₁ ⟶ x) (e), induced h₀ h₁ e ∘ g₀ = h₀)
   (induced_commutes₁ : ∀ {x} (h₀ : b₀ ⟶ x) (h₁ : b₁ ⟶ x) (e), induced h₀ h₁ e ∘ g₁ = h₁)

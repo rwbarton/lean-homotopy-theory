@@ -28,5 +28,8 @@ lemma embedding_of_embedding_comp {X Y Z : Top} {f : X ⟶ Y} (g : Y ⟶ Z)
   (hgf : embedding (g ∘ f)) : embedding f :=
 embedding_of_embedding_compose f.property g.property hgf
 
+def incl' {X : Top} (A B : set X) (h : A ⊆ B) : Top.mk_ob A ⟶ Top.mk_ob B :=
+Top.mk_hom (λ a, ⟨a.val, h a.property⟩) (by continuity)
+
 end «Top»
 end homotopy_theory.topological_spaces
