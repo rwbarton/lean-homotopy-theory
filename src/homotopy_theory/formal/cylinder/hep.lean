@@ -1,3 +1,4 @@
+import categories.colimits
 import .definitions
 
 open categories
@@ -18,7 +19,28 @@ include inst1
 -- functor, "on side ε".
 def hep (ε) {A X : C} (j : A ⟶ X) : Prop :=
 ∀ Y (f : X ⟶ Y) (H : I +> A ⟶ Y), f ∘ j = H ∘ i ε @> A →
-  ∃ H' : I +> X ⟶ Y, f = H' ∘ i ε @> X ∧ H' ∘ I &> j = H
+  ∃ H' : I +> X ⟶ Y, H' ∘ i ε @> X = f ∧ H' ∘ I &> j = H
+
+lemma hep_iff_pushout_retract (ε) {A X : C} {j : A ⟶ X}
+  {Z : C} {i' : X ⟶ Z} {j' : I +> A ⟶ Z} (po : Is_pushout j (i ε @> A) i' j') :
+  hep ε j ↔ ∃ r : I +> X ⟶ Z,
+    r ∘ po.induced (i ε @> X) (I &> j) ((i ε).naturality _) = 𝟙 _ :=
+iff.intro
+  (assume h,
+    let ⟨r, hr₁, hr₂⟩ := h Z i' j' po.commutes in
+    ⟨r, by apply po.uniqueness; rw ←associativity; simpa⟩)
+  (assume ⟨r, hr⟩ Y f H e,
+    have hr₁ : r ∘ i ε @> X = i', from eq.symm $ calc
+      i' = 𝟙 _ ∘ i' : by simp
+     ... = (r ∘ _) ∘ i' : by rw hr
+     ... = _ : by rw ←associativity; simp,
+    have hr₂ : r ∘ I &> j = j', from eq.symm $ calc
+      j' = 𝟙 _ ∘ j' : by simp
+     ... = (r ∘ _) ∘ j' : by rw hr
+     ... = _ : by rw ←associativity; simp,
+    ⟨po.induced f H e ∘ r,
+     by rw [←associativity, hr₁]; simp,
+     by rw [←associativity, hr₂]; simp⟩)
 
 -- The two-sided homotopy extension property.
 @[reducible] def two_sided_hep {A X : C} (j : A ⟶ X) : Prop := ∀ ε, hep ε j
@@ -31,7 +53,7 @@ assume Y f H e,
   let ⟨H₁, h₁, h₂⟩ := h Y f (H ∘ v @> A)
     (by convert e using 1; rw [←associativity]; simp) in
   ⟨H₁ ∘ v @> X,
-   by rw [h₁, ←associativity]; congr; simp,
+   by rw ←associativity; simpa,
    calc
      H₁ ∘ v @> X ∘ I &> j
        = H₁ ∘ (v @> X ∘ I &> j) : by simp
