@@ -34,7 +34,7 @@ local notation `A'` := P.subspace
 local notation `B'` := Q.subspace
 
 def pair.prod : pair :=
-pair.mk (Top.prod X Y) (set.prod A univ ∪ set.prod univ B)
+pair.mk (Top.prod X Y) {p | p.1 ∈ A ∨ p.2 ∈ B}
 
 notation P ` ⊗ ` Q := pair.prod P Q
 
@@ -64,44 +64,47 @@ protected def pair.i₁ : Top.prod A' B' ⟶ Top.prod X B' :=
 Top.mk_hom (λ p, (p.1.val, p.2)) (by continuity)
 
 protected def pair.j₀ : Top.prod A' Y ⟶ (P ⊗ Q).subspace :=
-Top.mk_hom (λ p, ⟨(p.1.val, p.2), or.inl ⟨p.1.property, trivial⟩⟩)
+Top.mk_hom (λ p, ⟨(p.1.val, p.2), or.inl p.1.property⟩)
   (by continuity)
 
 protected def pair.j₁ : Top.prod X B' ⟶ (P ⊗ Q).subspace :=
-Top.mk_hom (λ p, ⟨(p.1, p.2.val), or.inr ⟨trivial, p.2.property⟩⟩)
+Top.mk_hom (λ p, ⟨(p.1, p.2.val), or.inr p.2.property⟩)
   (by continuity)
+
+local notation `XY` := Top.prod X Y
 
 -- Establish an isomorphism to the intersection-union pushout square
 -- of subspaces of X × Y.
-protected def pair.k : homeomorphism (Top.prod A' B') (Top.mk_ob (set.prod A univ ∩ set.prod univ B : set (Top.prod X Y))) :=
+protected def pair.k : homeomorphism (Top.prod A' B') (Top.mk_ob {p : XY | p.1 ∈ A ∧ p.2 ∈ B}) :=
 { morphism :=
     Top.mk_hom
-      (λ p, ⟨(p.1.val, p.2.val), ⟨⟨p.1.property, trivial⟩, ⟨trivial, p.2.property⟩⟩⟩)
+      (λ p, ⟨(p.1.val, p.2.val), ⟨p.1.property, p.2.property⟩⟩)
       (by continuity),
   inverse :=
     Top.mk_hom
-      (λ p, (⟨p.val.1, p.property.left.left⟩, ⟨p.val.2, p.property.right.right⟩))
+      (λ p, (⟨p.val.1, p.property.left⟩, ⟨p.val.2, p.property.right⟩))
       (by continuity),
   witness_1 := by ext p; rcases p with ⟨⟨a, ha⟩, ⟨b, hb⟩⟩; refl,
   witness_2 := by ext p; rcases p with ⟨⟨a, b⟩, ⟨ha, hb⟩⟩; refl }
 
-protected def pair.l1 : homeomorphism (Top.prod A' Y) (Top.mk_ob (set.prod A univ : set (Top.prod X Y))) :=
-{ morphism := Top.mk_hom (λ p, ⟨(p.1.val, p.2), ⟨p.1.property, trivial⟩⟩) (by continuity),
-  inverse := Top.mk_hom (λ p, (⟨p.val.1, p.property.left⟩, p.val.2)) (by continuity),
+protected def pair.l1 : homeomorphism (Top.prod A' Y) (Top.mk_ob {p : XY | p.1 ∈ A}) :=
+{ morphism := Top.mk_hom (λ p, ⟨(p.1.val, p.2), p.1.property⟩) (by continuity),
+  inverse := Top.mk_hom (λ p, (⟨p.val.1, p.property⟩, p.val.2)) (by continuity),
   witness_1 := by ext p; rcases p with ⟨⟨a, ha⟩, y⟩; refl,
   witness_2 := by ext p; rcases p with ⟨⟨a, y⟩, ha⟩; refl }
 
-protected def pair.l2 : homeomorphism (Top.prod X B') (Top.mk_ob (set.prod univ B : set (Top.prod X Y))) :=
-{ morphism := Top.mk_hom (λ p, ⟨(p.1, p.2.val), ⟨trivial, p.2.property⟩⟩) (by continuity),
-  inverse := Top.mk_hom (λ p, (p.val.1, ⟨p.val.2, p.property.right⟩)) (by continuity),
+protected def pair.l2 : homeomorphism (Top.prod X B') (Top.mk_ob {p : XY | p.2 ∈ B}) :=
+{ morphism := Top.mk_hom (λ p, ⟨(p.1, p.2.val), p.2.property⟩) (by continuity),
+  inverse := Top.mk_hom (λ p, (p.val.1, ⟨p.val.2, p.property⟩)) (by continuity),
   witness_1 := by ext p; rcases p with ⟨x, ⟨b, hb⟩⟩; refl,
   witness_2 := by ext p; rcases p with ⟨⟨x, b⟩, hb⟩; refl }
 
 protected def pair.po :
   Is_pushout (pair.i₀ P Q) (pair.i₁ P Q) (pair.j₀ P Q) (pair.j₁ P Q) :=
 Is_pushout_of_isomorphic
-  (@Is_pushout_inter_union (Top.prod X Y) (set.prod A univ) (set.prod univ B)
-    (is_closed_prod ha is_closed_univ) (is_closed_prod is_closed_univ hb))
+  (@Is_pushout_inter_union (Top.prod X Y) _ _
+    (continuous_iff_is_closed.mp continuous_fst _ ha)
+    (continuous_iff_is_closed.mp continuous_snd _ hb))
   (pair.i₀ P Q) (pair.i₁ P Q)
   (pair.k P Q) (pair.l1 P Q) (pair.l2 P Q) (by funext; refl) (by funext; refl)
 
@@ -134,7 +137,7 @@ def pair.admits_retract : Prop := ∃ r, r ∘ P.incl = 𝟙 _
 
 -- A pair (X, A) is cofibered if and only if the inclusion map of the
 -- pair (X × I, A × I ∪ X × {0}) admits a retract.
--- 
+--
 -- This result holds even without the assumption that A is closed; see
 -- [Strøm, Note on Cofibrations II, Theorem 2]. However, a more
 -- intricate argument is then needed to show that A × I ∪ X × {0} is a
