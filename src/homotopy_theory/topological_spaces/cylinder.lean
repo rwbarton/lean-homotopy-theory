@@ -46,8 +46,8 @@ local attribute [extensionality] natural_transformation.NaturalTransformations_c
 
 instance : has_cylinder_with_involution Top :=
 { I := -×I01,
-  i := λ ε, { components := λ X, Top.mk_hom (λ x, (x, I01_of_endpoint ε)) (by continuity) },
-  p := { components := λ X, Top.pr₁ },
+  i := λ ε, Top.prod_pt_trans (I01_of_endpoint ε),
+  p := Top.pr₁_trans,
   pi := assume ε, rfl,
 
   v := Top.product_by_trans I01.v,

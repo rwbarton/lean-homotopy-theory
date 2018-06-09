@@ -16,6 +16,8 @@ local notation `Top` := Top.{u}
 -- TODO: Replace this @[reducible] with coercion to fun?
 @[reducible] def homeomorphism (X Y : Top) := Isomorphism X Y
 
+@[refl] def homeomorphism.refl (X : Top) : homeomorphism X X := Isomorphism.refl X
+
 @[trans] def homeomorphism.trans {X Y Z : Top}
   (h₁ : homeomorphism X Y) (h₂ : homeomorphism Y Z) :
   homeomorphism X Z :=
@@ -63,6 +65,16 @@ def homeomorphism.restrict {s : set X} {t : set Y} (hst : s = h ⁻¹' t) :
 lemma homeomorphism.restriction_commutes {s : set X} {t : set Y} (hst : s = h ⁻¹' t) :
   incl t ∘ h.restrict hst = h ∘ incl s :=
 by ext; refl
+
+def prod_singleton (h : * ≃ Y) : homeomorphism X (Top.prod X Y) :=
+{ morphism := Top.prod_pt (h punit.star),
+  inverse := Top.pr₁,
+  witness_1 := by ext; refl,
+  witness_2 := begin
+    ext p, rcases p with ⟨x, y⟩, change (x, _) = (x, y), congr,
+    convert h.right_inv y, change h punit.star = h (h.symm y),
+    cases h.symm y, refl
+  end }
 
 end «Top»
 end homotopy_theory.topological_spaces

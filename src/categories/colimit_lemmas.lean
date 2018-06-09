@@ -10,6 +10,8 @@ import .colimits
 
 -/
 
+open set
+
 open categories.category
 open categories.isomorphism
 local notation f ` ∘ `:80 g:80 := g ≫ f
@@ -136,5 +138,66 @@ by apply po.induced_commutes₀
 by apply po.induced_commutes₁
 
 end uniqueness_of_pushouts
+
+
+local notation [parsing_only] a ` ~~ ` b := Bij_on _ a b
+
+section isomorphic
+
+parameters {C : Type u} [cat : category.{u v} C]
+include cat
+
+-- TODO: Move this somewhere?
+def precomposition_bij {a' a x : C} (i : Isomorphism a' a) :
+  Bij_on (λ (k : a ⟶ x), (k ∘ ↑i : a' ⟶ x)) univ univ :=
+Bij_on.of_equiv $ show (a ⟶ x) ≃ (a' ⟶ x), from
+{ to_fun := λ k, k ∘ i.morphism,
+  inv_fun := λ k', k' ∘ i.inverse,
+  left_inv := λ k, by simp,
+  right_inv := λ k', by simp }
+
+parameters {a b₀ b₁ c : C} {f₀ : a ⟶ b₀} {f₁ : a ⟶ b₁}
+parameters {g₀ : b₀ ⟶ c} {g₁ : b₁ ⟶ c} (po : Is_pushout f₀ f₁ g₀ g₁)
+parameters {a' b'₀ b'₁ : C} (f'₀ : a' ⟶ b'₀) (f'₁ : a' ⟶ b'₁)
+parameters (i : Isomorphism a' a) (j₀ : Isomorphism b'₀ b₀) (j₁ : Isomorphism b'₁ b₁)
+parameters (e₀ : f₀ ∘ ↑i = j₀ ∘ f'₀) (e₁ : f₁ ∘ ↑i = j₁ ∘ f'₁)
+include e₀ e₁
+
+def Is_pushout_of_isomorphic : Is_pushout f'₀ f'₁ (g₀ ∘ ↑j₀) (g₁ ∘ ↑j₁) :=
+Is_pushout.mk $ λ x,
+  have _ := calc
+  univ ~~ {p : (b₀ ⟶ x) × (b₁ ⟶ x) | p.1 ∘ f₀ = p.2 ∘ f₁}
+       : po.universal x
+  ...  ~~ {p : (b₀ ⟶ x) × (b₁ ⟶ x) | (p.1 ∘ ↑j₀) ∘ f'₀ = (p.2 ∘ ↑j₁) ∘ f'₁}
+       : begin
+           convert Bij_on.refl _, funext p, apply propext,
+           rw [←associativity, ←associativity, ←e₀, ←e₁], simp
+         end
+  ...  ~~ {p : (b'₀ ⟶ x) × (b'₁ ⟶ x) | p.1 ∘ f'₀ = p.2 ∘ f'₁}
+       : Bij_on.restrict''
+           (Bij_on.prod' (precomposition_bij j₀) (precomposition_bij j₁))
+           {p | p.1 ∘ f'₀ = p.2 ∘ f'₁},
+  by convert this; funext; simp
+
+end isomorphic
+
+section pushout_tranpose
+
+parameters {C : Type u} [cat : category.{u v} C]
+include cat
+parameters {a b₀ b₁ c c' : C} {f₀ : a ⟶ b₀} {f₁ : a ⟶ b₁}
+parameters {g₀ : b₀ ⟶ c} {g₁ : b₁ ⟶ c} (po : Is_pushout f₀ f₁ g₀ g₁)
+
+def Is_pushout.transpose : Is_pushout f₁ f₀ g₁ g₀ :=
+Is_pushout.mk $ λ x, calc
+  univ ~~ {p : (b₀ ⟶ x) × (b₁ ⟶ x) | p.1 ∘ f₀ = p.2 ∘ f₁}
+       : po.universal x
+  ...  ~~ {p : (b₀ ⟶ x) × (b₁ ⟶ x) | p.2 ∘ f₁ = p.1 ∘ f₀}
+       : begin convert Bij_on.refl _; ext p; split; exact eq.symm, end
+  ...  ~~ {p' : (b₁ ⟶ x) × (b₀ ⟶ x) | p'.1 ∘ f₁ = p'.2 ∘ f₀}
+       : Bij_on.restrict_equiv (equiv.prod_comm _ _)
+           {p' | p'.1 ∘ f₁ = p'.2 ∘ f₀}
+
+end pushout_tranpose
 
 end categories

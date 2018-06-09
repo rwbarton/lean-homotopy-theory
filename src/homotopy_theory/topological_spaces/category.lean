@@ -75,6 +75,9 @@ protected def prod_maps {X X' Y Y' : Top} (f : X ⟶ X') (g : Y ⟶ Y') :
   Top.prod X Y ⟶ Top.prod X' Y' :=
 Top.mk_hom (λ p, (f p.1, g p.2)) (by continuity)
 
+protected def prod_pt {X Y : Top} (y : Y) : X ⟶ Top.prod X Y :=
+Top.mk_hom (λ x, (x, y)) (by continuity)
+
 protected def product_by (Y : Top) : Top ↝ Top :=
 { onObjects := λ X, Top.prod X Y,
   onMorphisms := λ X X' f, Top.prod_maps f 1 }
@@ -83,6 +86,9 @@ notation `-×`:35 Y:34 := Top.product_by Y
 
 protected def product_by_trans {Y Y' : Top} (g : Y ⟶ Y') : -×Y ⟶ -×Y' :=
 { components := λ X, Top.prod_maps 1 g }
+
+protected def prod_pt_trans {Y : Top} (y : Y) : 1 ⟶ -×Y :=
+{ components := λ X, Top.prod_pt y }
 
 protected def pr₁_trans {Y : Top} : -×Y ⟶ 1 :=
 { components := λ X, Top.pr₁ }

@@ -81,6 +81,14 @@ def Bij_on.prod {f : α → β} {a : set α} {b : set β}
   he := λ ⟨⟨x, y⟩, ⟨hx, hy⟩⟩, show (f (subtype.mk x hx), g (subtype.mk y hy)) = _,
     by rw [hf.he, hg.he]; simp }
 
+-- Product of two total bijections.
+-- Again, we need to use this instead of `equiv.prod_congr` because
+-- the latter is too strict.
+def Bij_on.prod' {f : α → β} {g : γ → δ}
+  (hf : Bij_on f univ univ) (hg : Bij_on g univ univ) :
+  Bij_on (λ (p : α × γ), (f p.1, g p.2)) univ univ :=
+begin convert Bij_on.prod hf hg; ext p; simp end
+
 -- Product of a total bijection by a type.
 def Bij_on.prod_right' {f : α → β} {b : set β} (hf : Bij_on f univ b) :
   Bij_on (λ (p : α × γ), (f p.1, p.2)) univ (b.prod univ) :=
