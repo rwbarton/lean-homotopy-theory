@@ -5,6 +5,7 @@ import .category
 import .subspace
 
 open categories.isomorphism
+local notation f ` ∘ `:80 g:80 := g ≫ f
 
 universe u
 
@@ -34,7 +35,7 @@ def homeomorphism.equiv : X ≃ Y :=
 -- TODO: We could also use this to prove is_open_iff
 lemma homeomorphism.embedding : embedding h :=
 embedding_of_embedding_comp h.symm.morphism
-  (by convert embedding_id; change h.equiv.symm ∘ h.equiv = id; simp)
+  (by convert embedding_id; change function.comp h.equiv.symm h.equiv = id; simp)
 
 lemma homeomorphism.is_open_iff (s : set Y) : is_open s ↔ is_open (h ⁻¹' s) :=
 iff.intro (h.morphism.property s) $
@@ -63,7 +64,7 @@ def homeomorphism.restrict {s : set X} {t : set Y} (hst : s = h ⁻¹' t) :
   witness_2 := by ext p; exact subtype.eq (h.equiv.right_inv p.val) }
 
 lemma homeomorphism.restriction_commutes {s : set X} {t : set Y} (hst : s = h ⁻¹' t) :
-  incl t ∘ h.restrict hst = h ∘ incl s :=
+  incl t ∘ (h.restrict hst).morphism = h.morphism ∘ incl s :=
 by ext; refl
 
 def prod_singleton (h : * ≃ Y) : homeomorphism X (Top.prod X Y) :=
@@ -75,6 +76,18 @@ def prod_singleton (h : * ≃ Y) : homeomorphism X (Top.prod X Y) :=
     convert h.right_inv y, change h punit.star = h (h.symm y),
     cases h.symm y, refl
   end }
+
+def prod_comm {X Y : Top} : homeomorphism (Top.prod X Y) (Top.prod Y X) :=
+{ morphism := Top.mk_hom (λ p, (p.2, p.1)) (by continuity),
+  inverse := Top.mk_hom (λ p, (p.2, p.1)) (by continuity),
+  witness_1 := by ext xy; cases xy; refl,
+  witness_2 := by ext xy; cases xy; refl }
+
+def prod_assoc {X Y Z : Top} : homeomorphism (Top.prod (Top.prod X Y) Z) (Top.prod X (Top.prod Y Z)) :=
+{ morphism := Top.mk_hom (λ p, (p.1.1, (p.1.2, p.2))) (by continuity),
+  inverse := Top.mk_hom (λ p, ((p.1, p.2.1), p.2.2)) (by continuity),
+  witness_1 := by ext xyz; rcases xyz with ⟨⟨x, y⟩, z⟩; refl,
+  witness_2 := by ext xyz; rcases xyz with ⟨x, ⟨y, z⟩⟩; refl }
 
 end «Top»
 end homotopy_theory.topological_spaces

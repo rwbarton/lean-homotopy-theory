@@ -17,26 +17,108 @@ structure pair :=
 (space : Top)
 (subset : set space)
 
-variables (P Q : pair)
+variables (P Q R : pair)
 -- TODO: Is this too weird?
 local notation `X` := P.space
 local notation `A` := P.subset
 local notation `Y` := Q.space
 local notation `B` := Q.subset
+local notation `Z` := R.space
+local notation `C` := R.subset
 
 -- The subspace component of a pair, considered as a space.
 def pair.subspace := Top.mk_ob A
 
--- The inclusion of the subspace, considered as a morphism of Top.
-def pair.incl : Top.mk_ob A ⟶ X := incl A
-
 local notation `A'` := P.subspace
 local notation `B'` := Q.subspace
+
+-- The inclusion of the subspace, considered as a morphism of Top.
+@[reducible] def pair.incl : A' ⟶ X := incl A
+
+section homeomorphism
+
+def Top.homeomorphism.of_pairs (h : homeomorphism X Y) : Prop := A = h ⁻¹' B
+structure pair.homeomorphism :=
+(h : homeomorphism X Y)
+(is_of_pairs : h.of_pairs P Q)
+
+notation P ` ≅ₚ ` Q := pair.homeomorphism P Q
+
+variables {P Q R}
+include P Q
+
+def pair.homeomorphism.is_of_pairs' (h : pair.homeomorphism P Q) : A = h.h.equiv ⁻¹' B :=
+h.is_of_pairs
+
+def pair.homeomorphism.on_subspaces (h : P ≅ₚ Q) : homeomorphism A' B' :=
+h.h.restrict h.is_of_pairs
+
+@[symm] def pair.homeomorphism.symm (h : P ≅ₚ Q) : Q ≅ₚ P :=
+pair.homeomorphism.mk h.h.symm $
+  show B = h.h.equiv.symm ⁻¹' A, from
+  by rw [h.is_of_pairs', ←preimage_comp]; simp [preimage_id]
+
+include R
+
+@[trans] def pair.homeomorphism.trans (h₁ : P ≅ₚ Q) (h₂ : Q ≅ₚ R) : P ≅ₚ R :=
+pair.homeomorphism.mk (h₁.h.trans h₂.h) $
+  show A = (function.comp h₂.h.equiv h₁.h.equiv) ⁻¹' C, from
+  by rw [preimage_comp, h₁.is_of_pairs', h₂.is_of_pairs']
+
+end homeomorphism
+
+section prod
 
 def pair.prod : pair :=
 pair.mk (Top.prod X Y) {p | p.1 ∈ A ∨ p.2 ∈ B}
 
-notation P ` ⊗ ` Q := pair.prod P Q
+notation P ` ⊗ `:35 Q:34 := pair.prod P Q
+
+variables {P Q R}
+include P Q
+
+lemma pair.prod.is_closed (ha : is_closed A) (hb : is_closed B) :
+  is_closed (P ⊗ Q).subset :=
+is_closed_union
+   (continuous_iff_is_closed.mp continuous_fst _ ha)
+   (continuous_iff_is_closed.mp continuous_snd _ hb)
+
+lemma prod_comm_is_of_pairs : prod_comm.of_pairs (P ⊗ Q) (Q ⊗ P) :=
+by ext pq; cases pq; exact or.comm
+
+def pair.prod_comm : P ⊗ Q ≅ₚ Q ⊗ P :=
+pair.homeomorphism.mk prod_comm prod_comm_is_of_pairs
+
+include R
+
+lemma prod_assoc_is_of_pairs : prod_assoc.of_pairs ((P ⊗ Q) ⊗ R) (P ⊗ (Q ⊗ R)) :=
+by ext pqr; rcases pqr with ⟨⟨p, q⟩, r⟩; exact or.assoc
+
+def pair.prod_assoc : (P ⊗ Q) ⊗ R ≅ₚ P ⊗ (Q ⊗ R) :=
+pair.homeomorphism.mk prod_assoc prod_assoc_is_of_pairs
+
+-- Maybe we should have made `pair` a category
+def pair.prod.congr_right (h : Q ≅ₚ R) : P ⊗ Q ≅ₚ P ⊗ R :=
+pair.homeomorphism.mk
+  { morphism := Top.prod_maps 1 h.h,
+    inverse := Top.prod_maps 1 h.h.symm,
+    witness_1 := begin
+      ext pq, cases pq with p q,
+      change (p, h.h.equiv.symm (h.h.equiv q)) = (p, q),
+      simp
+    end,
+    witness_2 := begin
+      ext pr, cases pr with p r,
+      change (p, h.h.equiv (h.h.equiv.symm r)) = (p, r),
+      simp
+    end}
+  begin
+    ext pq, cases pq with p q,
+    change p ∈ A ∨ q ∈ B ↔ p ∈ A ∨ q ∈ h.h.equiv ⁻¹' C,
+    rw h.is_of_pairs'
+  end
+
+end prod
 
 section pushout
 
@@ -133,7 +215,7 @@ local notation `i` := i.{1 0}
 -- cofibration.
 def pair.cofibered : Prop := cofibration P.incl
 
-def pair.admits_retract : Prop := ∃ r, r ∘ P.incl = 𝟙 _
+def pair.admits_retract : Prop := ∃ r : X ⟶ A', r ∘ P.incl = 1
 
 -- A pair (X, A) is cofibered if and only if the inclusion map of the
 -- pair (X × I, A × I ∪ X × {0}) admits a retract.
@@ -160,6 +242,54 @@ iff.trans (homotopy_theory.cylinder.hep_iff_pushout_retract 0 po'.transpose) $ b
   },
   unfold pair.admits_retract, rw this, refl
 end
+
+variables {P Q}
+lemma admits_retract_congr (h : pair.homeomorphism P Q) :
+  P.admits_retract → Q.admits_retract :=
+assume ⟨r, hr⟩,
+⟨h.on_subspaces.morphism ∘ r ∘ h.h.inverse, calc
+  h.on_subspaces.morphism ∘ r ∘ h.h.inverse ∘ Q.incl
+    = h.on_subspaces.morphism ∘ r ∘ h.h.inverse ∘
+      (Q.incl ∘ h.on_subspaces.morphism) ∘ h.on_subspaces.inverse      : by simp
+... = h.on_subspaces.morphism ∘ (r ∘ P.incl) ∘ h.on_subspaces.inverse
+    : by simp [pair.homeomorphism.on_subspaces, homeomorphism.restriction_commutes]
+... = 𝟙 _  : by rw hr; simp⟩
+
+lemma prod_empty_admits_retract (K : Top) :
+  P.admits_retract → (P ⊗ pair.mk K ∅).admits_retract :=
+assume ⟨r, hr⟩,
+let r' : Top.prod X K ⟶ (P ⊗ pair.mk K ∅).subspace :=
+  pair.j₀ P (pair.mk K ∅) ∘ Top.prod_maps r 1 in
+begin
+  existsi r',
+  ext p, rcases p with ⟨⟨a, k⟩, h|⟨⟨⟩⟩⟩,
+  apply subtype.eq,
+  change ((r a).val, k) = (a, k), congr,
+  exact congr_arg subtype.val (@@Top.hom_congr hr ⟨a, h⟩),
+end
+
+-- A condition for the product of closed pairs to be
+-- cofibered. Actually, P and Q only need to be cofibered (and only
+-- one of them needs to be closed); see [Strøm, Note on Cofibrations
+-- II, Theorem 6]. The argument is more intricate and the statement
+-- below will suffice for our purposes. We'll show that (Dⁿ, Sⁿ⁻¹)
+-- satisfies the hypothesis on Q.
+lemma prod_cofibered (ha : is_closed A) (hb : is_closed B)
+  (hq : Q ⊗ I_0 ≅ₚ pair.mk Y ∅ ⊗ I_0) :
+  P.cofibered → (P ⊗ Q).cofibered :=
+let Q' := pair.mk Y ∅ in
+have _ := calc
+  (P ⊗ I_0) ⊗ Q'
+    ≅ₚ P ⊗ (I_0 ⊗ Q')  : pair.prod_assoc
+... ≅ₚ P ⊗ (Q' ⊗ I_0)  : pair.prod.congr_right pair.prod_comm
+... ≅ₚ P ⊗ (Q ⊗ I_0)   : pair.prod.congr_right hq.symm
+... ≅ₚ (P ⊗ Q) ⊗ I_0   : pair.prod_assoc.symm,
+calc
+  P.cofibered
+    → (P ⊗ I_0).admits_retract         : (pair.cofibered_iff P ha).mp
+... → ((P ⊗ I_0) ⊗ Q').admits_retract  : prod_empty_admits_retract _
+... → ((P ⊗ Q) ⊗ I_0).admits_retract   : admits_retract_congr this
+... → (P ⊗ Q).cofibered  : (pair.cofibered_iff _ (pair.prod.is_closed ha hb)).mpr
 
 end cofibered
 
