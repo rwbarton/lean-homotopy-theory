@@ -1,6 +1,7 @@
 import .category
 import .cofibrations
 import .inter_union
+import .smush
 
 noncomputable theory
 
@@ -290,6 +291,34 @@ calc
 ... → ((P ⊗ I_0) ⊗ Q').admits_retract  : prod_empty_admits_retract _
 ... → ((P ⊗ Q) ⊗ I_0).admits_retract   : admits_retract_congr this
 ... → (P ⊗ Q).cofibered  : (pair.cofibered_iff _ (pair.prod.is_closed ha hb)).mpr
+
+section smush
+
+variables (V : Type) [topological_space V] [smush.admissible' V]
+
+def unit_disk : Top :=
+Top.mk_ob (smush.unit_disk V)
+
+def unit_disk_sphere : pair :=
+pair.mk (unit_disk V) {v | smush.admissible.norm v.val = (1 : ℝ)}
+
+def smush : unit_disk_sphere V ⊗ I_0 ≅ₚ pair.mk (unit_disk V) ∅ ⊗ I_0 :=
+pair.homeomorphism.mk
+  (homeomorphism.of_equiv (smush.H_equiv V)
+    (smush.continuous_H V) (smush.continuous_vHv V))
+  (begin
+    change {p : unit_disk V × I01 | _ ∨ p.2 ∈ ({0} : set I01)} =
+      (smush.H V) ⁻¹' {p : unit_disk V × I01 | p.1 ∈ ∅ ∨ p.2 ∈ ({0} : set I01)},
+    convert smush.Ht0 V;
+    { ext p, change _ ∨ _ ↔ _ ∨ _, apply or_congr (iff.refl _),
+      rw mem_singleton_iff, apply subtype.ext },
+  end)
+
+lemma prod_disk_sphere_cofibered (ha : is_closed A) :
+  P.cofibered → (P ⊗ unit_disk_sphere V).cofibered :=
+prod_cofibered P _ ha (is_closed_eq (by continuity) continuous_const) (smush V)
+
+end smush
 
 end cofibered
 

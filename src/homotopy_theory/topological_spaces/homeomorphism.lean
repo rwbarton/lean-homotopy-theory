@@ -24,6 +24,13 @@ local notation `Top` := Top.{u}
   homeomorphism X Z :=
 h₁.trans h₂
 
+def homeomorphism.of_equiv {X Y : Top} (h : X ≃ Y)
+  (hf : continuous h) (hg : continuous h.symm) : homeomorphism X Y :=
+{ morphism := Top.mk_hom h hf,
+  inverse := Top.mk_hom h.symm hg,
+  witness_1 := by ext p; change h.symm (h p) = p; simp,
+  witness_2 := by ext p; change h (h.symm p) = p; simp }
+
 variables {X Y : Top} (h : homeomorphism X Y)
 
 def homeomorphism.equiv : X ≃ Y :=
