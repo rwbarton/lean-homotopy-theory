@@ -1,11 +1,16 @@
+import categories.isomorphism
 import homotopy_theory.formal.cylinder.hep
 import .category
 import .colimits
 import .cylinder
+import .pair
 import .pushout_lemmas
+
+open set
 
 open categories
 open categories.category
+open categories.isomorphism
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
 open homotopy_theory.cylinder
@@ -95,5 +100,22 @@ have embedding (i 1 @> X ∘ j), begin
   simp
 end,
 embedding_of_embedding_comp _ this
+
+lemma cofibration_iff_cofibered_of_embedding (e : embedding j) :
+  cofibration j ↔ (pair.mk X (range j)).cofibered :=
+let j' := Top.factor_through_incl j (range j) (subset.refl _) in
+show hep 0 j ↔ hep 0 _, from
+mem_iff_mem_of_isomorphic
+  (homeomorphism_to_image_of_embedding e)
+  (Isomorphism.refl X)
+  (by ext p; refl)
+
+lemma cofibration_iff_cofibered :
+  cofibration j ↔ embedding j ∧ (pair.mk X (range j)).cofibered :=
+iff.intro
+  (assume h,
+    have e : embedding j := embedding_of_cofibration h,
+    ⟨e, (cofibration_iff_cofibered_of_embedding e).mp h⟩)
+  (assume h, (cofibration_iff_cofibered_of_embedding h.1).mpr h.2)
 
 end homotopy_theory.topological_spaces

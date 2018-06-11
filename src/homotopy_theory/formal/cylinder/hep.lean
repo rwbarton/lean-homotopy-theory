@@ -1,17 +1,20 @@
 import categories.colimits
+import categories.isomorphism
+import categories.replete
 import .definitions
 
 open categories
 open categories.category
+open categories.isomorphism
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
-universe u
+universes u v
 
 namespace homotopy_theory.cylinder
 
 section hep
 
-variables {C : Type u} [category C] [inst1 : has_cylinder C] [inst2 : has_cylinder_with_involution C]
+variables {C : Type u} [category.{u v} C] [inst1 : has_cylinder C] [inst2 : has_cylinder_with_involution C]
 
 include inst1
 
@@ -20,6 +23,25 @@ include inst1
 def hep (ε) {A X : C} (j : A ⟶ X) : Prop :=
 ∀ Y (f : X ⟶ Y) (H : I +> A ⟶ Y), f ∘ j = H ∘ i ε @> A →
   ∃ H' : I +> X ⟶ Y, H' ∘ i ε @> X = f ∧ H' ∘ I &> j = H
+
+lemma hep_of_isomorphism (ε) {A X : C} (h : Isomorphism A X) : hep ε h.morphism :=
+assume Y f H e,
+  ⟨H ∘ I &> h.inverse,
+   by erw [←associativity, ←(i ε).naturality, associativity, ←e, Isomorphism.witness_2_assoc_lemma],
+   by erw [←functor.Functor.onIsomorphisms.inverse, Isomorphism.witness_1_assoc_lemma]⟩
+
+lemma hep_id (ε) {X : C} : hep ε (𝟙 X) :=
+hep_of_isomorphism ε (Isomorphism.refl X)
+
+lemma hep_comp (ε) {A B X : C} {f : A ⟶ B} {g : B ⟶ X} (hf : hep ε f) (hg : hep ε g) :
+  hep ε (g ∘ f) :=
+assume Y k H e,
+  let ⟨J, Je₁, Je₂⟩ := hf Y (k ∘ g) H (by convert e using 1; simp) in
+  let ⟨K, Ke₁, Ke₂⟩ := hg Y k J Je₁.symm in
+  ⟨K, Ke₁, by rw [I.functoriality, associativity, Ke₂, Je₂]⟩
+
+instance hep_replete (ε) : replete_wide_subcategory.{u v} C (λ a b, hep ε) :=
+replete_wide_subcategory.mk' (λ a b, hep_of_isomorphism ε) (λ a b c f g, hep_comp ε)
 
 lemma hep_iff_pushout_retract (ε) {A X : C} {j : A ⟶ X}
   {Z : C} {i' : X ⟶ Z} {j' : I +> A ⟶ Z} (po : Is_pushout j (i ε @> A) i' j') :

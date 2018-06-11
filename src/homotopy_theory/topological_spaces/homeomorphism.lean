@@ -4,6 +4,8 @@ import for_mathlib
 import .category
 import .subspace
 
+open set
+
 open categories.isomorphism
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
@@ -73,6 +75,17 @@ def homeomorphism.restrict {s : set X} {t : set Y} (hst : s = h ⁻¹' t) :
 lemma homeomorphism.restriction_commutes {s : set X} {t : set Y} (hst : s = h ⁻¹' t) :
   incl t ∘ (h.restrict hst).morphism = h.morphism ∘ incl s :=
 by ext; refl
+
+-- Hopefully it's okay to use let inside a definition like this
+noncomputable def homeomorphism_to_image_of_embedding {A X : Top} {j : A ⟶ X}
+  (h : embedding j) : homeomorphism A (Top.mk_ob (range j)) :=
+let j' := Top.factor_through_incl j (range j) (subset.refl _),
+    e := (equiv.set.range j h.1).replace_to_fun j' (by funext p; simp; refl) in
+homeomorphism.of_equiv e j'.property
+  (continuous_of_embedding_of_continuous_comp h $ begin
+    convert continuous_subtype_val using 1, funext p,
+    exact congr_arg subtype.val (e.right_inv p)
+  end)
 
 def prod_singleton (h : * ≃ Y) : homeomorphism X (Top.prod X Y) :=
 { morphism := Top.prod_pt (h punit.star),

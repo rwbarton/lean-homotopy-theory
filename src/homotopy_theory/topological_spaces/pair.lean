@@ -1,5 +1,9 @@
+import categories.colimit_lemmas
+import homotopy_theory.formal.cylinder.hep
+
 import .category
-import .cofibrations
+import .cylinder
+import .homeomorphism
 import .inter_union
 import .smush
 
@@ -214,7 +218,7 @@ local notation `i` := i.{1 0}
 
 -- A pair is cofibered if the inclusion of the subspace is a
 -- cofibration.
-def pair.cofibered : Prop := cofibration P.incl
+def pair.cofibered : Prop := hep 0 P.incl
 
 def pair.admits_retract : Prop := ∃ r : X ⟶ A', r ∘ P.incl = 1
 

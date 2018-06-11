@@ -24,4 +24,10 @@ def subtype_prod_subtype_equiv_subtype {α β : Type*} {p : α → Prop} {q : β
  λ ⟨⟨a, p⟩, ⟨b, q⟩⟩, rfl,
  λ ⟨⟨a, b⟩, ⟨p, q⟩⟩, rfl⟩
 
+def replace_to_fun {α β : Sort*} (e : α ≃ β) (f : α → β) (h : ⇑e = f) : α ≃ β :=
+{ to_fun := f,
+  inv_fun := e.inv_fun,
+  left_inv := h ▸ e.left_inv,
+  right_inv := h ▸ e.right_inv }
+
 end equiv
