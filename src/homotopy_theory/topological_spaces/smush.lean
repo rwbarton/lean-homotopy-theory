@@ -220,4 +220,14 @@ set.ext $ λ p, by convert (construction.Ht0 p).symm; simp; refl
 
 end continuity
 
+instance : admissible' ℝ :=
+{ mul_smul' := module.mul_smul,
+  one_smul' := module.one_smul,
+  norm := abs,
+  norm_nonneg := abs_nonneg,
+  norm_mul := abs_mul,
+
+  continuous_smul := continuous_mul',
+  continuous_norm := real.continuous_abs }
+
 end homotopy_theory.topological_spaces.smush

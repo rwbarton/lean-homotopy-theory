@@ -52,11 +52,23 @@ notation P ` ≅ₚ ` Q := pair.homeomorphism P Q
 variables {P Q R}
 include P Q
 
-def pair.homeomorphism.is_of_pairs' (h : pair.homeomorphism P Q) : A = h.h.equiv ⁻¹' B :=
+lemma pair.homeomorphism.is_of_pairs' (h : P ≅ₚ Q) : A = h.h.equiv ⁻¹' B :=
 h.is_of_pairs
+
+lemma pair.homeomorphism.is_of_pairs.mk' (h : homeomorphism X Y)
+  (ha : ∀ a ∈ A, h a ∈ B) (hb : ∀ b ∈ B, h.symm b ∈ A) : h.of_pairs P Q :=
+begin
+  ext p, split, { exact ha p },
+  { intro hp, apply function.comp _ (hb (h p)) hp,
+    change h.equiv.symm (h.equiv p) ∈ _ → p ∈ _,
+    simp }
+end
 
 def pair.homeomorphism.on_subspaces (h : P ≅ₚ Q) : homeomorphism A' B' :=
 h.h.restrict h.is_of_pairs
+
+lemma is_closed_congr (h : P ≅ₚ Q) : is_closed A ↔ is_closed B :=
+by rw [h.is_of_pairs', h.h.is_closed_iff]; refl
 
 @[symm] def pair.homeomorphism.symm (h : P ≅ₚ Q) : Q ≅ₚ P :=
 pair.homeomorphism.mk h.h.symm $
@@ -249,8 +261,8 @@ iff.trans (homotopy_theory.cylinder.hep_iff_pushout_retract 0 po'.transpose) $ b
 end
 
 variables {P Q}
-lemma admits_retract_congr (h : pair.homeomorphism P Q) :
-  P.admits_retract → Q.admits_retract :=
+-- TODO: Should these be ↔?
+lemma admits_retract_congr (h : P ≅ₚ Q) : P.admits_retract → Q.admits_retract :=
 assume ⟨r, hr⟩,
 ⟨h.on_subspaces.morphism ∘ r ∘ h.h.inverse, calc
   h.on_subspaces.morphism ∘ r ∘ h.h.inverse ∘ Q.incl
@@ -259,6 +271,17 @@ assume ⟨r, hr⟩,
 ... = h.on_subspaces.morphism ∘ (r ∘ P.incl) ∘ h.on_subspaces.inverse
     : by simp [pair.homeomorphism.on_subspaces, homeomorphism.restriction_commutes]
 ... = 𝟙 _  : by rw hr; simp⟩
+
+lemma cofibered_congr (h : P ≅ₚ Q) (ha : is_closed A) : P.cofibered → Q.cofibered :=
+have P ⊗ I_0 ≅ₚ Q ⊗ I_0, from calc
+  P ⊗ I_0 ≅ₚ I_0 ⊗ P  : pair.prod_comm
+  ...     ≅ₚ I_0 ⊗ Q  : pair.prod.congr_right h -- TODO: congr_left
+  ...     ≅ₚ Q ⊗ I_0  : pair.prod_comm,
+calc
+  P.cofibered
+    → (P ⊗ I_0).admits_retract  : (P.cofibered_iff ha).mp
+... → (Q ⊗ I_0).admits_retract  : admits_retract_congr this
+... → Q.cofibered               : (Q.cofibered_iff ((is_closed_congr h).mp ha)).mpr
 
 lemma prod_empty_admits_retract (K : Top) :
   P.admits_retract → (P ⊗ pair.mk K ∅).admits_retract :=
@@ -306,6 +329,9 @@ Top.mk_ob (smush.unit_disk V)
 def unit_disk_sphere : pair :=
 pair.mk (unit_disk V) {v | smush.admissible.norm v.val = (1 : ℝ)}
 
+lemma unit_disk_sphere.is_closed : is_closed (unit_disk_sphere V).subset :=
+is_closed_eq (by continuity) continuous_const
+
 def smush : unit_disk_sphere V ⊗ I_0 ≅ₚ pair.mk (unit_disk V) ∅ ⊗ I_0 :=
 pair.homeomorphism.mk
   (homeomorphism.of_equiv (smush.H_equiv V)
@@ -320,9 +346,64 @@ pair.homeomorphism.mk
 
 lemma prod_disk_sphere_cofibered (ha : is_closed A) :
   P.cofibered → (P ⊗ unit_disk_sphere V).cofibered :=
-prod_cofibered P _ ha (is_closed_eq (by continuity) continuous_const) (smush V)
+prod_cofibered P _ ha (unit_disk_sphere.is_closed V) (smush V)
 
 end smush
+
+def I_01 := pair.mk I01 {0, 1}
+def I_01_is_D1_S0 : I_01 ≅ₚ unit_disk_sphere ℝ :=
+pair.homeomorphism.mk
+  { morphism :=
+      Top.mk_hom
+        (λ t,
+          ⟨2 * t.val - 1,
+           abs_le.mpr
+             ⟨calc -1 = 2 * 0 - 1      : by norm_num
+                  ... ≤ 2 * t.val - 1  : sub_le_sub_right (mul_le_mul_of_nonneg_left t.property.left (by norm_num)) _,
+              calc 2 * t.val - 1 ≤ 2 * 1 - 1  : sub_le_sub_right (mul_le_mul_of_nonneg_left t.property.right (by norm_num)) _
+                             ... = 1          : by norm_num⟩⟩)
+        (by continuity),
+    inverse :=
+      Top.mk_hom
+        (λ t,
+          ⟨(1 / 2) * (t.val + 1),
+           mul_nonneg (by norm_num) (le_add_of_neg_add_le_right (abs_le.mp t.property).left),
+           calc (1 / 2) * (t.val + 1) ≤ (1 / 2) * (1 + 1)  : mul_le_mul_of_nonneg_left (add_le_add_right (abs_le.mp t.property).right _) (by norm_num)
+                                  ... = 1                  : by norm_num⟩)
+        (by continuity),
+    witness_1 := begin
+      ext t, apply subtype.eq,
+      change (1 / 2) * ((2 * t.val - 1) + 1) = t.val,
+      ring
+    end,
+    witness_2 := begin
+      ext t, apply subtype.eq,
+      change 2 * ((1 / 2) * (t.val + 1)) - 1 = t.val,
+      ring
+    end }
+  begin
+    apply pair.homeomorphism.is_of_pairs.mk',
+    { intros a ha, change a ∈ {(0 : I01), (1 : I01)} at ha,
+      have ha' : a = (1 : I01) ∨ a = (0 : I01) := by simp at ha; exact ha,
+      cases ha' with ha' ha',
+      { subst ha', change abs (2 * (1 : ℝ) - 1) = 1, norm_num },
+      { subst ha', change abs (2 * (0 : ℝ) - 1) = 1, norm_num } },
+    { intros b hb, cases b with b hb', change abs b = 1 at hb,
+      rw abs_eq at hb, swap, exact zero_le_one,
+      cases hb with hb hb; change subtype.mk _ _ ∈ I_01.subset,
+      { subst hb, have : (1 : I01) ∈ ({0, 1} : set I01), by simp, convert this, norm_num },
+      { subst hb, have : (0 : I01) ∈ ({0, 1} : set I01), by simp, convert this, norm_num } }
+  end
+
+lemma prod_I_01_cofibered (ha : is_closed A) :
+  P.cofibered → (P ⊗ I_01).cofibered :=
+calc
+  P.cofibered
+    → (P ⊗ unit_disk_sphere ℝ).cofibered
+    : prod_disk_sphere_cofibered P ℝ ha
+... → (P ⊗ I_01).cofibered
+    : cofibered_congr (pair.prod.congr_right I_01_is_D1_S0.symm)
+        (pair.prod.is_closed ha (unit_disk_sphere.is_closed ℝ))
 
 end cofibered
 
