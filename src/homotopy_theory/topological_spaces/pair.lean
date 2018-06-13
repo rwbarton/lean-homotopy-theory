@@ -114,21 +114,9 @@ by ext pqr; rcases pqr with ⟨⟨p, q⟩, r⟩; exact or.assoc
 def pair.prod_assoc : (P ⊗ Q) ⊗ R ≅ₚ P ⊗ (Q ⊗ R) :=
 pair.homeomorphism.mk prod_assoc prod_assoc_is_of_pairs
 
--- Maybe we should have made `pair` a category
+-- Maybe we should have made `pair` a category and P ⊗ - a functor
 def pair.prod.congr_right (h : Q ≅ₚ R) : P ⊗ Q ≅ₚ P ⊗ R :=
-pair.homeomorphism.mk
-  { morphism := Top.prod_maps 1 h.h,
-    inverse := Top.prod_maps 1 h.h.symm,
-    witness_1 := begin
-      ext pq, cases pq with p q,
-      change (p, h.h.equiv.symm (h.h.equiv q)) = (p, q),
-      simp
-    end,
-    witness_2 := begin
-      ext pr, cases pr with p r,
-      change (p, h.h.equiv (h.h.equiv.symm r)) = (p, r),
-      simp
-    end}
+pair.homeomorphism.mk h.h.prod_congr_right
   begin
     ext pq, cases pq with p q,
     change p ∈ A ∨ q ∈ B ↔ p ∈ A ∨ q ∈ h.h.equiv ⁻¹' C,

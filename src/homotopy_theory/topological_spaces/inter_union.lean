@@ -1,7 +1,9 @@
 import categories.category
 import categories.colimits
+import categories.colimit_lemmas
 import categories.types
 
+import .homeomorphism
 import .subspace
 
 open set
@@ -127,6 +129,21 @@ Is_pushout.mk $ λ Z, calc
    ... ~~ {p : (Top.mk_ob A₀ ⟶ Z) × (Top.mk_ob A₁ ⟶ Z) | p.1 ∘ i₀ = p.2 ∘ i₁}
        : by convert Bij_on.restrict_equiv equiv.subtype_prod_subtype_equiv_subtype.symm _;
             ext; simp only [Top.hom_eq2]; refl
+
+local notation `k₀` := incl A₀
+local notation `k₁` := incl A₁
+variables (h : A₀ ∪ A₁ = univ)
+
+include h
+def union_is_X : homeomorphism (Top.mk_ob A) X :=
+{ morphism := incl _,
+  inverse := Top.mk_hom (λ x, ⟨x, by rw h; exact trivial⟩) (by continuity),
+  witness_1 := by ext p; cases p; refl,
+  witness_2 := by ext p; refl }
+
+noncomputable def Is_pushout_inter_of_cover : Is_pushout i₀ i₁ k₀ k₁ :=
+Is_pushout_of_isomorphic'
+  (Is_pushout_inter_union A₀ A₁ ha₀ ha₁) (union_is_X A₀ A₁ h)
 
 end inter_union
 

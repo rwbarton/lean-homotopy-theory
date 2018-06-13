@@ -95,6 +95,13 @@ def Is_initial_object.mk'
       right_inv := assume p, rfl },
     h := rfl } }
 
+parameters (H : Is_initial_object)
+def Is_initial_object.induced {x} : a ⟶ x :=
+(H.universal x).e.symm trivial
+
+def Is_initial_object.uniqueness {x} (k k' : a ⟶ x) : k = k' :=
+(H.universal x).bijective.1 rfl
+
 end Is
 
 -- An initial object.
@@ -148,6 +155,22 @@ def Is_coproduct.mk'
       right_inv := assume p, prod.ext.mpr $
         ⟨induced_commutes₀ p.1 p.2, induced_commutes₁ p.1 p.2⟩ },
     h := rfl } }
+
+parameters (H : Is_coproduct)
+def Is_coproduct.induced {x} (h₀ : a₀ ⟶ x) (h₁ : a₁ ⟶ x) : b ⟶ x :=
+(H.universal x).e.inv_fun (h₀, h₁)
+
+@[simp] lemma Is_coproduct.induced_commutes₀ {x} (h₀ : a₀ ⟶ x) (h₁ : a₁ ⟶ x) :
+  H.induced h₀ h₁ ∘ f₀ = h₀ :=
+congr_arg prod.fst (H.universal x).cancel_right
+
+@[simp] lemma Is_coproduct.induced_commutes₁ {x} (h₀ : a₀ ⟶ x) (h₁ : a₁ ⟶ x) :
+  H.induced h₀ h₁ ∘ f₁ = h₁ :=
+congr_arg prod.snd (H.universal x).cancel_right
+
+lemma Is_coproduct.uniqueness {x : C} {k k' : b ⟶ x}
+  (e₀ : k ∘ f₀ = k' ∘ f₀) (e₁ : k ∘ f₁ = k' ∘ f₁) : k = k' :=
+(H.universal x).bijective.1 (prod.ext.mpr ⟨e₀, e₁⟩)
 
 end Is
 

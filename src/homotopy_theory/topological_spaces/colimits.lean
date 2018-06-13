@@ -34,6 +34,19 @@ Is_initial_object.mk' Top.empty_induced (assume Z k k', by ext x; cases x)
 instance : has_initial_object.{(u+1) u} Top :=
 ⟨⟨Top.empty, Top.empty_is_initial_object⟩⟩
 
+protected def is_initial_object_of_to_empty (A : Top) (h : A → pempty) :
+  Is_initial_object.{(u+1) u} A :=
+have continuous h, begin
+  intros u hu,
+  have : u = ∅, from set.eq_empty_iff_forall_not_mem.mpr (pempty.rec _),
+  rw [this, set.preimage_empty],
+  exact is_open_empty
+end,
+have h' : A ⟶ Top.empty := Top.mk_hom h this,
+Is_initial_object.mk'
+  (λ Z, Top.empty_induced Z ∘ h')
+  (assume Z k k', begin ext x, cases h x end)
+
 end initial_object
 
 

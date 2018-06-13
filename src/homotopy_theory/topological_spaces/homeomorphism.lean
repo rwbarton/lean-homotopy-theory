@@ -33,7 +33,7 @@ def homeomorphism.of_equiv {X Y : Top} (h : X ≃ Y)
   witness_1 := by ext p; change h.symm (h p) = p; simp,
   witness_2 := by ext p; change h (h.symm p) = p; simp }
 
-variables {X Y : Top} (h : homeomorphism X Y)
+variables {X Y Z : Top} (h : homeomorphism X Y)
 
 def homeomorphism.equiv : X ≃ Y :=
 { to_fun := h,
@@ -76,6 +76,10 @@ lemma homeomorphism.restriction_commutes {s : set X} {t : set Y} (hst : s = h �
   incl t ∘ (h.restrict hst).morphism = h.morphism ∘ incl s :=
 by ext; refl
 
+-- This definition cannot be computable because the information that a
+-- point of X lies in the range of j is stored in a Prop, and so is
+-- unavailable at runtime.
+
 -- Hopefully it's okay to use let inside a definition like this
 noncomputable def homeomorphism_to_image_of_embedding {A X : Top} {j : A ⟶ X}
   (h : embedding j) : homeomorphism A (Top.mk_ob (range j)) :=
@@ -86,6 +90,22 @@ homeomorphism.of_equiv e j'.property
     convert continuous_subtype_val using 1, funext p,
     exact congr_arg subtype.val (e.right_inv p)
   end)
+
+-- TODO: Would also be action on isomorphisms of the functor X × -
+def homeomorphism.prod_congr_right (h : homeomorphism Y Z) :
+  homeomorphism (Top.prod X Y) (Top.prod X Z) :=
+{ morphism := Top.prod_maps 1 h,
+  inverse := Top.prod_maps 1 h.symm,
+  witness_1 := begin
+    ext pq, cases pq with p q,
+    change (p, h.equiv.symm (h.equiv q)) = (p, q),
+    simp
+  end,
+  witness_2 := begin
+    ext pr, cases pr with p r,
+    change (p, h.equiv (h.equiv.symm r)) = (p, r),
+    simp
+  end }
 
 def prod_singleton (h : * ≃ Y) : homeomorphism X (Top.prod X Y) :=
 { morphism := Top.prod_pt (h punit.star),
