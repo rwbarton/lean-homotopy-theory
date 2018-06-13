@@ -1,8 +1,10 @@
 import categories.isomorphism
 import homotopy_theory.formal.cylinder.hep
+
 import .category
 import .colimits
 import .cylinder
+import .interval_endpoints
 import .pair
 import .pushout_lemmas
 
@@ -117,5 +119,36 @@ iff.intro
     have e : embedding j := embedding_of_cofibration h,
     ⟨e, (cofibration_iff_cofibered_of_embedding e).mp h⟩)
   (assume h, (cofibration_iff_cofibered_of_embedding h.1).mpr h.2)
+
+section relative_cylinder
+noncomputable theory
+
+variables (j) (ha : is_closed (range j))
+variable (hj : cofibration j)
+
+lemma relative_cylinder' : ∃ Po : pushout (ii @> A) (∂I &> j),
+  cofibration (Po.is_pushout.induced (I &> j) (ii @> X) (ii.naturality _).symm) :=
+let P : pair := pair.mk X (range j) in
+let j_ : homeomorphism A P.subspace :=
+  homeomorphism_to_image_of_embedding (embedding_of_cofibration hj) in
+let po :=
+  pair.po P I_01 ha
+    ((is_closed_congr I_01_is_D1_S0).mpr (unit_disk_sphere.is_closed ℝ)) in
+let po' := Is_pushout_of_isomorphic po (ii @> A) (∂I &> j)
+  ((∂I.onIsomorphisms j_).trans prod_doubleton) (I.onIsomorphisms j_) prod_doubleton
+  (by apply coprod.uniqueness; refl)
+  (by apply coprod.uniqueness; refl) in
+let ind :=
+  po'.induced (I &> j) (ii @> X) (by apply coprod.uniqueness; { ext p, refl }) in
+have ind = pair.incl _, begin
+  dsimp [ind], apply po'.uniqueness,
+  { simpa },
+  { apply coprod.uniqueness; simpa },
+end,
+⟨⟨(P ⊗ I_01).subspace, _, _, po'⟩,
+ by change cofibration ind; rw this;
+    exact prod_I_01_cofibered P ha (cofibration_iff_cofibered.mp hj).2⟩
+
+end relative_cylinder
 
 end homotopy_theory.topological_spaces

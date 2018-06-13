@@ -61,12 +61,30 @@ def coprod.induced {a₀ a₁ b : C} (f₀ : a₀ ⟶ b) (f₁ : a₁ ⟶ b) : a
   coprod.induced (k ∘ i₀) (k ∘ i₁) = k :=
 coprod.uniqueness (by simp) (by simp)
 
+def coprod_of_maps {a₀ a₁ b₀ b₁ : C} (f₀ : a₀ ⟶ b₀) (f₁ : a₁ ⟶ b₁) : a₀ ⊔ a₁ ⟶ b₀ ⊔ b₁ :=
+coprod.induced (i₀ ∘ f₀) (i₁ ∘ f₁)
+
+@[simp] lemma coprod_of_maps_commutes₀ {a₀ a₁ b₀ b₁ : C} {f₀ : a₀ ⟶ b₀} {f₁ : a₁ ⟶ b₁} :
+  coprod_of_maps f₀ f₁ ∘ i₀ = i₀ ∘ f₀ :=
+coprod.induced_commutes₀ _ _
+
+@[simp] lemma coprod_of_maps_commutes₁ {a₀ a₁ b₀ b₁ : C} {f₀ : a₀ ⟶ b₀} {f₁ : a₁ ⟶ b₁} :
+  coprod_of_maps f₀ f₁ ∘ i₁ = i₁ ∘ f₁ :=
+coprod.induced_commutes₁ _ _
+
 def isomorphic_coprod_of_Is_coproduct {a₀ a₁ b : C} {f₀ : a₀ ⟶ b} {f₁ : a₁ ⟶ b}
   (h : Is_coproduct f₀ f₁) : Isomorphism (a₀ ⊔ a₁) b :=
 { morphism := coprod.induced f₀ f₁,
   inverse := h.induced i₀ i₁,
   witness_1 := by apply coprod.uniqueness; { rw ←associativity, simp },
   witness_2 := by apply h.uniqueness; { rw ←associativity, simp } }
+
+def coprod_of_isomorphisms {a₀ a₁ b₀ b₁ : C} (j₀ : Isomorphism a₀ b₀) (j₁ : Isomorphism a₁ b₁) :
+  Isomorphism (a₀ ⊔ a₁) (b₀ ⊔ b₁) :=
+{ morphism := coprod_of_maps j₀.morphism j₁.morphism,
+  inverse := coprod_of_maps j₀.inverse j₁.inverse,
+  witness_1 := by apply coprod.uniqueness; rw ←associativity; simp,
+  witness_2 := by apply coprod.uniqueness; rw ←associativity; simp }
 
 end coproduct
 

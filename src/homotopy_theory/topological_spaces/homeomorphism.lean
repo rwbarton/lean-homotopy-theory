@@ -76,6 +76,11 @@ lemma homeomorphism.restriction_commutes {s : set X} {t : set Y} (hst : s = h �
   incl t ∘ (h.restrict hst).morphism = h.morphism ∘ incl s :=
 by ext; refl
 
+-- Better than h ▸ refl because this lets the val field compute.
+def subspace_equiv_subspace {X : Top} {A A' : set X} (h : A = A') :
+  homeomorphism (Top.mk_ob A) (Top.mk_ob A') :=
+(homeomorphism.refl X).restrict h
+
 -- This definition cannot be computable because the information that a
 -- point of X lies in the range of j is stored in a Prop, and so is
 -- unavailable at runtime.

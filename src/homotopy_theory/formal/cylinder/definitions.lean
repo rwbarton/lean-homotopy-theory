@@ -1,7 +1,9 @@
 import categories.natural_transformation
 import categories.functor_categories
+import categories.colimit_lemmas
 
 open categories
+open categories.category
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
 -- TODO: Move these elsewhere
@@ -10,7 +12,7 @@ notation t ` @> `:90 X:90 := t.components X
 
 namespace homotopy_theory.cylinder
 
-universe u
+universes u v
 
 
 -- An "abstract endpoint" of a "cylinder"; there are two.
@@ -41,6 +43,28 @@ has_cylinder.i C
 
 @[reducible] def p {C : Type u} [category C] [has_cylinder C] : I ⟶ 1 :=
 has_cylinder.p C
+
+
+-- If C admits coproducts, then we can combine the inclusions `i 0`
+-- and `i 1` into a single natural transformation `∂I ⟶ I`, where `∂I`
+-- is defined by `∂I A = A ⊔ A`. (`∂I` does not depend on `I`.)
+def boundary_I {C : Type u} [category.{u v} C] [has_coproducts.{u v} C] : C ↝ C :=
+{ onObjects := λ A, A ⊔ A,
+  onMorphisms := λ A B f, coprod_of_maps f f,
+  identities := λ A, by apply coprod.uniqueness; simp,
+  functoriality := λ A B C f g, by apply coprod.uniqueness; rw ←associativity; simp }
+
+notation `∂I` := boundary_I
+
+def ii {C : Type u} [category.{u v} C] [has_coproducts.{u v} C] [has_cylinder C] : ∂I ⟶ I :=
+show ∂I ⟶ (I : C ↝ C), from
+{ components := λ (A : C), coprod.induced (i 0 @> A) (i 1 @> A),
+  naturality := λ A B f,
+  begin
+    dsimp [boundary_I],
+    apply coprod.uniqueness;
+      { rw [←associativity, ←associativity], simpa using (i _).naturality f }
+  end }
 
 
 def endpoint.v : endpoint → endpoint
