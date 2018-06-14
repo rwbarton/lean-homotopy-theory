@@ -5,11 +5,10 @@ universes u v
 open set
 
 section
-variables {α : Type u} [topological_space α] {β : Type v}
+variables {α : Type u} [topological_space α]
 
-lemma is_open_bUnion {s : set β} {f : β → set α} (h : ∀i∈s, is_open (f i)) :
-  is_open (⋃i∈s, f i) :=
-is_open_Union $ assume i, is_open_Union $ assume hi, h i hi
+lemma is_closed_diff {s t : set α} (h₁ : is_closed s) (h₂ : is_open t) : is_closed (s - t) :=
+is_closed_inter h₁ $ is_closed_compl_iff.mpr h₂
 
 end
 
