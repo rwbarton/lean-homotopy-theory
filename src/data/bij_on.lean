@@ -28,6 +28,9 @@ def Bij_on.mk_univ (e : α ≃ b) (he : ∀ x, f x = e x) : Bij_on f univ b :=
 def Bij_on.of_equiv (e : α ≃ β) : Bij_on e.to_fun univ univ :=
 Bij_on.mk_univ (e.trans (equiv.set.univ _).symm) (by intro x; refl)
 
+def Bij_on.of_Is_equiv (h : Is_equiv f) : Bij_on f univ univ :=
+by convert Bij_on.of_equiv h.e; funext a; rw [h.h] { occs := occurrences.pos [1] }; refl
+
 def Bij_on.Is_equiv (h : Bij_on f univ univ) : Is_equiv f :=
 { e := (equiv.set.univ _).symm.trans (h.e.trans (equiv.set.univ _)),
   h := funext $ λ a, h.he ⟨a, trivial⟩ }
