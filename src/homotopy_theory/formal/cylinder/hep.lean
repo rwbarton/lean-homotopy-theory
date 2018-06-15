@@ -1,5 +1,6 @@
 import categories.colimits
 import categories.isomorphism
+import categories.preserves_colimits
 import categories.replete
 import .definitions
 
@@ -42,6 +43,29 @@ assume Y k H e,
 
 instance hep_replete (ε) : replete_wide_subcategory.{u v} C (λ a b, hep ε) :=
 replete_wide_subcategory.mk' (λ a b, hep_of_isomorphism ε) (λ a b c f g, hep_comp ε)
+
+lemma hep_pushout (ε) {A B A' B' : C} {f : A ⟶ B} {g : A ⟶ A'} {f' : A' ⟶ B'} {g' : B ⟶ B'}
+  (po : Is_pushout f g g' f') (po' : Is_pushout (I &> f) (I &> g) (I &> g') (I &> f'))
+  (hf : hep ε f) : hep ε f' :=
+assume Y h H e,
+  have (h ∘ g') ∘ f = (H ∘ (I &> g)) ∘ i ε @> A, begin
+    rw [←associativity, ←associativity, po.commutes, ←(i ε).naturality],
+    simp [e], refl
+  end,
+  let ⟨J, Je₁, Je₂⟩ := hf Y (h ∘ g') (H ∘ (I &> g)) this in
+  let K := po'.induced J H Je₂ in
+  ⟨K,
+   begin
+     apply po.uniqueness; erw [←associativity, (i ε).naturality, associativity],
+     { rw [←Je₁], simp },
+     { rw [e], simp }
+   end,
+   po'.induced_commutes₁ J H Je₂⟩
+
+lemma hep_pushout' [preserves_pushouts (I : C ↝ C)] (ε) {A B A' B' : C}
+  {f : A ⟶ B} {g : A ⟶ A'} {f' : A' ⟶ B'} {g' : B ⟶ B'} (po : Is_pushout f g g' f')
+  (hf : hep ε f) : hep ε f' :=
+hep_pushout ε po (preserves_pushouts.Is_pushout_of_Is_pushout I po) hf
 
 lemma hep_iff_pushout_retract (ε) {A X : C} {j : A ⟶ X}
   {Z : C} {i' : X ⟶ Z} {j' : I +> A ⟶ Z} (po : Is_pushout j (i ε @> A) i' j') :

@@ -177,6 +177,22 @@ end uniqueness_of_pushouts
 
 local notation [parsing_only] a ` ~~ ` b := Bij_on _ a b
 
+section refl
+parameters {C : Type u} [cat : category.{u v} C]
+include cat
+parameters {a b : C} (f : a ⟶ b)
+
+def Is_pushout.refl : Is_pushout f (𝟙 a) (𝟙 b) f :=
+Is_pushout.mk $ λ x,
+  Bij_on.mk
+    { to_fun := λ h, ⟨(h ∘ 𝟙 b, h ∘ f), by simp⟩,
+      inv_fun := λ p, ⟨p.val.1, trivial⟩,
+      left_inv := assume h, by simp,
+      right_inv := assume ⟨⟨pv1, pv2⟩, pp⟩, by simpa using pp }
+    (assume h, rfl)
+
+end refl
+
 section isomorphic
 
 parameters {C : Type u} [cat : category.{u v} C]

@@ -77,3 +77,34 @@ instance {β : α → Type v} [Πa, discrete_space (β a)] : discrete_space (sig
   is_discrete_topology := by unfold sigma.topological_space; simp }
 
 end discrete
+
+section compact
+open filter
+variables {α : Type u} [topological_space α]
+
+lemma induced_nhds {s : set α} {x : α} (h : x ∈ s) :
+  nhds (⟨x,h⟩ : subtype s) = vmap subtype.val (nhds x) :=
+filter.ext.mpr $ assume r, by rw [mem_vmap_sets, nhds_sets, nhds_sets]; exact
+  iff.intro
+    (λ⟨t, tr, ⟨t', t'o, tt'⟩, xt⟩,
+      ⟨t', ⟨t', subset.refl t', t'o, by subst tt'; exact xt⟩, tt' ▸ tr⟩)
+    (λ⟨t, ⟨u, ut, uo, xu⟩, tr⟩,
+      ⟨subtype.val ⁻¹' u, subset.trans (preimage_mono ut) tr, ⟨u, uo, rfl⟩, xu⟩)
+
+-- TODO: Prove other direction using compact_image?
+lemma compactness_intrinsic {s : set α} (s_cpt : compact s) :
+  compact (univ : set (subtype s)) :=
+begin
+  rw compact_iff_ultrafilter_le_nhds at ⊢ s_cpt,
+  intros f hf fs',
+  let f' : filter α := map subtype.val f,
+  have : f' ≤ principal s, begin
+    rw [map_le_iff_le_vmap, vmap_principal], convert fs',
+    apply ext, intro x, simpa using x.property,
+  end,
+  rcases s_cpt f' (ultrafilter_map hf) this with ⟨a, ha, h2⟩,
+  refine ⟨⟨a, ha⟩, trivial, _⟩,
+  rwa [induced_nhds, ←map_le_iff_le_vmap]
+end
+
+end compact

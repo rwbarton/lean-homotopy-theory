@@ -1,8 +1,10 @@
 import analysis.real
+import categories.adjunctions
 import tactic.norm_num
 
 import homotopy_theory.formal.cylinder.definitions
 import .category
+import .exponentiable
 
 noncomputable theory
 
@@ -31,6 +33,9 @@ instance : has_one I01 := ⟨⟨1, by norm_num, by norm_num⟩⟩
 instance : t2_space I01 :=
 by dsimp [I01, Top.mk_ob]; apply_instance
 
+instance : locally_compact_space I01 :=
+locally_compact_of_compact (compactness_intrinsic compact_ivl)
+
 -- The endpoint of [0,1] corresponding to an abstract endpoint.
 def I01_of_endpoint : endpoint → I01
 | 0 := 0
@@ -58,5 +63,8 @@ instance : has_cylinder_with_involution Top :=
     simp
   end,
   pv := rfl }
+
+instance I.has_right_adjoint : has_right_adjoint (I : Top ↝ Top) :=
+by unfold I; apply_instance
 
 end homotopy_theory.topological_spaces
