@@ -25,7 +25,7 @@ def hep (ε) {A X : C} (j : A ⟶ X) : Prop :=
 ∀ Y (f : X ⟶ Y) (H : I +> A ⟶ Y), f ∘ j = H ∘ i ε @> A →
   ∃ H' : I +> X ⟶ Y, H' ∘ i ε @> X = f ∧ H' ∘ I &> j = H
 
-lemma hep_of_isomorphism (ε) {A X : C} (h : Isomorphism A X) : hep ε h.morphism :=
+lemma hep_of_isomorphism (ε) {A X : C} (h : Isomorphism A X) : hep ε (h : A ⟶ X) :=
 assume Y f H e,
   ⟨H ∘ I &> h.inverse,
    by erw [←associativity, ←(i ε).naturality, associativity, ←e, Isomorphism.witness_2_assoc_lemma],
@@ -87,6 +87,18 @@ iff.intro
     ⟨po.induced f H e ∘ r,
      by rw [←associativity, hr₁]; simp,
      by rw [←associativity, hr₂]; simp⟩)
+
+lemma hep_initial_induced (ε) {A X : C} {j : A ⟶ X}
+  (Ai : Is_initial_object.{u v} A) (IAi : Is_initial_object.{u v} (I +> A)) :
+  hep ε j :=
+let po : Is_pushout j (i ε @> A) (𝟙 X) IAi.induced := begin
+  convert Is_pushout_of_isomorphic (Is_pushout.refl j) j (i ε @> A)
+    (Isomorphism.refl A) (Isomorphism.refl X) (initial_object.unique IAi Ai)
+    (Ai.uniqueness _ _) (Ai.uniqueness _ _), { simp }, { apply IAi.uniqueness }
+end in
+(hep_iff_pushout_retract ε po).mpr ⟨p @> X, po.uniqueness
+  (by rw [←associativity, po.induced_commutes₀]; simp)
+  (IAi.uniqueness _ _)⟩
 
 -- The two-sided homotopy extension property.
 @[reducible] def two_sided_hep {A X : C} (j : A ⟶ X) : Prop := ∀ ε, hep ε j

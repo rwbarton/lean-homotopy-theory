@@ -5,6 +5,7 @@ import categories.colimit_lemmas
 open categories
 open categories.category
 local notation f ` ∘ `:80 g:80 := g ≫ f
+local notation F ` ∘ᶠ `:80 G:80 := functor.FunctorComposition G F
 
 -- TODO: Move these elsewhere
 infixr ` &> `:85 := functor.Functor.onMorphisms
@@ -35,15 +36,24 @@ class has_cylinder (C : Type u) [category C] :=
 (p : I ⟶ 1)
 (pi : ∀ ε, p ∘ i ε = 1)
 
-def I {C : Type u} [category C] [has_cylinder C] : C ↝ C :=
+section
+parameters {C : Type u} [cat : category C] [has_cylinder C]
+include cat
+
+def I : C ↝ C :=
 has_cylinder.I C
 
-@[reducible] def i {C : Type u} [category C] [has_cylinder C] : Π ε, 1 ⟶ I :=
+@[reducible] def i : Π ε, 1 ⟶ I :=
 has_cylinder.i C
 
-@[reducible] def p {C : Type u} [category C] [has_cylinder C] : I ⟶ 1 :=
+@[reducible] def p : I ⟶ 1 :=
 has_cylinder.p C
 
+@[simp] lemma pi_components (ε) {A : C} : p @> A ∘ i ε @> A = 𝟙 A :=
+show (p ∘ i ε) @> A = 𝟙 A,
+by rw has_cylinder.pi; refl
+
+end
 
 -- If C admits coproducts, then we can combine the inclusions `i 0`
 -- and `i 1` into a single natural transformation `∂I ⟶ I`, where `∂I`
@@ -103,5 +113,21 @@ show (v ∘ v) @> A = (1 : I ⟹ I) @> A,
 by rw has_cylinder_with_involution.vv; refl
 
 end
+
+section interchange
+parameters (C : Type u) [cat : category C] [has_cylinder C]
+include cat
+local notation `I` := (I : C ↝ C)
+
+local attribute [elab_simple] functor.Functor.onMorphisms
+
+-- Interchange of two applications of the cylinder functor. The
+-- standard example is (on Top as above) T (x, t, t') = (x, t', t).
+class cylinder_has_interchange :=
+(T : I ∘ᶠ I ⟶ I ∘ᶠ I)
+(Ti : ∀ ε A, T @> _ ∘ i ε @> (I +> A) = I &> (i ε @> A))
+(TIi : ∀ ε A, T @> _ ∘ I &> (i ε @> A) = i ε @> (I +> A))
+
+end interchange
 
 end homotopy_theory.cylinder

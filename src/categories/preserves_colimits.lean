@@ -14,15 +14,27 @@ variables {C : Type u₁} [catC : category.{u₁ v₁} C]
 variables {D : Type u₂} [catD : category.{u₂ v₂} D]
 include catC catD
 
+class preserves_initial_object (F : C ↝ D) :=
+(Is_initial_object_of_Is_initial_object :
+  Π {a : C}, Is_initial_object.{u₁ v₁} a → Is_initial_object.{u₂ v₂} (F +> a))
+
 class preserves_pushouts (F : C ↝ D) :=
 (Is_pushout_of_Is_pushout :
   Π {a b₀ b₁ c : C} {f₀ : a ⟶ b₀} {f₁ : a ⟶ b₁} {g₀ : b₀ ⟶ c} {g₁ : b₁ ⟶ c},
   Is_pushout f₀ f₁ g₀ g₁ → Is_pushout (F &> f₀) (F &> f₁) (F &> g₀) (F &> g₁))
 
+section left_adjoint
+
+variables {F : C ↝ D} {G : D ↝ C} (adj : adjunction F G)
+
+def left_adjoint_preserves_initial_object : preserves_initial_object F :=
+⟨λ a ai, Is_initial_object.mk $ λ x,
+  Is_equiv.mk ((adj.hom_equivalence a x).trans (ai.universal (G +> x)).e)
+    (by ext; refl)⟩
+
 local notation [parsing_only] a ` ~~ ` b := Bij_on _ a b
 
-def left_adjoint_preserves_pushout {F : C ↝ D} {G : D ↝ C} (adj : adjunction F G) :
-  preserves_pushouts F :=
+def left_adjoint_preserves_pushout : preserves_pushouts F :=
 ⟨λ a b₀ b₁ c f₀ f₁ g₀ g₁ po, Is_pushout.mk $ λ x,
   have _ := calc
     (univ : set (F +> c ⟶ x))
@@ -61,6 +73,12 @@ def left_adjoint_preserves_pushout {F : C ↝ D} {G : D ↝ C} (adj : adjunction
     rw adj.hom_equivalence_symm_naturality,
     simp
   end⟩
+
+end left_adjoint
+
+instance has_right_adjoint.preserves_initial_object (F : C ↝ D) [has_right_adjoint F] :
+  preserves_initial_object F :=
+left_adjoint_preserves_initial_object (has_right_adjoint.adj F)
 
 instance has_right_adjoint.preserves_pushouts (F : C ↝ D) [has_right_adjoint F] :
   preserves_pushouts F :=

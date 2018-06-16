@@ -57,7 +57,7 @@ instance precofibration_category.replete
       (cof_id a) }
 
 include cat
-lemma cof_iso {a b : C} (i : a ≅ b) : is_cof i.morphism := mem_iso i
+lemma cof_iso {a b : C} (i : a ≅ b) : is_cof (i : a ⟶ b) := mem_iso i
 
 -- The coproduct of cofibrations is a cofibration.
 -- TODO: Should we try to express this using Is_coproduct?
@@ -83,5 +83,9 @@ begin
   convert cof_comp (cof_iso (coprod_initial_left ∅)) (cof_coprod h₀ h₁),
   apply initial.uniqueness
 end
+
+variables (C)
+class all_objects_cofibrant [has_initial_object.{u v} C] :=
+(cofibrant : ∀ (a : C), cofibrant a)
 
 end homotopy_theory.cofibrations
