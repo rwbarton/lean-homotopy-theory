@@ -12,7 +12,6 @@ namespace homotopy_theory.topological_spaces
 open homotopy_theory.cofibrations
 open homotopy_theory.cofibrations.precofibration_category
 open homotopy_theory.cylinder
-open homotopy_theory.i_category
 
 -- Top is an I-category with cofibrations the closed cofibrations and
 -- cylinder functor - × [0, 1].

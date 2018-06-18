@@ -18,6 +18,11 @@ class preserves_initial_object (F : C ↝ D) :=
 (Is_initial_object_of_Is_initial_object :
   Π {a : C}, Is_initial_object.{u₁ v₁} a → Is_initial_object.{u₂ v₂} (F +> a))
 
+class preserves_coproducts (F : C ↝ D) :=
+(Is_coproduct_of_Is_coproduct :
+  Π {a₀ a₁ b : C} {f₀ : a₀ ⟶ b} {f₁ : a₁ ⟶ b},
+  Is_coproduct f₀ f₁ → Is_coproduct (F &> f₀) (F &> f₁))
+
 class preserves_pushouts (F : C ↝ D) :=
 (Is_pushout_of_Is_pushout :
   Π {a b₀ b₁ c : C} {f₀ : a ⟶ b₀} {f₁ : a ⟶ b₁} {g₀ : b₀ ⟶ c} {g₁ : b₁ ⟶ c},
@@ -31,6 +36,8 @@ def left_adjoint_preserves_initial_object : preserves_initial_object F :=
 ⟨λ a ai, Is_initial_object.mk $ λ x,
   Is_equiv.mk ((adj.hom_equivalence a x).trans (ai.universal (G +> x)).e)
     (by ext; refl)⟩
+
+-- TODO: show left adjoints preserve coproducts
 
 local notation [parsing_only] a ` ~~ ` b := Bij_on _ a b
 

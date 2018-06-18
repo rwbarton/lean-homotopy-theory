@@ -326,12 +326,22 @@ section pushout_initial
 parameters {C : Type u} [cat : category.{u v} C]
 include cat
 parameters {a b₀ b₁ c : C} {f₀ : a ⟶ b₀} {f₁ : a ⟶ b₁}
-parameters {g₀ : b₀ ⟶ c} {g₁ : b₁ ⟶ c} (po : Is_pushout f₀ f₁ g₀ g₁)
+parameters {g₀ : b₀ ⟶ c} {g₁ : b₁ ⟶ c}
 
-def Is_coproduct_of_Is_pushout_of_Is_initial
+-- TODO: Somehow prove these two simultaneously?
+def Is_pushout_of_Is_coproduct_of_Is_initial (copr : Is_coproduct g₀ g₁)
+  (h : Is_initial_object.{u v} a) : Is_pushout f₀ f₁ g₀ g₁ :=
+Is_pushout.mk $ λ x, calc
+  univ ~~ {p : (b₀ ⟶ x) × (b₁ ⟶ x) | true}
+       : Bij_on.of_Is_equiv (copr.universal x)
+  ...  ~~ {p : (b₀ ⟶ x) × (b₁ ⟶ x) | p.1 ∘ f₀ = p.2 ∘ f₁}
+       : by convert Bij_on.refl _; ext p; change (_ = _) ↔ true;
+            simp; apply h.uniqueness
+
+def Is_coproduct_of_Is_pushout_of_Is_initial (po : Is_pushout f₀ f₁ g₀ g₁)
   (h : Is_initial_object.{u v} a) : Is_coproduct g₀ g₁ :=
 have _ := λ x, calc
-  univ ~~ {p : (b₀ ⟶ x) × (b₁ ⟶ x) | p.1 ∘ f₀ = p.2 ∘ f₁ }
+  univ ~~ {p : (b₀ ⟶ x) × (b₁ ⟶ x) | p.1 ∘ f₀ = p.2 ∘ f₁}
        : po.universal x
   ...  ~~ (univ : set ((b₀ ⟶ x) × (b₁ ⟶ x)))
        : begin
