@@ -79,6 +79,38 @@ Iai.uniqueness _ _
 
 end rel
 
+section dir
+-- A technical contrivance to let us abstract over the direction of a
+-- homotopy.
+def homotopy_dir (ε : endpoint) {x y : C} (fε fεv : x ⟶ y) : Type v :=
+match ε with
+| 0 := homotopy fε fεv
+| 1 := homotopy fεv fε
+end
+
+def homotopy_dir.H {ε} {x y : C} {fε fεv : x ⟶ y} (H : homotopy_dir ε fε fεv) :
+  I +> x ⟶ y :=
+match ε, H with
+| 0, H := homotopy.H H
+| 1, H := homotopy.H H
+end
+
+lemma homotopy_dir.Hiε {ε} {x y : C} {fε fεv : x ⟶ y} (H : homotopy_dir ε fε fεv) :
+  H.H ∘ i ε @> x = fε :=
+match ε, H with
+| 0, H := homotopy.Hi₀ H
+| 1, H := homotopy.Hi₁ H
+end
+
+lemma homotopy_dir.Hiεv {ε} {x y : C} {fε fεv : x ⟶ y} (H : homotopy_dir ε fε fεv) :
+  H.H ∘ i ε.v @> x = fεv :=
+match ε, H with
+| 0, H := homotopy.Hi₁ H
+| 1, H := homotopy.Hi₀ H
+end
+
+end dir
+
 -- The homotopy relation with respect to the given cylinder functor.
 def homotopic {x y : C} (f₀ f₁ : x ⟶ y) : Prop := nonempty (homotopy f₀ f₁)
 

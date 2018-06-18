@@ -92,8 +92,13 @@ instance : preserves_coproducts (I : C ↝ C) :=
 
 parameters {a b : C} (j : a ⟶ b) (hj : is_cof j)
 parameters {x : C} {f₀ f₁ f₂ : b ⟶ x}
-parameters {H₁ : homotopy f₀ f₁} (h₁ : H₁.is_rel j)
-parameters {H₂ : homotopy f₀ f₂} (h₂ : H₂.is_rel j)
+-- More generally, we assume that the homotopies H₁ : f₀ ≃ f₁ and
+-- H₂ : f₀ ≃ f₂ restrict to the same homotopy G on A.
+parameters {G : I +> a ⟶ x}
+-- Furthermore, we generalize over the direction of the homotopies.
+parameters (ε : endpoint)
+parameters {H₁ : homotopy_dir ε f₀ f₁} (h₁ : H₁.H ∘ I &> j = G)
+parameters {H₂ : homotopy_dir ε f₀ f₂} (h₂ : H₂.H ∘ I &> j = G)
 -- Goal: construct a homotopy from f₁ to f₂ rel j.
 
 /-
@@ -118,26 +123,22 @@ Is_coproduct_of_Is_coproduct _
 -- Thus, we can "glue" the homotopies H₁ and H₂ to form a map I(b ⊔ b) → X.
 def H₁H₂ : I +> (b ⊔ b) ⟶ x :=
 Ib_Ib.induced H₁.H H₂.H
--- Because the homotopies are rel j, the restriction of this map to I(a ⊔ a)
+-- Because the homotopies agree on a, the restriction of this map to I(a ⊔ a)
 -- extends to a map I(Ia) → X. Then we get an induced map on I(b ⊔ₐ Ia ⊔ₐ b).
-def f₀jpp : I +> I +> a ⟶ x := f₀ ∘ j ∘ p @> a ∘ I &> (p @> a)
+def GIp : I +> I +> a ⟶ x := G ∘ I &> (p @> a)
 
 include h₁ h₂
 def H₁H₂' : I +> b_Ia_b ⟶ x :=
-Ipo.induced H₁H₂ f₀jpp $
+Ipo.induced H₁H₂ GIp $
   -- This is a bit awful
-  have ∀ ε, f₀ ∘ j ∘ p @> a = f₀ ∘ j ∘ p @> a ∘ I &> p @> a ∘ I &> i ε @> a := assume ε, calc
-      f₀ ∘ j ∘ p @> a
-        = (f₀ ∘ j ∘ p @> a) ∘ I &> (p @> a ∘ i ε @> a)  : by simp
-    ... = f₀ ∘ j ∘ p @> a ∘ I &> p @> a ∘ I &> i ε @> a : by rw [I.functoriality]; simp,
   begin
-    unfold homotopy.is_rel at h₁ h₂,
     apply Ia_Ia.uniqueness;
     rw [←associativity, ←associativity, ←I.functoriality, ←I.functoriality];
     change
       _ ∘ I &> (coprod_of_maps j j ∘ _) =
       _ ∘ I &> (coprod.induced (i 0 @> a) (i 1 @> a) ∘ _);
-    simp [H₁H₂, f₀jpp]; rw h₁ <|> rw h₂; apply this
+    simp [H₁H₂, GIp]; rw h₁ <|> rw h₂;
+    rw [←associativity, ←I.functoriality]; simp
   end
 omit h₁ h₂
 
@@ -153,10 +154,9 @@ lemma p_nat_assoc {y z w : C} (g : z ⟶ w) (h : y ⟶ z) :
   g ∘ p @> z ∘ I &> h = g ∘ h ∘ p @> y :=
 by erw [←associativity, p.naturality]; simp
 
-lemma H₁H₂'i0 : f₀ ∘ p @> b ∘ j' = H₁H₂' ∘ i 0 @> _ :=
+lemma H₁H₂'iε : f₀ ∘ p @> b ∘ j' = H₁H₂' ∘ i ε @> _ :=
 have t : ∀ {z} (k : z ⟶ _), f₀ ∘ p @> b ∘ j' ∘ k = f₀ ∘ p @> b ∘ (j' ∘ k), by simp,
 begin
-  unfold homotopy.is_rel at h₁ h₂,
   unfold H₁H₂' H₁H₂,
   apply Po.is_pushout.uniqueness,
   -- This is truly awful
@@ -164,32 +164,28 @@ begin
     apply coprod.uniqueness;
     { simp, erw i_nat_assoc, simp,
       rw t, unfold j' ii, simp, rw ←associativity, simp, rw ←associativity, simp,
-      rw H₁.Hi₀ <|> rw H₂.Hi₀ } },
-  { rw [i_nat_assoc, t], unfold j' f₀jpp, simp,
-    rw [←i_nat_assoc, p_nat_assoc],
-    have :
-      f₀ ∘ j ∘ p @> a ∘ (i 0 @> a) ∘ p @> a =
-      f₀ ∘ j ∘ (p @> a ∘ i 0 @> a) ∘ p @> a, by simp only [associativity],
-    erw this, dsimp, simp }     -- dsimp rewrites 1 +> a to a in some type
+      rw H₁.Hiε <|> rw H₂.Hiε } },
+  { rw [i_nat_assoc, t], unfold j' GIp, simp,
+    rw [←i_nat_assoc, p_nat_assoc, ←h₁, ←i_nat_assoc, H₁.Hiε] }
 end
 
 -- Now we can apply the homotopy extension property of j'
 lemma Ex_E : ∃ (E : I +> (I +> b) ⟶ x),
-  E ∘ i 0 @> (I +> b) = f₀ ∘ p @> b ∧ E ∘ I &> j' = H₁H₂' :=
-hep_cof j' (relative_cylinder j hj) 0 _ (f₀ ∘ p @> b) _ H₁H₂'i0
+  E ∘ i ε @> (I +> b) = f₀ ∘ p @> b ∧ E ∘ I &> j' = H₁H₂' :=
+hep_cof j' (relative_cylinder j hj) ε _ (f₀ ∘ p @> b) _ H₁H₂'iε
 
 section E
 parameters (E : I +> (I +> b) ⟶ x)
-  (hE : E ∘ i 0 @> (I +> b) = f₀ ∘ p @> b ∧ E ∘ I &> j' = H₁H₂')
--- Now E ∘ i 1 is supposed to be a homotopy from f₁ to f₂ rel j.
+  (hE : E ∘ i ε @> (I +> b) = f₀ ∘ p @> b ∧ E ∘ I &> j' = H₁H₂')
+-- Now E ∘ i ε.v is supposed to be a homotopy from f₁ to f₂ rel j.
 
 include hE
-lemma Ei1i_ :
-  E ∘ i 1 @> (I +> b) ∘ i 0 @> b = f₁ ∧
-  E ∘ i 1 @> (I +> b) ∘ i 1 @> b = f₂ :=
+lemma Eiεvi_ :
+  E ∘ i ε.v @> (I +> b) ∘ i 0 @> b = f₁ ∧
+  E ∘ i ε.v @> (I +> b) ∘ i 1 @> b = f₂ :=
 have
-  i.{u v} 1 @> (I +> b) ∘ i 0 @> b = I &> j' ∘ I &> Po.map₀ ∘ i 1 @> _ ∘ i₀ ∧
-  i.{u v} 1 @> (I +> b) ∘ i 1 @> b = I &> j' ∘ I &> Po.map₀ ∘ i 1 @> _ ∘ i₁, begin
+  i.{u v} ε.v @> (I +> b) ∘ i 0 @> b = I &> j' ∘ I &> Po.map₀ ∘ i ε.v @> _ ∘ i₀ ∧
+  i.{u v} ε.v @> (I +> b) ∘ i 1 @> b = I &> j' ∘ I &> Po.map₀ ∘ i ε.v @> _ ∘ i₁, begin
   split;
   { rw ←I.functoriality, unfold j', simp, erw i_nat_assoc,
     rw ←I.functoriality, unfold ii, simp,
@@ -201,34 +197,28 @@ begin
     simp [hE.2, H₁H₂', H₁H₂],
     erw i_nat_assoc, dsimp, simp,
     -- dsimp: coprod vs (has_coproducts.coproduct _ _).ob?
-    exact H₁.Hi₁ <|> exact H₂.Hi₁ }
+    exact H₁.Hiεv <|> exact H₂.Hiεv }
 end
 
-def Ei1 : homotopy f₁ f₂ :=
-{ H := E ∘ i 1 @> (I +> b), Hi₀ := Ei1i_.1, Hi₁ := Ei1i_.2 }
+def Eiε : homotopy f₁ f₂ :=
+{ H := E ∘ i ε.v @> (I +> b), Hi₀ := Eiεvi_.1, Hi₁ := Eiεvi_.2 }
 
 local attribute [elab_simple] functor.Functor.onMorphisms
-lemma Ei1_is_rel : Ei1.is_rel j :=
-have i 1 @> (I +> b) ∘ I &> j = I &> j' ∘ I &> Po.map₁ ∘ _, begin
+lemma Eiε_is_rel : Eiε.is_rel j :=
+have i ε.v @> (I +> b) ∘ I &> j = I &> j' ∘ I &> Po.map₁ ∘ _, begin
   rw ←I.functoriality, unfold j', simp,
-  rw ←(i 1).naturality, refl
+  rw ←(i ε.v).naturality, refl
 end,
-have f₀j_f₁j : f₀ ∘ j = f₁ ∘ j := agree_of_is_rel h₁,
 begin
-  dsimp [homotopy.is_rel, Ei1] { iota := tt },
-  rw [←associativity, this], simp [hE.2, H₁H₂', f₀jpp],
-  rw f₀j_f₁j,
-  rw ←i_nat_assoc, dsimp,
-  have :
-    f₁ ∘ j ∘ p @> a ∘ (i 1 @> a) ∘ p @> a =
-    f₁ ∘ j ∘ (p @> a ∘ i 1 @> a) ∘ p @> a, by simp only [associativity],
-  rw this, dsimp, simp
+  dsimp [homotopy.is_rel, Eiε] { iota := tt },
+  rw [←associativity, this], simp [hE.2, H₁H₂', GIp],
+  rw [←h₁, ←i_nat_assoc, ←i_nat_assoc, H₁.Hiεv]
 end
 
 end E
 
 lemma f₁_f₂ : f₁ ≃ f₂ rel j :=
-let ⟨E, hE⟩ := Ex_E in ⟨Ei1 E hE, Ei1_is_rel E hE⟩
+let ⟨E, hE⟩ := Ex_E in ⟨Eiε E hE, Eiε_is_rel E hE⟩
 
 end
 end equiv_private
@@ -246,7 +236,7 @@ variables {a b : C} {j : a ⟶ b} (hj : is_cof j)
 
 lemma homotopic_rel.symm_trans {x : C} {f₀ f₁ f₂ : b ⟶ x} :
   (f₀ ≃ f₁ rel j) → (f₀ ≃ f₂ rel j) → (f₁ ≃ f₂ rel j) :=
-assume ⟨H₁, h₁⟩ ⟨H₂, h₂⟩, equiv_private.f₁_f₂ j hj h₁ h₂
+assume ⟨H₁, h₁⟩ ⟨H₂, h₂⟩, equiv_private.f₁_f₂ j hj 0 h₁ h₂
 
 lemma homotopic_rel.symm {x : C} {f₀ f₁ : b ⟶ x} (h : f₀ ≃ f₁ rel j) : f₁ ≃ f₀ rel j :=
 homotopic_rel.symm_trans hj h (homotopic_rel.refl _)
