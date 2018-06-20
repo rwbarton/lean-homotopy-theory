@@ -63,7 +63,7 @@ def drag_rel : maps_extending hj u → maps_extending hj u' → Prop :=
 λ f₀ f₁, ∃ H : homotopy f₀.val f₁.val, H.H ∘ I &> j = G.H
 
 local notation f₀ ` ~G `:50 f₁:50 := drag_rel f₀ f₁
-local notation `[` b `,` x `]^` u:60 := homotopy_classes_extending_rel hj u
+local notation `[` b `,` x `]^` u:60 := homotopy_classes_extending_rel j hj u
 
 -- The relation ~G does not descend to the quotient: given a homotopy
 -- f₀ ≃ f₀' rel u and a homotopy f₀ ≃ f₁ extending G, we may not be

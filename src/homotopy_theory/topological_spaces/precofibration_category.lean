@@ -22,6 +22,7 @@ local notation `Top` := Top.{0}
 def closed_cofibration {A X : Top} (j : A ⟶ X) : Prop :=
 cofibration j ∧ is_closed (range j)
 
+-- A closed cofibration is a closed map.
 lemma closed_cofibration.is_closed {A X : Top} {j : A ⟶ X} (hj : closed_cofibration j)
   {v : set A} : is_closed v → is_closed (j '' v) :=
 embedding_is_closed (embedding_of_cofibration hj.1) hj.2
@@ -57,5 +58,11 @@ instance : all_objects_cofibrant.{1 0} Top :=
     intros x h,
     rcases h with ⟨⟨⟩, he⟩
   end⟩⟩
+
+lemma closed_cofibration_incl_iff {P : pair} :
+  closed_cofibration P.incl ↔ P.cofibered ∧ is_closed P.subset :=
+iff.intro
+  (assume ⟨h₁, h₂⟩, ⟨h₁, by convert h₂; exact range_subtype_val.symm⟩)
+  (assume ⟨h₁, h₂⟩, ⟨h₁, by convert h₂; exact range_subtype_val⟩)
 
 end homotopy_theory.topological_spaces

@@ -132,9 +132,7 @@ lemma relative_cylinder' : ∃ Po : pushout (∂I &> j) (ii @> A),
 let P : pair := pair.mk X (range j) in
 let j_ : homeomorphism A P.subspace :=
   homeomorphism_to_image_of_embedding (embedding_of_cofibration hj) in
-have I_01_is_closed : _ :=
-  (is_closed_congr I_01_is_D1_S0).mpr (unit_disk_sphere.is_closed ℝ),
-let po := pair.po P I_01 ha I_01_is_closed in
+let po := pair.po P I_01 ha I_01.is_closed in
 let po' := Is_pushout_of_isomorphic po.transpose (∂I &> j) (ii @> A)
   ((∂I.onIsomorphisms j_).trans prod_doubleton) prod_doubleton (I.onIsomorphisms j_)
   (by apply coprod.uniqueness; refl)
@@ -149,7 +147,7 @@ end,
  begin
    change cofibration ind ∧ is_closed (range ind), rw this,
    refine ⟨prod_I_01_cofibered P ha (cofibration_iff_cofibered.mp hj).2, _⟩,
-   convert @pair.prod.is_closed P I_01 ha I_01_is_closed using 1,
+   convert @pair.prod.is_closed P I_01 ha I_01.is_closed using 1,
    apply range_subtype_val
  end⟩
 

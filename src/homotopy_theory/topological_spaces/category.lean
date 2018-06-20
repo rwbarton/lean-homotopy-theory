@@ -54,6 +54,9 @@ Top.mk_hom (λ _, punit.star) (by continuity)
 
 end terminal
 
+protected def const {A X : Top} (x : X) : A ⟶ X :=
+Top.mk_hom (λ a, x) (by continuity)
+
 
 section product
 

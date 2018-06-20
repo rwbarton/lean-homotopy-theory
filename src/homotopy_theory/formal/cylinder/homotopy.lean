@@ -64,6 +64,13 @@ lemma homotopy.refl_is_rel {f : x ⟶ y} : (homotopy.refl f).is_rel j :=
 show f ∘ p @> x ∘ I &> j = f ∘ j ∘ p @> a,
 by rw [←associativity, ←associativity, p.naturality]; refl
 
+lemma homotopy.congr_left_is_rel {f₀ f₁ : x ⟶ y} {H : homotopy f₀ f₁} (h : H.is_rel j)
+  {z} (g : y ⟶ z) : (H.congr_left g).is_rel j :=
+begin
+  unfold homotopy.is_rel at ⊢ h, dsimp [homotopy.congr_left] { iota := tt },
+  rw [←associativity, h], simp
+end
+
 -- In practice, `a` is initial and `I` preserves initial objects.
 lemma homotopy.is_rel_initial (Iai : Is_initial_object.{u v} (I +> a))
   (H : homotopy f₀ f₁) : H.is_rel j :=

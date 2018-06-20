@@ -2,6 +2,7 @@ import categories.colimit_lemmas
 import homotopy_theory.formal.cylinder.hep
 
 import .category
+import .colimits
 import .cylinder
 import .homeomorphism
 import .inter_union
@@ -83,6 +84,8 @@ pair.homeomorphism.mk (h₁.h.trans h₂.h) $
   by rw [preimage_comp, h₁.is_of_pairs', h₂.is_of_pairs']
 
 end homeomorphism
+
+@[reducible] def pair.empty (W : Top) : pair := pair.mk W ∅
 
 section prod
 
@@ -220,6 +223,12 @@ local notation `i` := i.{1 0}
 -- cofibration.
 def pair.cofibered : Prop := hep 0 P.incl
 
+lemma pair.empty_cofibered (W : Top) : (pair.empty W).cofibered :=
+have Is_initial_object.{1 0} (pair.empty W).subspace, from
+  Top.is_initial_object_of_to_empty _ (by intro p; rcases p with ⟨_,⟨⟩⟩),
+hep_initial_induced 0 this
+  (preserves_initial_object.Is_initial_object_of_Is_initial_object I.{1 0} this)
+
 def pair.admits_retract : Prop := ∃ r : X ⟶ A', r ∘ P.incl = 1
 
 -- A pair (X, A) is cofibered if and only if the inclusion map of the
@@ -272,10 +281,10 @@ calc
 ... → Q.cofibered               : (Q.cofibered_iff ((is_closed_congr h).mp ha)).mpr
 
 lemma prod_empty_admits_retract (K : Top) :
-  P.admits_retract → (P ⊗ pair.mk K ∅).admits_retract :=
+  P.admits_retract → (P ⊗ pair.empty K).admits_retract :=
 assume ⟨r, hr⟩,
-let r' : Top.prod X K ⟶ (P ⊗ pair.mk K ∅).subspace :=
-  pair.j₀ P (pair.mk K ∅) ∘ Top.prod_maps r 1 in
+let r' : Top.prod X K ⟶ (P ⊗ pair.empty K).subspace :=
+  pair.j₀ P (pair.empty K) ∘ Top.prod_maps r 1 in
 begin
   existsi r',
   ext p, rcases p with ⟨⟨a, k⟩, h|⟨⟨⟩⟩⟩,
@@ -291,9 +300,9 @@ end
 -- below will suffice for our purposes. We'll show that (Dⁿ, Sⁿ⁻¹)
 -- satisfies the hypothesis on Q.
 lemma prod_cofibered (ha : is_closed A) (hb : is_closed B)
-  (hq : Q ⊗ I_0 ≅ₚ pair.mk Y ∅ ⊗ I_0) :
+  (hq : Q ⊗ I_0 ≅ₚ pair.empty Y ⊗ I_0) :
   P.cofibered → (P ⊗ Q).cofibered :=
-let Q' := pair.mk Y ∅ in
+let Q' := pair.empty Y in
 have _ := calc
   (P ⊗ I_0) ⊗ Q'
     ≅ₚ P ⊗ (I_0 ⊗ Q')  : pair.prod_assoc
@@ -320,7 +329,7 @@ pair.mk (unit_disk V) {v | smush.admissible.norm v.val = (1 : ℝ)}
 lemma unit_disk_sphere.is_closed : is_closed (unit_disk_sphere V).subset :=
 is_closed_eq (by continuity) continuous_const
 
-def smush : unit_disk_sphere V ⊗ I_0 ≅ₚ pair.mk (unit_disk V) ∅ ⊗ I_0 :=
+def smush : unit_disk_sphere V ⊗ I_0 ≅ₚ pair.empty (unit_disk V) ⊗ I_0 :=
 pair.homeomorphism.mk
   (homeomorphism.of_equiv (smush.H_equiv V)
     (smush.continuous_H V) (smush.continuous_vHv V))
@@ -382,6 +391,9 @@ pair.homeomorphism.mk
       { subst hb, have : (1 : I01) ∈ ({0, 1} : set I01), by simp, convert this, norm_num },
       { subst hb, have : (0 : I01) ∈ ({0, 1} : set I01), by simp, convert this, norm_num } }
   end
+
+lemma I_01.is_closed : is_closed I_01.subset :=
+(is_closed_congr I_01_is_D1_S0).mpr (unit_disk_sphere.is_closed ℝ)
 
 lemma prod_I_01_cofibered (ha : is_closed A) :
   P.cofibered → (P ⊗ I_01).cofibered :=
