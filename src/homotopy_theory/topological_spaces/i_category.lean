@@ -1,4 +1,4 @@
-import homotopy_theory.formal.cofibrations.i_category
+import homotopy_theory.formal.i_category.definitions
 
 import .precofibration_category
 
