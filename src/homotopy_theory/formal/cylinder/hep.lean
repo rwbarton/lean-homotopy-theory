@@ -50,7 +50,7 @@ lemma hep_pushout (ε) {A B A' B' : C} {f : A ⟶ B} {g : A ⟶ A'} {f' : A' ⟶
 assume Y h H e,
   have (h ∘ g') ∘ f = (H ∘ (I &> g)) ∘ i ε @> A, begin
     rw [←associativity, ←associativity, po.commutes, ←(i ε).naturality],
-    simp [e], refl
+    simp [e]
   end,
   let ⟨J, Je₁, Je₂⟩ := hf Y (h ∘ g') (H ∘ (I &> g)) this in
   let K := po'.induced J H Je₂ in

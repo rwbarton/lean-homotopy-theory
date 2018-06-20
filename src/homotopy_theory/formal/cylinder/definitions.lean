@@ -11,10 +11,17 @@ local notation F ` ∘ᶠ `:80 G:80 := functor.FunctorComposition G F
 infixr ` &> `:85 := functor.Functor.onMorphisms
 notation t ` @> `:90 X:90 := t.components X
 
-namespace homotopy_theory.cylinder
-
 universes u v
 
+-- TODO: Move these
+@[simp] lemma one_functor_ob {C : Type u} [category C] {x} : (1 : C ↝ C) +> x = x :=
+rfl
+
+@[simp] lemma one_functor_hom {C : Type u} [category C] {x y} {f : x ⟶ y} :
+  (1 : C ↝ C) &> f = f :=
+rfl
+
+namespace homotopy_theory.cylinder
 
 -- An "abstract endpoint" of a "cylinder"; there are two.
 inductive endpoint
@@ -52,6 +59,14 @@ has_cylinder.p C
 @[simp] lemma pi_components (ε) {A : C} : p @> A ∘ i ε @> A = 𝟙 A :=
 show (p ∘ i ε) @> A = 𝟙 A,
 by rw has_cylinder.pi; refl
+
+lemma i_nat_assoc (ε) {y z w : C} (g : I +> z ⟶ w) (h : y ⟶ z) :
+  g ∘ (i ε) @> z ∘ h = g ∘ I &> h ∘ (i ε) @> y :=
+by erw [←associativity, (i ε).naturality]; simp
+
+lemma p_nat_assoc {y z w : C} (g : z ⟶ w) (h : y ⟶ z) :
+  g ∘ p @> z ∘ I &> h = g ∘ h ∘ p @> y :=
+by erw [←associativity, p.naturality]; simp
 
 end
 

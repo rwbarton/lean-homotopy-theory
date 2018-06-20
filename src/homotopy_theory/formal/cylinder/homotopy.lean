@@ -9,14 +9,6 @@ local notation t ` @> `:90 X:90 := t.components X
 
 universes u v
 
--- TODO: Move these
-@[simp] lemma one_functor_ob {C : Type u} [category C] {x} : (1 : C ↝ C) +> x = x :=
-rfl
-
-@[simp] lemma one_functor_hom {C : Type u} [category C] {x y} {f : x ⟶ y} :
-  (1 : C ↝ C) &> f = f :=
-rfl
-
 namespace homotopy_theory.cylinder
 
 variables {C : Type u} [cat : category.{u v} C] [has_cylinder C]
@@ -109,12 +101,20 @@ match ε, H with
 | 1, H := homotopy.Hi₀ H
 end
 
+def homotopy_dir.mk (ε : endpoint) {x y : C} {fε fεv : x ⟶ y}
+  (H : I +> x ⟶ y) (Hiε : H ∘ i ε @> x = fε) (Hiεv : H ∘ i ε.v @> x = fεv) :
+  homotopy_dir ε fε fεv :=
+match ε, H, Hiε, Hiεv with
+| 0, H, Hiε, Hiεv := { H := H, Hi₀ := Hiε, Hi₁ := Hiεv }
+| 1, H, Hiε, Hiεv := { H := H, Hi₀ := Hiεv, Hi₁ := Hiε }
+end
+
 end dir
 
 -- The homotopy relation with respect to the given cylinder functor.
 def homotopic {x y : C} (f₀ f₁ : x ⟶ y) : Prop := nonempty (homotopy f₀ f₁)
 
-notation f₀ ` ≃ ` f₁ := homotopic f₀ f₁
+notation f₀ ` ≃ `:50 f₁:50 := homotopic f₀ f₁
 
 lemma homotopic.refl {x y : C} (f : x ⟶ y) : f ≃ f :=
 ⟨homotopy.refl f⟩
@@ -131,7 +131,7 @@ let ⟨H⟩ := h in ⟨H.congr_right g⟩
 def homotopic_rel {a x y : C} (j : a ⟶ x) (f₀ f₁ : x ⟶ y) : Prop :=
 ∃ H : homotopy f₀ f₁, H.is_rel j
 
-notation f₀ ` ≃ ` f₁ ` rel ` j := homotopic_rel j f₀ f₁
+notation f₀ ` ≃ `:50 f₁:50 ` rel `:50 j:50 := homotopic_rel j f₀ f₁
 
 lemma homotopic_rel.refl {a x y : C} {j : a ⟶ x} (f : x ⟶ y) : f ≃ f rel j :=
 ⟨homotopy.refl f, homotopy.refl_is_rel⟩
