@@ -9,6 +9,13 @@ local notation f ` ∘ `:80 g:80 := g ≫ f
 namespace homotopy_theory.cofibrations
 open homotopy_theory.cylinder
 
+section C
+parameters {C : Type u} [cat : category.{u v} C]
+  [has_initial_object.{u v} C] [has_coproducts.{u v} C] [I_category.{u v} C]
+include cat
+
+parameters {a b : C} {j : a ⟶ b} (hj : is_cof j)
+
 section
 /-
 
@@ -31,11 +38,7 @@ following along. A familiar example is the isomorphism πₙ(X, x) ≃
 
 -/
 
-parameters {C : Type u} [cat : category.{u v} C]
-  [has_initial_object.{u v} C] [has_coproducts.{u v} C] [I_category.{u v} C]
-include cat
-
-parameters {a b : C} {j : a ⟶ b} (hj : is_cof j) {x : C}
+parameters {x : C}
 include hj
 
 section dir
@@ -55,7 +58,7 @@ let ⟨E, h₁, h₂⟩ := I_category.hep_cof j hj ε x fε.val G.H $
 
 end dir
 
-parameters (u u' : a ⟶ x)
+parameters {u u' : a ⟶ x}
 parameters (G : homotopy u u')
 include G
 
@@ -83,7 +86,7 @@ lemma drag_rel_homotopy_total₁ (g₁) : ∃ g₀, drag_rel_homotopy g₀ g₁ 
 quotient.induction_on g₁ $ assume f₁,
   let ⟨f₀, h⟩ := total uu' 1 G f₁ in ⟨⟦f₀⟧, ⟨f₀, f₁, rfl, rfl, h⟩⟩
 
-lemma drag_rel_homotopy_unique₀ (g₀ g₁ g₁') :
+lemma drag_rel_homotopy_unique₀ {g₀ g₁ g₁'} :
   drag_rel_homotopy g₀ g₁ → drag_rel_homotopy g₀ g₁' → g₁ = g₁' :=
 assume ⟨f₀, f₁, hf₀, hf₁, ⟨H, h⟩⟩ ⟨f₀', f₁', hf₀', hf₁', ⟨H', h'⟩⟩,
   have f₀.val ≃ f₀'.val rel j, from quotient.exact (hf₀.trans hf₀'.symm),
@@ -91,7 +94,7 @@ assume ⟨f₀, f₁, hf₀, hf₁, ⟨H, h⟩⟩ ⟨f₀', f₁', hf₀', hf₁
   hf₁.symm.trans $
     (quotient.sound (equiv_private.f₁_f₂ j hj h₀ 0 h h') : ⟦f₁⟧ = ⟦f₁'⟧).trans hf₁'
 
-lemma drag_rel_homotopy_unique₁ (g₀ g₀' g₁) :
+lemma drag_rel_homotopy_unique₁ {g₀ g₀' g₁} :
   drag_rel_homotopy g₀ g₁ → drag_rel_homotopy g₀' g₁ → g₀ = g₀' :=
 assume ⟨f₀, f₁, hf₀, hf₁, ⟨H, h⟩⟩ ⟨f₀', f₁', hf₀', hf₁', ⟨H', h'⟩⟩,
   have f₁.val ≃ f₁'.val rel j, from quotient.exact (hf₁.trans hf₁'.symm),
@@ -99,5 +102,60 @@ assume ⟨f₀, f₁, hf₀, hf₁, ⟨H, h⟩⟩ ⟨f₀', f₁', hf₀', hf₁
   hf₀.symm.trans $
     (quotient.sound (equiv_private.f₁_f₂ j hj h₁ 1 h h') : ⟦f₀⟧ = ⟦f₀'⟧).trans hf₀'
 
+parameters {hj u u'}
+
+-- TODO: General theory of bijective relations
+noncomputable def drag_equiv : [b, x]^u ≃ [b, x]^u' :=
+{ to_fun := λ g₀, classical.some (drag_rel_homotopy_total₀ g₀),
+  inv_fun := λ g₁, classical.some (drag_rel_homotopy_total₁ g₁),
+  left_inv := assume g₀,
+    let g₁ := classical.some (drag_rel_homotopy_total₀ g₀),
+        g₀' := classical.some (drag_rel_homotopy_total₁ g₁) in
+    show g₀' = g₀, from
+    have e' : drag_rel_homotopy g₀' g₁, from classical.some_spec (drag_rel_homotopy_total₁ g₁),
+    have e : drag_rel_homotopy g₀ g₁, from classical.some_spec (drag_rel_homotopy_total₀ g₀),
+    drag_rel_homotopy_unique₁ e' e,
+  right_inv := assume g₁,
+    let g₀ := classical.some (drag_rel_homotopy_total₁ g₁),
+        g₁' := classical.some (drag_rel_homotopy_total₀ g₀) in
+    show g₁' = g₁, from
+    have e' : drag_rel_homotopy g₀ g₁', from classical.some_spec (drag_rel_homotopy_total₀ g₀),
+    have e : drag_rel_homotopy g₀ g₁, from classical.some_spec (drag_rel_homotopy_total₁ g₁),
+    drag_rel_homotopy_unique₀ e' e }
+
+lemma drag_equiv_apply {g₀ g₁} : drag_equiv g₀ = g₁ ↔ drag_rel_homotopy g₀ g₁ :=
+iff.intro
+  (assume h, by rw ←h; exact classical.some_spec (drag_rel_homotopy_total₀ _ _ _))
+  (assume h,
+    have h' : drag_rel_homotopy g₀ (drag_equiv g₀) :=
+      classical.some_spec (drag_rel_homotopy_total₀ _),
+    drag_rel_homotopy_unique₀ h' h)
+
 end
+
+parameters {hj}
+
+lemma drag_rel_homotopy_induced {x y : C} {u u' : a ⟶ x} (G : homotopy u u') (g : x ⟶ y)
+  (g₀ : homotopy_classes_extending_rel j hj u) (g₁ : homotopy_classes_extending_rel j hj u') :
+  drag_rel_homotopy G g₀ g₁ →
+  drag_rel_homotopy (G.congr_left g) (hcer_induced g g₀) (hcer_induced g g₁) :=
+assume ⟨f₀, f₁, hf₀, hf₁, H, hH⟩,
+⟨⟨g ∘ f₀.val, by rw [←associativity, f₀.property]⟩,
+ ⟨g ∘ f₁.val, by rw [←associativity, f₁.property]⟩,
+ by rw ←hf₀; refl, by rw ←hf₁; refl,
+ H.congr_left g,
+ by unfold homotopy.congr_left; rw [←associativity, hH]⟩
+
+lemma drag_equiv_induced {x y : C} {u u' : a ⟶ x} (G : homotopy u u') (g : x ⟶ y)
+  (g₀ : homotopy_classes_extending_rel j hj u) :
+  hcer_induced g (drag_equiv G g₀) = drag_equiv (G.congr_left g) (hcer_induced g g₀) :=
+begin
+  symmetry,
+  rw drag_equiv_apply,
+  apply drag_rel_homotopy_induced,
+  rw ←drag_equiv_apply
+end
+
+end C
+
 end homotopy_theory.cofibrations

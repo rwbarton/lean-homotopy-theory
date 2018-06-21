@@ -41,7 +41,7 @@ variables (j)
 def homotopy_classes_extending_rel : Type v :=
 quotient (maps_extending.homotopic_rel hj u)
 
-variables {y : C} (g : x ⟶ y)
+variables {y : C} (g : x ⟶ y) {j hj u}
 
 -- TODO: naming
 def hcer_induced : homotopy_classes_extending_rel j hj u → homotopy_classes_extending_rel j hj (g ∘ u) :=
