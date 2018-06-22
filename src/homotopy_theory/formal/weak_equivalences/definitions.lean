@@ -35,16 +35,27 @@ section isomorphisms
 variables {C : Type u} [cat : category.{u v} C]
 include cat
 
-def is_iso ⦃a b : C⦄ (f : a ⟶ b) := ∃ i : a ≅ b, i.morphism = f
+def is_iso ⦃a b : C⦄ (f : a ⟶ b) : Prop := ∃ i : a ≅ b, i.morphism = f
+
+lemma iso_iso ⦃a b : C⦄ (i : a ≅ b) : is_iso i.morphism := ⟨i, rfl⟩
+lemma iso_comp ⦃a b c : C⦄ {f : a ⟶ b} {g : b ⟶ c} :
+  is_iso f → is_iso g → is_iso (g ∘ f) :=
+assume ⟨i, hi⟩ ⟨j, hj⟩, ⟨i.trans j, by rw [←hi, ←hj]; refl⟩
+
+lemma iso_of_comp_iso_left ⦃a b c : C⦄ {f : a ⟶ b} {g : b ⟶ c} :
+  is_iso f → is_iso (g ∘ f) → is_iso g :=
+assume ⟨i, hi⟩ ⟨j, hj⟩,
+  ⟨i.symm.trans j, show j.morphism ∘ i.inverse = g, by rw [hj, ←hi]; simp⟩
+lemma iso_of_comp_iso_right ⦃a b c : C⦄ {f : a ⟶ b} {g : b ⟶ c} :
+  is_iso g → is_iso (g ∘ f) → is_iso f :=
+assume ⟨i, hi⟩ ⟨j, hj⟩,
+  ⟨j.trans i.symm, show i.inverse ∘ j.morphism = f, by rw [hj, ←hi]; simp⟩
 
 def isomorphisms_as_weak_equivalences : category_with_weak_equivalences C :=
 { is_weq := is_iso,
-  to_replete_wide_subcategory := replete_wide_subcategory.mk' (λ a b i, ⟨i, rfl⟩)
-    (λ a b c f g ⟨i, hi⟩ ⟨j, hj⟩, ⟨i.trans j, by rw [←hi, ←hj]; refl⟩),
-  weq_of_comp_weq_left := λ a b c f g ⟨i, hi⟩ ⟨j, hj⟩,
-    ⟨i.symm.trans j, show j.morphism ∘ i.inverse = g, by rw [hj, ←hi]; simp⟩,
-  weq_of_comp_weq_right := λ a b c f g ⟨i, hi⟩ ⟨j, hj⟩,
-    ⟨j.trans i.symm, show i.inverse ∘ j.morphism = f, by rw [hj, ←hi]; simp⟩ }
+  to_replete_wide_subcategory := replete_wide_subcategory.mk' iso_iso iso_comp,
+  weq_of_comp_weq_left := iso_of_comp_iso_left,
+  weq_of_comp_weq_right := iso_of_comp_iso_right }
 
 end isomorphisms
 
