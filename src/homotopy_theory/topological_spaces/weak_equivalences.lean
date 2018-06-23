@@ -35,9 +35,6 @@ replete_wide_subcategory.mk' @is_weak_equivalence_iso @is_weak_equivalence_comp
 set_option eqn_compiler.zeta true
 def Top_weak_equivalences : category_with_weak_equivalences Top :=
 { is_weq := @is_weak_equivalence,
-  to_replete_wide_subcategory :=
-    show replete_wide_subcategory.{1 0} Top @is_weak_equivalence,
-    by apply_instance,
   weq_of_comp_weq_left := assume X Y Z f g hf hgf,
     ⟨iso_of_comp_iso_left hf.1 (by rw ←π₀.functoriality; exact hgf.1),
      assume n y,
