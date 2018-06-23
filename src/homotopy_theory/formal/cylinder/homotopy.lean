@@ -39,6 +39,12 @@ def homotopy.congr_right {x' x y : C} (g : x' ⟶ x) {f₀ f₁ : x ⟶ y} (H : 
   Hi₀ := by rw [←associativity, ←(i _).naturality]; simp [H.Hi₀],
   Hi₁ := by rw [←associativity, ←(i _).naturality]; simp [H.Hi₁] }
 
+-- Annoying equality stuff.
+-- If we rewrite the starting point of the homotopy by an equality, it doesn't change H.
+lemma homotopy.eq_rec_on_left {x y : C} {f₀ f₀' f₁ : x ⟶ y} (H : homotopy f₀ f₁)
+  (e : f₀ = f₀') : (eq.rec_on e H : homotopy f₀' f₁).H = H.H :=
+by cases e; refl
+
 section rel
 variables {a x y : C} (j : a ⟶ x) {f₀ f₁ : x ⟶ y}
 
@@ -64,11 +70,18 @@ lemma homotopy.refl_is_rel {f : x ⟶ y} : (homotopy.refl f).is_rel j :=
 show f ∘ p @> x ∘ I &> j = f ∘ j ∘ p @> a,
 by rw [←associativity, ←associativity, p.naturality]; refl
 
-lemma homotopy.congr_left_is_rel {f₀ f₁ : x ⟶ y} {H : homotopy f₀ f₁} (h : H.is_rel j)
-  {z} (g : y ⟶ z) : (H.congr_left g).is_rel j :=
+lemma homotopy.congr_left_is_rel {f₀ f₁ : x ⟶ y} {H : homotopy f₀ f₁}
+  {z} (g : y ⟶ z) (h : H.is_rel j) : (H.congr_left g).is_rel j :=
 begin
   unfold homotopy.is_rel at ⊢ h, dsimp [homotopy.congr_left] { iota := tt },
   rw [←associativity, h], simp
+end
+
+lemma homotopy.congr_right_is_rel {f₀ f₁ : x ⟶ y} {H : homotopy f₀ f₁}
+  {x'} {j' : a ⟶ x'} (g : x' ⟶ x) (h : H.is_rel (g ∘ j')) : (H.congr_right g).is_rel j' :=
+begin
+  unfold homotopy.is_rel at ⊢ h, dsimp [homotopy.congr_right] { iota := tt },
+  rw [←associativity, ←I.functoriality, h], simp
 end
 
 -- In practice, `a` is initial and `I` preserves initial objects.
@@ -123,7 +136,7 @@ def homotopic {x y : C} (f₀ f₁ : x ⟶ y) : Prop := nonempty (homotopy f₀ 
 
 notation f₀ ` ≃ `:50 f₁:50 := homotopic f₀ f₁
 
-lemma homotopic.refl {x y : C} (f : x ⟶ y) : f ≃ f :=
+@[refl] lemma homotopic.refl {x y : C} (f : x ⟶ y) : f ≃ f :=
 ⟨homotopy.refl f⟩
 
 lemma homotopic.congr_left {x y y' : C} (g : y ⟶ y') {f₀ f₁ : x ⟶ y} (h : f₀ ≃ f₁) :
@@ -140,8 +153,19 @@ def homotopic_rel {a x y : C} (j : a ⟶ x) (f₀ f₁ : x ⟶ y) : Prop :=
 
 notation f₀ ` ≃ `:50 f₁:50 ` rel `:50 j:50 := homotopic_rel j f₀ f₁
 
-lemma homotopic_rel.refl {a x y : C} {j : a ⟶ x} (f : x ⟶ y) : f ≃ f rel j :=
+@[refl] lemma homotopic_rel.refl {a x y : C} {j : a ⟶ x} (f : x ⟶ y) : f ≃ f rel j :=
 ⟨homotopy.refl f, homotopy.refl_is_rel⟩
+
+lemma homotopic_rel.congr_left {a x y y' : C} {j : a ⟶ x} (g : y ⟶ y') {f₀ f₁ : x ⟶ y} :
+  f₀ ≃ f₁ rel j → g ∘ f₀ ≃ g ∘ f₁ rel j :=
+assume ⟨H, h⟩, ⟨H.congr_left g, homotopy.congr_left_is_rel g h⟩
+
+lemma homotopic_rel.congr_right {a x' x y : C} {j' : a ⟶ x'} (g : x' ⟶ x) {f₀ f₁ : x ⟶ y} :
+  f₀ ≃ f₁ rel (g ∘ j') → f₀ ∘ g ≃ f₁ ∘ g rel j' :=
+assume ⟨H, h⟩, ⟨H.congr_right g, homotopy.congr_right_is_rel g h⟩
+
+lemma homotopic_rel.forget_rel {a x y : C} {j : a ⟶ x} {f₀ f₁ : x ⟶ y} : f₀ ≃ f₁ rel j → f₀ ≃ f₁ :=
+assume ⟨H, h⟩, ⟨H⟩
 
 lemma homotopic_rel_initial {a x y : C} (Iai : Is_initial_object.{u v} (I +> a))
   (j : a ⟶ x) (f₀ f₁ : x ⟶ y) : (f₀ ≃ f₁ rel j) = (f₀ ≃ f₁) :=

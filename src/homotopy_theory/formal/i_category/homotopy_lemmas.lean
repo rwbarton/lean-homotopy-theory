@@ -207,13 +207,13 @@ lemma homotopic_rel_is_equivalence {x : C} :
  λ f₀ f₁, homotopic_rel.symm hj,
  λ f₀ f₁ f₂, homotopic_rel.trans hj⟩
 
-lemma homotopic.symm {x : C} {f₀ f₁ : b ⟶ x} (h : f₀ ≃ f₁) : f₁ ≃ f₀ :=
+@[symm] lemma homotopic.symm {x : C} {f₀ f₁ : b ⟶ x} (h : f₀ ≃ f₁) : f₁ ≃ f₀ :=
 begin
   rw ←(homotopic_rel_initial (equiv_private.Ii_initial) (! b)) at ⊢ h,
   exact homotopic_rel.symm (all_objects_cofibrant.cofibrant.{u v} b) h,
 end
 
-lemma homotopic.trans {x : C} {f₀ f₁ f₂ : b ⟶ x} (h₁ : f₀ ≃ f₁) (h₂ : f₁ ≃ f₂) : f₀ ≃ f₂ :=
+@[trans] lemma homotopic.trans {x : C} {f₀ f₁ f₂ : b ⟶ x} (h₁ : f₀ ≃ f₁) (h₂ : f₁ ≃ f₂) : f₀ ≃ f₂ :=
 begin
   rw ←(homotopic_rel_initial (equiv_private.Ii_initial) (! b)) at ⊢ h₁ h₂,
   exact homotopic_rel.trans (all_objects_cofibrant.cofibrant.{u v} b) h₁ h₂,

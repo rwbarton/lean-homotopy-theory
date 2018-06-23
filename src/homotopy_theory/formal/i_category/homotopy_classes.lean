@@ -47,7 +47,7 @@ variables {y : C} (g : x ⟶ y) {j hj u}
 def hcer_induced : homotopy_classes_extending_rel j hj u → homotopy_classes_extending_rel j hj (g ∘ u) :=
 λ f, quotient.lift_on f
   (λ f, (⟦⟨g ∘ f.val, by rw [←associativity, f.property]⟩⟧ : homotopy_classes_extending_rel j hj (g ∘ u)))
-  (assume f f' ⟨H, Hr⟩, quotient.sound ⟨H.congr_left g, homotopy.congr_left_is_rel Hr g⟩)
+  (assume f f' H, quotient.sound (H.congr_left g))
 end
 
 end C
