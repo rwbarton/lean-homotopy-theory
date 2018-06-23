@@ -1,4 +1,5 @@
 import homotopy_theory.formal.cylinder.homotopy
+import homotopy_theory.formal.cylinder.sdr
 import .definitions
 import .homotopy_lemmas
 import .homotopy_equivalences
@@ -21,6 +22,7 @@ namespace homotopy_theory.cofibrations
 section C
 open categories.has_initial_object
 open homotopy_theory.cylinder
+open precofibration_category
 open I_category
 
 parameters {C : Type u} [category.{u v} C] [has_initial_object.{u v} C]
@@ -70,7 +72,7 @@ homotopic_rel.trans hj h₁ h₂
 -- Why is this necessary? doesn't work without `local`
 local notation f₀ ` ≃ `:50 f₁:50 := homotopic f₀ f₁
 
--- [Kamps & Porter, Lemma I.6.3]
+-- [Kamps & Porter, Theorem I.6.3]
 lemma dold_theorem {a x x' : C} {j : a ⟶ x} (hj : is_cof j) {j' : a ⟶ x'} (hj' : is_cof j')
   {f : x ⟶ x'} (hf : f ∘ j = j') (hef : homotopy_equivalence f) :
   ∃ h : x' ⟶ x, h ∘ j' = j ∧ h ∘ f ≃ 𝟙 _ rel j ∧ f ∘ h ≃ 𝟙 _ rel j' :=
@@ -104,6 +106,24 @@ have hh₂' : h ∘ f ≃ 𝟙 x rel h ∘ j', by convert hh₂; rw [←hf]; sim
   ...   ≃ k ∘ (𝟙 x) ∘ h     rel j'  : by convert (hh₂'.congr_left k).congr_right h using 1; refl
   ...   = k ∘ h                     : by simp
   ...   ≃ 𝟙 x'              rel j'  : hk₂⟩
+
+-- [Kamps & Porter, Theorem I.6.9]. Apply Dold's theorem to j itself.
+lemma heq_iff_sdr_inclusion {a x : C} {j : a ⟶ x} (hj : is_cof j) :
+  homotopy_equivalence j ↔ is_sdr_inclusion j :=
+iff.intro
+  (assume hf,
+    let ⟨h, hh₁, hh₂, hh₃⟩ := dold_theorem (cof_id a) hj (by simp) hf in
+    ⟨⟨h, hh₁, hh₃⟩⟩)
+  (assume ⟨⟨r, h, H⟩⟩, homotopy_equivalence_iff.mpr
+    ⟨r, by convert homotopic.refl (𝟙 a), H.forget_rel⟩)
+
+lemma pushout_is_acof {a x a' x' : C} {j : a ⟶ x} {f : a ⟶ a'} {f' : x ⟶ x'} {j' : a' ⟶ x'}
+  (po : Is_pushout j f f' j') (hj : is_cof j) (hej : homotopy_equivalence j) :
+  homotopy_equivalence j' :=
+have is_cof j', from pushout_is_cof po hj,
+(heq_iff_sdr_inclusion this).mpr $
+pushout_of_sdr_inclusion po (I_preserves_pushout_by_cof hj po) $
+(heq_iff_sdr_inclusion hj).mp hej
 
 end C
 end homotopy_theory.cofibrations
