@@ -84,6 +84,16 @@ begin
   apply initial.uniqueness
 end
 
+lemma cof_i₀ [has_initial_object.{u v} C] [has_coproducts.{u v} C]
+  {a₀ a₁ : C} (h : cofibrant a₁) : is_cof (i₀ : a₀ ⟶ a₀ ⊔ a₁) :=
+by convert cof_comp (cof_iso (coprod_initial_right a₀)) (cof_coprod (cof_id a₀) h);
+   simp
+
+lemma cof_i₁ [has_initial_object.{u v} C] [has_coproducts.{u v} C]
+  {a₀ a₁ : C} (h : cofibrant a₀) : is_cof (i₁ : a₁ ⟶ a₀ ⊔ a₁) :=
+by convert cof_comp (cof_iso (coprod_initial_left a₁)) (cof_coprod h (cof_id a₁));
+   simp
+
 variables (C)
 class all_objects_cofibrant [has_initial_object.{u v} C] :=
 (cofibrant : ∀ (a : C), cofibrant a)
