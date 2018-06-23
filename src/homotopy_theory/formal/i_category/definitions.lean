@@ -57,4 +57,18 @@ class I_category extends has_cylinder C, preserves_initial_object (I : C ↝ C),
   (pushout_by_cof (∂I &> j) (ii @> a) (cof_coprod hj hj)).is_pushout.induced
     (ii @> b) (I &> j) (ii.naturality _))
 
+open precofibration_category
+open I_category
+variables {C}
+
+-- Alternate formulation of the relative cylinder axiom, using an
+-- arbitrary pushout rather than the one given by the precofibration
+-- category structure.
+lemma relative_cylinder' [I_category.{u v} C] {a b : C} (j : a ⟶ b) (hj : is_cof j)
+  {z} (ii' : ∂I +> b ⟶ z) (jj' : I +> a ⟶ z) (po : Is_pushout (∂I &> j) (ii @> a) ii' jj') :
+  is_cof (po.induced (ii @> b) (I &> j) (ii.naturality _)) :=
+let po' := (pushout_by_cof (∂I &> j) (ii @> a) (cof_coprod hj hj)).is_pushout in
+by convert cof_comp (cof_iso (pushout.unique po po')) (relative_cylinder j hj);
+   apply po.uniqueness; rw ←category.associativity; simp; refl
+
 end homotopy_theory.cofibrations

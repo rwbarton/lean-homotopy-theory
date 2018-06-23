@@ -1,5 +1,6 @@
 import homotopy_theory.formal.cylinder.homotopy
 import .definitions
+import .lemmas
 
 universes u v
 
@@ -37,18 +38,6 @@ parameters {C : Type u} [category.{u v} C] [has_initial_object.{u v} C]
   [has_coproducts.{u v} C] [Icat : I_category.{u v} C]
 include Icat
 
-def Ii_initial : Is_initial_object.{u v} (I +> ∅ : C) :=
-Is_initial_object_of_Is_initial_object.{u v} I
-  (initial_object.{u v} C).is_initial_object
-
-instance : preserves_coproducts (I : C ↝ C) :=
-⟨λ a₀ a₁ b f₀ f₁ copr,
-  let po : Is_pushout (! a₀) (! a₁) f₀ f₁ :=
-    Is_pushout_of_Is_coproduct_of_Is_initial copr
-      (initial_object.{u v} C).is_initial_object in
-  Is_coproduct_of_Is_pushout_of_Is_initial
-    (I_preserves_pushout_by_cof (all_objects_cofibrant.cofibrant a₀) po) Ii_initial⟩
-
 parameters {a b : C} (j : a ⟶ b) (hj : is_cof j)
 parameters {x : C} {f₀ f₀' f₁ f₁' : b ⟶ x}
 parameters {G : I +> a ⟶ x}
@@ -75,11 +64,9 @@ def Ipo : Is_pushout (I &> (∂I &> j)) (I &> (ii @> a)) (I &> Po.map₀) (I &> 
 I_preserves_pushout_by_cof (cof_coprod hj hj) Po.is_pushout
 -- Moreover, I(a ⊔ a) = Ia ⊔ Ia and I(b ⊔ b) = Ib ⊔ Ib.
 def Ia_Ia : Is_coproduct (I &> (i₀ : a ⟶ a ⊔ a)) (I &> (i₁ : a ⟶ a ⊔ a)) :=
-Is_coproduct_of_Is_coproduct _
-  (has_coproducts.coproduct.{u v} a a).is_coproduct
+I_of_coprod_is_coproduct
 def Ib_Ib : Is_coproduct (I &> (i₀ : b ⟶ b ⊔ b)) (I &> (i₁ : b ⟶ b ⊔ b)) :=
-Is_coproduct_of_Is_coproduct _
-  (has_coproducts.coproduct.{u v} b b).is_coproduct
+I_of_coprod_is_coproduct
 -- Thus, we can "glue" the homotopies H and H' to form a map I(b ⊔ b) → X.
 def HH' : I +> (b ⊔ b) ⟶ x :=
 Ib_Ib.induced H.H H'.H
@@ -209,13 +196,13 @@ lemma homotopic_rel_is_equivalence {x : C} :
 
 @[symm] lemma homotopic.symm {x : C} {f₀ f₁ : b ⟶ x} (h : f₀ ≃ f₁) : f₁ ≃ f₀ :=
 begin
-  rw ←(homotopic_rel_initial (equiv_private.Ii_initial) (! b)) at ⊢ h,
+  rw ←(homotopic_rel_initial Ii_initial (! b)) at ⊢ h,
   exact homotopic_rel.symm (all_objects_cofibrant.cofibrant.{u v} b) h,
 end
 
 @[trans] lemma homotopic.trans {x : C} {f₀ f₁ f₂ : b ⟶ x} (h₁ : f₀ ≃ f₁) (h₂ : f₁ ≃ f₂) : f₀ ≃ f₂ :=
 begin
-  rw ←(homotopic_rel_initial (equiv_private.Ii_initial) (! b)) at ⊢ h₁ h₂,
+  rw ←(homotopic_rel_initial Ii_initial (! b)) at ⊢ h₁ h₂,
   exact homotopic_rel.trans (all_objects_cofibrant.cofibrant.{u v} b) h₁ h₂,
 end
 

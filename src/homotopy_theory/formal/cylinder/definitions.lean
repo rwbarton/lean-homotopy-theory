@@ -70,10 +70,15 @@ by erw [←associativity, p.naturality]; simp
 
 end
 
+
+section boundary
+variables {C : Type u} [cat : category.{u v} C] [has_coproducts.{u v} C]
+include cat
+
 -- If C admits coproducts, then we can combine the inclusions `i 0`
 -- and `i 1` into a single natural transformation `∂I ⟶ I`, where `∂I`
 -- is defined by `∂I A = A ⊔ A`. (`∂I` does not depend on `I`.)
-def boundary_I {C : Type u} [category.{u v} C] [has_coproducts.{u v} C] : C ↝ C :=
+def boundary_I : C ↝ C :=
 { onObjects := λ A, A ⊔ A,
   onMorphisms := λ A B f, coprod_of_maps f f,
   identities := λ A, by apply coprod.uniqueness; simp,
@@ -81,7 +86,9 @@ def boundary_I {C : Type u} [category.{u v} C] [has_coproducts.{u v} C] : C ↝ 
 
 notation `∂I` := boundary_I
 
-def ii {C : Type u} [category.{u v} C] [has_coproducts.{u v} C] [has_cylinder C] : ∂I ⟶ I :=
+variables [has_cylinder C]
+
+def ii : ∂I ⟶ I :=
 show ∂I ⟶ (I : C ↝ C), from
 { components := λ (A : C), coprod.induced (i 0 @> A) (i 1 @> A),
   naturality := λ A B f,
@@ -90,6 +97,14 @@ show ∂I ⟶ (I : C ↝ C), from
     apply coprod.uniqueness;
       { rw [←associativity, ←associativity], simpa using (i _).naturality f }
   end }
+
+@[simp] lemma iii₀_assoc {A B : C} (f : I +> A ⟶ B) : f ∘ ii @> A ∘ i₀ = f ∘ i 0 @> A :=
+by rw ←associativity; simp [ii]
+
+@[simp] lemma iii₁_assoc {A B : C} (f : I +> A ⟶ B) : f ∘ ii @> A ∘ i₁ = f ∘ i 1 @> A :=
+by rw ←associativity; simp [ii]
+
+end boundary
 
 
 def endpoint.v : endpoint → endpoint
@@ -130,7 +145,7 @@ by rw has_cylinder_with_involution.vv; refl
 end
 
 section interchange
-parameters (C : Type u) [cat : category C] [has_cylinder C]
+variables (C : Type u) [cat : category.{u v} C] [has_cylinder C]
 include cat
 local notation `I` := (I : C ↝ C)
 
@@ -142,6 +157,12 @@ class cylinder_has_interchange :=
 (T : I ∘ᶠ I ⟶ I ∘ᶠ I)
 (Ti : ∀ ε A, T @> _ ∘ i ε @> (I +> A) = I &> (i ε @> A))
 (TIi : ∀ ε A, T @> _ ∘ I &> (i ε @> A) = i ε @> (I +> A))
+
+variables [cylinder_has_interchange.{u v} C]
+variables {C}
+
+@[reducible] def T : I ∘ᶠ I ⟶ I ∘ᶠ I :=
+cylinder_has_interchange.T C
 
 end interchange
 
