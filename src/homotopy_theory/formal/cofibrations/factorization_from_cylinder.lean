@@ -85,7 +85,7 @@ def cofibration_category.mk_from_cylinder
     Is_pushout f g g' f' → is_acof f → is_acof f')
   (cylinder : ∀ (a : C), ∃ c (j : a ⊔ a ⟶ c) (g : c ⟶ a),
     is_cof j ∧ is_weq g ∧ g ∘ j = coprod.induced (𝟙 a) (𝟙 a))
-  (fibrant_replacement : ∀ (x : C), ∃ rx (j : x ⟶ rx), is_acof j) :
+  (fibrant_replacement : ∀ (x : C), ∃ rx (j : x ⟶ rx), is_acof j ∧ fibrant rx) :
   cofibration_category.{u v} C :=
 { pushout_is_acof := pushout_is_acof,
   fibrant_replacement := @fibrant_replacement,

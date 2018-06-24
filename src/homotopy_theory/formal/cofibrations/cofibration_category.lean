@@ -48,7 +48,7 @@ def is_acof [precofibration_category C] [category_with_weak_equivalences C]
 
 def fibrant [precofibration_category C] [category_with_weak_equivalences C]
   (x : C) : Prop :=
-∀ {y} {j : x ⟶ y} (hj : is_acof j), ∃ r, r ∘ j = 𝟙 x
+∀ ⦃y⦄ {j : x ⟶ y} (hj : is_acof j), ∃ r, r ∘ j = 𝟙 x
 
 variables (C)
 class cofibration_category extends category_with_weak_equivalences C,
@@ -57,7 +57,7 @@ class cofibration_category extends category_with_weak_equivalences C,
   Is_pushout f g g' f' → is_acof f → is_acof f')
 (factorization : ∀ {a x : C} (f : a ⟶ x), ∃ b (j : a ⟶ b) (g : b ⟶ x),
   is_cof j ∧ is_weq g ∧ g ∘ j = f)
-(fibrant_replacement : ∀ (x : C), ∃ rx (j : x ⟶ rx), is_acof j)
+(fibrant_replacement : ∀ (x : C), ∃ rx (j : x ⟶ rx), is_acof j ∧ fibrant rx)
 
 -- Baues' axiom C2(a).
 class left_proper [cofibration_category.{u v} C] : Prop :=
