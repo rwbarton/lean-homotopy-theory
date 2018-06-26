@@ -34,13 +34,33 @@ let ⟨c, ii, p, hii, hp, pii⟩ :=
 
 variables {hj}
 
+def relative_cylinder.i₀ (c : relative_cylinder hj) : b ⟶ c.ob :=
+c.ii ∘ (pushout_by_cof j j hj).map₀
+
+def relative_cylinder.i₁ (c : relative_cylinder hj) : b ⟶ c.ob :=
+c.ii ∘ (pushout_by_cof j j hj).map₁
+
+lemma relative_cylinder.pi₀ (c : relative_cylinder hj) : c.p ∘ c.i₀ = 𝟙 b :=
+by unfold relative_cylinder.i₀; simp [c.pii]
+
+lemma relative_cylinder.pi₁ (c : relative_cylinder hj) : c.p ∘ c.i₁ = 𝟙 b :=
+by unfold relative_cylinder.i₁; simp [c.pii]
+
 structure cylinder_embedding (c c' : relative_cylinder hj) :=
 (k : c.ob ⟶ c'.ob)
 (hk : is_cof k)
 (hkii : k ∘ c.ii = c'.ii)
 (hpk : c'.p ∘ k = c.p)
 
-lemma cylinder.embedding.acof_k {c c' : relative_cylinder hj} (m : cylinder_embedding c c') :
+lemma cylinder_embedding.hki₀ {c c' : relative_cylinder hj} (m : cylinder_embedding c c') :
+  m.k ∘ c.i₀ = c'.i₀ :=
+by unfold relative_cylinder.i₀; simp [m.hkii]
+
+lemma cylinder_embedding.hki₁ {c c' : relative_cylinder hj} (m : cylinder_embedding c c') :
+  m.k ∘ c.i₁ = c'.i₁ :=
+by unfold relative_cylinder.i₁; simp [m.hkii]
+
+lemma cylinder_embedding.acof_k {c c' : relative_cylinder hj} (m : cylinder_embedding c c') :
   is_acof m.k :=
 ⟨m.hk, weq_of_comp_weq_right c'.hp (by convert c.hp; rw m.hpk)⟩
 
