@@ -1,3 +1,4 @@
+import categories.pasting_pushouts
 import homotopy_theory.formal.cylinder.definitions
 import .cofibration_category
 
@@ -46,6 +47,20 @@ by unfold relative_cylinder.i₀; simp [c.pii]
 lemma relative_cylinder.pi₁ (c : relative_cylinder hj) : c.p ∘ c.i₁ = 𝟙 b :=
 by unfold relative_cylinder.i₁; simp [c.pii]
 
+lemma relative_cylinder.ij (c : relative_cylinder hj) : c.i₀ ∘ j = c.i₁ ∘ j :=
+begin
+  unfold relative_cylinder.i₀ relative_cylinder.i₁,
+  rw [←associativity, ←associativity, (pushout_by_cof j j hj).is_pushout.commutes]
+end
+
+lemma relative_cylinder.acof_i₀ (c : relative_cylinder hj) : is_acof c.i₀ :=
+⟨cof_comp (pushout_is_cof (pushout_by_cof j j hj).is_pushout.transpose hj) c.hii,
+ weq_of_comp_weq_right c.hp (by convert (weq_id _); exact c.pi₀)⟩
+
+lemma relative_cylinder.acof_i₁ (c : relative_cylinder hj) : is_acof c.i₁ :=
+⟨cof_comp (pushout_is_cof (pushout_by_cof j j hj).is_pushout hj) c.hii,
+ weq_of_comp_weq_right c.hp (by convert (weq_id _); exact c.pi₁)⟩
+
 structure cylinder_embedding (c c' : relative_cylinder hj) :=
 (k : c.ob ⟶ c'.ob)
 (hk : is_cof k)
@@ -85,5 +100,89 @@ let c' : relative_cylinder hj :=
   rfl,
   by simp [ql]⟩,
  trivial⟩
+
+def relative_cylinder.reverse (c : relative_cylinder hj) : relative_cylinder hj :=
+⟨c.ob,
+ c.ii ∘ (pushout_by_cof j j hj).is_pushout.swap,
+ c.p,
+ cof_comp (cof_iso (pushout_by_cof j j hj).is_pushout.swap_iso) c.hii,
+ c.hp,
+ by simp [c.pii]⟩
+
+@[simp] lemma relative_cylinder.reverse_i₀ {c : relative_cylinder hj} :
+  c.reverse.i₀ = c.i₁ :=
+show c.ii ∘ (pushout_by_cof j j hj).is_pushout.induced _ _ _ ∘ (pushout_by_cof j j hj).map₀ = _,
+by rw [←associativity]; simp; refl
+
+@[simp] lemma relative_cylinder.reverse_i₁ {c : relative_cylinder hj} :
+  c.reverse.i₁ = c.i₀ :=
+show c.ii ∘ (pushout_by_cof j j hj).is_pushout.induced _ _ _ ∘ (pushout_by_cof j j hj).map₁ = _,
+by rw [←associativity]; simp; refl
+
+def relative_cylinder.glue (c₀ c₁ : relative_cylinder hj) : relative_cylinder.{u v} hj :=
+let po := pushout_by_cof c₀.i₁ c₁.i₀ c₀.acof_i₁.1 in
+⟨po.ob,
+ (pushout_by_cof j j hj).is_pushout.induced (po.map₀ ∘ c₀.i₀) (po.map₁ ∘ c₁.i₁) $
+   by rw [←associativity, ←associativity, c₀.ij, ←c₁.ij]; simp [po.is_pushout.commutes],
+ po.is_pushout.induced c₀.p c₁.p (by rw [c₀.pi₁, c₁.pi₀]),
+ begin
+   let po₀ := pushout_by_cof c₀.i₀ (pushout_by_cof j j hj).map₀ c₀.acof_i₀.1,
+   let po₀' :=
+     (Is_pushout_of_Is_pushout_of_Is_pushout
+       (pushout_by_cof j j hj).is_pushout.transpose po₀.is_pushout.transpose).transpose,
+   let f :=
+     (pushout_by_cof j j hj).is_pushout.induced
+       (po₀.map₀ ∘ c₀.i₁) (po₀.map₁ ∘ (pushout_by_cof j j hj).map₁)
+       (by rw [←associativity, ←associativity, ←c₀.ij,
+               ←(pushout_by_cof j j hj).is_pushout.commutes,
+               associativity, associativity, po₀.is_pushout.commutes]),
+   let po₁ : Is_pushout c₀.i₁ (pushout_by_cof j j hj).map₀ po₀.map₀ f :=
+     Is_pushout_of_Is_pushout_of_Is_pushout_vert'
+       (pushout_by_cof j j hj).is_pushout
+       (begin convert po₀' using 1, { exact c₀.ij.symm }, { simp } end) (by simp),
+   let g := po₁.induced po.map₀ (po.map₁ ∘ c₁.ii)
+     (by rw ←associativity; exact po.is_pushout.commutes),
+   let po₂ : Is_pushout f c₁.ii g po.map₁ :=
+     Is_pushout_of_Is_pushout_of_Is_pushout' po₁ (by convert po.is_pushout; simp) (by simp),
+   have : ∀ p,
+     (pushout_by_cof j j hj).is_pushout.induced (po.map₀ ∘ c₀.i₀) (po.map₁ ∘ c₁.i₁) p =
+     g ∘ po₀.map₁ :=
+   begin
+     intro p, apply (pushout_by_cof j j hj).is_pushout.uniqueness,
+     { rw [←associativity, ←po₀.is_pushout.commutes], simp },
+     { rw ←associativity,
+       have :
+         po₀.map₁ ∘ (pushout_by_cof.{u v} j j hj).map₁ =
+         f ∘ (pushout_by_cof.{u v} j j hj).map₁, by simp,
+       rw this,
+       rw [associativity, po₂.commutes, ←associativity],
+       change _ = po.map₁ ∘ c₁.i₁, simp }
+   end,
+   rw this,
+   exact cof_comp
+     (pushout_is_cof po₀.is_pushout c₀.acof_i₀.1)
+     (pushout_is_cof po₂.transpose c₁.hii)
+ end,
+ weq_of_comp_weq_left
+   (pushout_is_acof po.is_pushout c₀.acof_i₁).2
+   (by simpa using c₁.hp),
+ begin
+   apply (pushout_by_cof j j hj).is_pushout.uniqueness;
+   { rw ←associativity, simp, rw [c₀.pi₀] <|> rw [c₁.pi₁] }
+ end⟩
+
+@[simp] lemma relative_cylinder.glue_i₀ {c₀ c₁ : relative_cylinder hj} :
+  (c₀.glue c₁).i₀ = (pushout_by_cof c₀.i₁ c₁.i₀ c₀.acof_i₁.1).map₀ ∘ c₀.i₀ :=
+let po := pushout_by_cof c₀.i₁ c₁.i₀ c₀.acof_i₁.1 in
+show
+  (pushout_by_cof j j hj).is_pushout.induced (po.map₀ ∘ c₀.i₀) (po.map₁ ∘ c₁.i₁) _ ∘
+    (pushout_by_cof j j hj).map₀ = _, by simp
+
+@[simp] lemma relative_cylinder.glue_i₁ {c₀ c₁ : relative_cylinder hj} :
+  (c₀.glue c₁).i₁ = (pushout_by_cof c₀.i₁ c₁.i₀ c₀.acof_i₁.1).map₁ ∘ c₁.i₁ :=
+let po := pushout_by_cof c₀.i₁ c₁.i₀ c₀.acof_i₁.1 in
+show
+  (pushout_by_cof j j hj).is_pushout.induced (po.map₀ ∘ c₀.i₀) (po.map₁ ∘ c₁.i₁) _ ∘
+    (pushout_by_cof j j hj).map₁ = _, by simp
 
 end homotopy_theory.cofibrations

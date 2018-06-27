@@ -449,4 +449,23 @@ by convert Is_pushout_of_isomorphic po f i₁
 
 end pushout_i
 
+section pushout_swap
+parameters {C : Type u} [cat : category.{u v} C]
+include cat
+parameters {a b c : C} {f : a ⟶ b} {g₀ g₁ : b ⟶ c} (po : Is_pushout f f g₀ g₁)
+
+def Is_pushout.swap : c ⟶ c := po.induced g₁ g₀ po.commutes.symm
+
+def Is_pushout.swap_iso : c ≅ c :=
+{ morphism := po.swap,
+  inverse := po.swap,
+  witness_1 := by apply po.uniqueness; unfold Is_pushout.swap; rw ←associativity; simp,
+  witness_2 := by apply po.uniqueness; unfold Is_pushout.swap; rw ←associativity; simp }
+
+@[simp] def Is_pushout.induced_swap {x} {h₀ h₁ : b ⟶ x} {p p'} :
+  po.induced h₀ h₁ p ∘ po.swap = po.induced h₁ h₀ p' :=
+by apply po.uniqueness; unfold Is_pushout.swap; rw ←associativity; simp
+
+end pushout_swap
+
 end categories

@@ -56,4 +56,26 @@ lemma homotopic_rel' (c : relative_cylinder hj) {x} (hx : fibrant x) (f₀ f₁ 
   (h : homotopic_rel hj f₀ f₁) : homotopic_wrt c f₀ f₁ :=
 let ⟨c', hw⟩ := h in (homotopic_iff c' c hx f₀ f₁).mp hw
 
+@[refl] lemma homotopic_rel.refl {x} (f : b ⟶ x) : homotopic_rel hj f f :=
+let ⟨c⟩ := exists_relative_cylinder hj in
+⟨c, ⟨⟨f ∘ c.p, by rw [←associativity, c.pi₀]; simp, by rw [←associativity, c.pi₁]; simp⟩⟩⟩
+
+@[symm] lemma homotopic_rel.symm {x} {f₀ f₁ : b ⟶ x} :
+  homotopic_rel hj f₀ f₁ → homotopic_rel hj f₁ f₀ :=
+assume ⟨c, ⟨⟨H, Hi₀, Hi₁⟩⟩⟩,
+⟨c.reverse, ⟨⟨H, by convert Hi₁; simp, by convert Hi₀; simp⟩⟩⟩
+
+@[trans] lemma homotopic_rel.trans {x} {f₀ f₁ f₂ : b ⟶ x} :
+  homotopic_rel hj f₀ f₁ → homotopic_rel hj f₁ f₂ → homotopic_rel hj f₀ f₂ :=
+assume ⟨c₀, ⟨⟨H₀, H₀i₀, H₀i₁⟩⟩⟩ ⟨c₁, ⟨⟨H₁, H₁i₀, H₁i₁⟩⟩⟩,
+⟨c₀.glue c₁,
+  ⟨⟨(pushout_by_cof c₀.i₁ c₁.i₀ c₀.acof_i₁.1).is_pushout.induced H₀ H₁ (H₀i₁.trans H₁i₀.symm),
+    by convert H₀i₀ using 1; simp, by convert H₁i₁ using 1; simp⟩⟩⟩
+
+lemma homotopic_rel_is_equivalence {x : C} :
+  equivalence (homotopic_rel hj : (b ⟶ x) → (b ⟶ x) → Prop) :=
+⟨homotopic_rel.refl,
+ λ f₀ f₁, homotopic_rel.symm,
+ λ f₀ f₁ f₂, homotopic_rel.trans⟩
+
 end homotopy_theory.cofibrations
