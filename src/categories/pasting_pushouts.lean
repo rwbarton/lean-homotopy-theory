@@ -1,4 +1,5 @@
 import .colimits
+import .colimit_lemmas
 
 open set
 
@@ -20,14 +21,10 @@ parameters {i : a ⟶ b} {i' : a' ⟶ b'} {i'' : a'' ⟶ b''}
 
 local notation a ` ~~ ` b := Bij_on _ a b
 
-def Is_pushout_of_Is_pushout_of_Is_pushout
-  (po : Is_pushout i f f' i') (po' : Is_pushout i' g g' i''):
-  Is_pushout i (g ∘ f) (g' ∘ f') i'' :=
-Is_pushout.mk $ λ x,
-show Bij_on (λ (k : b'' ⟶ x), (k ∘ (g' ∘ f'), k ∘ i'')) univ {p | p.1 ∘ i = p.2 ∘ (g ∘ f)}, from
-suffices Bij_on (λ (k : b'' ⟶ x), ((k ∘ g') ∘ f', k ∘ i'')) univ {p | p.1 ∘ i = (p.2 ∘ g) ∘ f}, by simpa,
-calc univ ~~ {p : (b' ⟶ x) × (a'' ⟶ x) | p.1 ∘ i' = p.2 ∘ g}     : po'.universal x
-     ...  ~~ {t : ((b ⟶ x) × (a' ⟶ x)) × (a'' ⟶ x) | _}          : Bij_on.restrict' (Bij_on.prod_right' (po.universal x)) {t | t.1.2 = t.2 ∘ g}
+def pasting_core (po : Is_pushout i f f' i') :=
+λ x, calc
+     {p : (b' ⟶ x) × (a'' ⟶ x) | p.1 ∘ i' = p.2 ∘ g}
+          ~~ {t : ((b ⟶ x) × (a' ⟶ x)) × (a'' ⟶ x) | _}          : Bij_on.restrict' (Bij_on.prod_right' (po.universal x)) {t | t.1.2 = t.2 ∘ g}
      ...  ~~ {t : ((b ⟶ x) × (a' ⟶ x)) × (a'' ⟶ x) | t.1.1 ∘ i = (t.2 ∘ g) ∘ f ∧ t.1.2 = t.2 ∘ g} :
   begin
     convert Bij_on.refl _, ext t,
@@ -48,6 +45,30 @@ calc univ ~~ {p : (b' ⟶ x) × (a'' ⟶ x) | p.1 ∘ i' = p.2 ∘ g}     : po'.
       right_inv := by intro p; rcases p with ⟨⟨p₁, p₂⟩, h⟩; refl },
     intro p, refl
   end
+
+def Is_pushout_of_Is_pushout_of_Is_pushout (po : Is_pushout i f f' i')
+  (po' : Is_pushout i' g g' i'') : Is_pushout i (g ∘ f) (g' ∘ f') i'' :=
+Is_pushout.mk $ λ x,
+by convert Bij_on.trans (po'.universal x) (pasting_core po x); simp
+
+-- For the converse, we must also assume that the second square commutes.
+def Is_pushout_of_Is_pushout_of_Is_pushout' (po : Is_pushout i f f' i')
+  (po'' : Is_pushout i (g ∘ f) (g' ∘ f') i'') (commutes : g' ∘ i' = i'' ∘ g) :
+  Is_pushout i' g g' i'' :=
+Is_pushout.mk $ λ x,
+  Bij_on.trans_symm
+    (assume p ⟨⟩, show p ∘ g' ∘ i' = p ∘ i'' ∘ g,
+      by rw [←associativity, ←associativity, commutes])
+    (by convert po''.universal x; simp) (pasting_core po x)
+
+def Is_pushout_of_Is_pushout_of_Is_pushout_vert (po : Is_pushout f i i' f')
+  (po' : Is_pushout g i' i'' g') : Is_pushout (g ∘ f) i i'' (g' ∘ f') :=
+(Is_pushout_of_Is_pushout_of_Is_pushout po.transpose po'.transpose).transpose
+
+def Is_pushout_of_Is_pushout_of_Is_pushout_vert' (po : Is_pushout f i i' f')
+  (po'' : Is_pushout (g ∘ f) i i'' (g' ∘ f')) (commutes : i'' ∘ g = g' ∘ i') :
+  Is_pushout g i' i'' g' :=
+(Is_pushout_of_Is_pushout_of_Is_pushout' po.transpose po''.transpose commutes.symm).transpose
 
 end
 

@@ -70,6 +70,19 @@ by rw h.he; simp
 { e := hf.e.trans hg.e,
   he := assume x, show g (f x) = hg.e (hf.e x), by rw [hf.he, hg.he] }
 
+def Bij_on.trans_symm {f : α → β} {g : β → γ}
+  {a : set α} {b : set β} {c : set γ} (hf : ∀ x, x ∈ a → f x ∈ b)
+  (hgf : Bij_on (g ∘ f) a c) (hg : Bij_on g b c) :
+  Bij_on f a b :=
+{ e := hgf.e.trans hg.e.symm,
+  he := assume x, show f x = hg.e.symm (hgf.e x), begin
+    apply hg.inj_on,
+    exact hf x.val x.property,
+    exact (hg.e.symm (hgf.e x)).property,
+    change (g ∘ f) x = _,
+    rw [hg.he, hgf.he], simp
+  end }
+
 -- Product of two bijections.
 def Bij_on.prod {f : α → β} {a : set α} {b : set β}
   {g : γ → δ} {c : set γ} {d : set δ} (hf : Bij_on f a b) (hg : Bij_on g c d) :
