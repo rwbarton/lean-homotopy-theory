@@ -61,6 +61,14 @@ lemma relative_cylinder.acof_i₁ (c : relative_cylinder hj) : is_acof c.i₁ :=
 ⟨cof_comp (pushout_is_cof (pushout_by_cof j j hj).is_pushout hj) c.hii,
  weq_of_comp_weq_right c.hp (by convert (weq_id _); exact c.pi₁)⟩
 
+-- If j : a → b is an *acyclic* cofibration, then so is c.ii.
+lemma relative_cylinder.acof_ii (c : relative_cylinder hj) (hj' : is_weq j) : is_acof c.ii :=
+have is_acof (pushout_by_cof j j hj).map₁, from
+  pushout_is_acof (pushout_by_cof j j hj).is_pushout ⟨hj, hj'⟩,
+have is_weq ((pushout_by_cof j j hj).is_pushout.induced (𝟙 b) (𝟙 b) rfl), from
+  weq_of_comp_weq_left this.2 (by convert weq_id b using 1; simp),
+⟨c.hii, weq_of_comp_weq_right c.hp (by convert this; simp [c.pii])⟩
+
 structure cylinder_embedding (c c' : relative_cylinder hj) :=
 (k : c.ob ⟶ c'.ob)
 (hk : is_cof k)
@@ -184,5 +192,79 @@ let po := pushout_by_cof c₀.i₁ c₁.i₀ c₀.acof_i₁.1 in
 show
   (pushout_by_cof j j hj).is_pushout.induced (po.map₀ ∘ c₀.i₀) (po.map₁ ∘ c₁.i₁) _ ∘
     (pushout_by_cof j j hj).map₁ = _, by simp
+
+section pair_map
+variables (hj)
+variables {a' b' : C} {j' : a' ⟶ b'} (hj' : is_cof j')
+
+include hj hj'
+structure pair_map :=
+(g : a ⟶ a')
+(h : b ⟶ b')
+(commutes : h ∘ j = j' ∘ g)
+omit hj hj'
+
+variables {hj hj'}
+def endpoints_map (h : pair_map hj hj') :
+  (pushout_by_cof j j hj).ob ⟶ (pushout_by_cof j' j' hj').ob :=
+pushout_of_maps
+  (pushout_by_cof j j hj).is_pushout
+  (pushout_by_cof j' j' hj').is_pushout
+  h.g h.h h.h h.commutes h.commutes
+
+-- Like `cylinder_embedding`, but we do not require that the map
+-- between cylinders be a cofibration (since b → b' might not be one).
+structure cylinder_map_over (h : pair_map hj hj')
+  (c : relative_cylinder hj) (c' : relative_cylinder hj') :=
+(k : c.ob ⟶ c'.ob)
+(hkii : k ∘ c.ii = c'.ii ∘ endpoints_map h)
+(hpk : c'.p ∘ k = h.h ∘ c.p)
+
+lemma cylinder_map_over.hki₀ {h : pair_map hj hj'}
+  {c : relative_cylinder hj} {c' : relative_cylinder hj'} (m : cylinder_map_over h c c') :
+  m.k ∘ c.i₀ = c'.i₀ ∘ h.h :=
+begin
+  unfold relative_cylinder.i₀,
+  rw [associativity, m.hkii],
+  unfold endpoints_map pushout_of_maps,
+  rw [←associativity], simp
+end
+
+lemma cylinder_map_over.hki₁ {h : pair_map hj hj'}
+  {c : relative_cylinder hj} {c' : relative_cylinder hj'} (m : cylinder_map_over h c c') :
+  m.k ∘ c.i₁ = c'.i₁ ∘ h.h :=
+begin
+  unfold relative_cylinder.i₁,
+  rw [associativity, m.hkii],
+  unfold endpoints_map pushout_of_maps,
+  rw [←associativity], simp
+end
+
+lemma exists_of_pair_map (h : pair_map hj hj')
+  (c₀ : relative_cylinder hj) (c₁ : relative_cylinder hj') :
+  ∃ c' (m₀ : cylinder_map_over h c₀ c') (m₁ : cylinder_embedding c₁ c'), true :=
+let po := pushout_by_cof c₀.ii (c₁.ii ∘ endpoints_map h) c₀.hii,
+    pp := po.is_pushout.induced (h.h ∘ c₀.p) c₁.p $ begin
+      rw [←associativity, c₀.pii, associativity, c₁.pii],
+      unfold endpoints_map, rw [induced_pushout_of_maps, pushout_induced_comp],
+      simp
+    end,
+    ⟨c'_ob, l, q, hl, hq, ql⟩ := factorization pp in
+let c' : relative_cylinder hj' :=
+  ⟨c'_ob, l ∘ po.map₁ ∘ c₁.ii, q,
+   cof_comp c₁.hii (cof_comp (pushout_is_cof po.is_pushout c₀.hii) hl),
+   hq, by simp [ql, c₁.pii]⟩ in
+⟨c',
+ ⟨l ∘ po.map₀,
+  by rw [←associativity, po.is_pushout.commutes]; simp,
+  by simp [ql]⟩,
+ ⟨l ∘ po.map₁,
+  cof_comp (pushout_is_cof po.is_pushout c₀.hii) hl,
+  rfl,
+  by simp [ql]⟩,
+ trivial⟩
+
+
+end pair_map
 
 end homotopy_theory.cofibrations

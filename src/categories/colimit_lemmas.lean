@@ -148,6 +148,19 @@ rfl
 end coproduct
 
 
+section pushout_induced_comp
+parameters {C : Type u} [cat : category.{u v} C]
+include cat
+parameters {a b₀ b₁ c c' : C} {f₀ : a ⟶ b₀} {f₁ : a ⟶ b₁}
+parameters {g₀ : b₀ ⟶ c} {g₁ : b₁ ⟶ c} (po : Is_pushout f₀ f₁ g₀ g₁)
+
+lemma pushout_induced_comp {x y : C} {h₀ : b₀ ⟶ x} {h₁ : b₁ ⟶ x} {k : x ⟶ y} {e} :
+  k ∘ po.induced h₀ h₁ e = po.induced (k ∘ h₀) (k ∘ h₁)
+    (by rw [←associativity, ←associativity, e]) :=
+by apply po.uniqueness; rw ←associativity; simp
+
+end pushout_induced_comp
+
 section pushouts_from_coequalizers
 parameters {C : Type u} [cat : category.{u v} C] [has_coproducts.{u v} C]
 include cat
@@ -467,5 +480,30 @@ def Is_pushout.swap_iso : c ≅ c :=
 by apply po.uniqueness; unfold Is_pushout.swap; rw ←associativity; simp
 
 end pushout_swap
+
+section pushout_of_maps
+parameters {C : Type u} [cat : category.{u v} C]
+include cat
+parameters {a b₀ b₁ c : C} {f₀ : a ⟶ b₀} {f₁ : a ⟶ b₁}
+parameters {g₀ : b₀ ⟶ c} {g₁ : b₁ ⟶ c} (po : Is_pushout f₀ f₁ g₀ g₁)
+parameters {a' b₀' b₁' c' : C} {f₀' : a' ⟶ b₀'} {f₁' : a' ⟶ b₁'}
+parameters {g₀' : b₀' ⟶ c'} {g₁' : b₁' ⟶ c'} (po' : Is_pushout f₀' f₁' g₀' g₁')
+parameters (ha : a ⟶ a') (hb₀ : b₀ ⟶ b₀') (hb₁ : b₁ ⟶ b₁')
+parameters (h₀ : hb₀ ∘ f₀ = f₀' ∘ ha) (h₁ : hb₁ ∘ f₁ = f₁' ∘ ha)
+include po po' h₀ h₁
+
+def pushout_of_maps : c ⟶ c' :=
+po.induced (g₀' ∘ hb₀) (g₁' ∘ hb₁)
+  (by rw [←associativity, ←associativity, h₀, h₁]; simp [po'.commutes])
+
+def induced_pushout_of_maps {x : C} {k₀ : b₀' ⟶ x} {k₁ : b₁' ⟶ x} {e} :
+  po'.induced k₀ k₁ e ∘ pushout_of_maps = po.induced (k₀ ∘ hb₀) (k₁ ∘ hb₁)
+    (by rw [←associativity, ←associativity, h₀, h₁]; simp [e]) :=
+begin
+  unfold pushout_of_maps,
+  apply po.uniqueness; { rw ←associativity, simp }
+end
+
+end pushout_of_maps
 
 end categories

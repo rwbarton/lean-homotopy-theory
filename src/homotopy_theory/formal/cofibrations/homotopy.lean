@@ -78,4 +78,39 @@ lemma homotopic_rel_is_equivalence {x : C} :
  λ f₀ f₁, homotopic_rel.symm,
  λ f₀ f₁ f₂, homotopic_rel.trans⟩
 
+notation f₀ ` ≃ `:50 f₁:50 ` rel `:50 hj:50 := homotopic_rel hj f₀ f₁
+
+variables (hj)
+def homotopic_rel_setoid (x : C) : setoid (b ⟶ x) :=
+{ r := λ f₀ f₁, homotopic_rel hj f₀ f₁,
+  iseqv := homotopic_rel_is_equivalence }
+
+def homotopy_class_rel (x : C) : Type v :=
+quotient (homotopic_rel_setoid hj x)
+
+-- Lifts are unique up to homotopy.
+-- TODO: Useful?
+lemma lifts_unique (hj : is_acof j) {x : C} (hx : fibrant x) (f : a ⟶ x)
+  {g₀ g₁ : b ⟶ x} (hg₀ : g₀ ∘ j = f) (hg₁ : g₁ ∘ j = f) : g₀ ≃ g₁ rel hj.1 :=
+let ⟨c⟩ := exists_relative_cylinder hj.1,
+    ⟨H, h⟩ := fibrant_iff_rlp.mp hx (c.acof_ii hj.2)
+      ((pushout_by_cof j j hj.1).is_pushout.induced g₀ g₁ (hg₀.trans hg₁.symm)) in
+⟨c, ⟨⟨H, by simp [relative_cylinder.i₀, h], by simp [relative_cylinder.i₁, h]⟩⟩⟩
+
+section congr_right
+variables {a' b' : C} {j' : a' ⟶ b'} (hj' : is_cof j')
+
+lemma homotopic_rel.congr_right (h : pair_map hj' hj) {x : C} (hx : fibrant x)
+  (f₀ f₁ : b ⟶ x) : f₀ ≃ f₁ rel hj → f₀ ∘ h.h ≃ f₁ ∘ h.h rel hj' :=
+assume ⟨c, H⟩,
+let ⟨c'⟩ := exists_relative_cylinder hj',
+    ⟨c'', m', m, ⟨⟩⟩ := exists_of_pair_map h c' c,
+    ⟨H'⟩ := (homotopic_iff_of_embedding m hx f₀ f₁).mp H in
+⟨c',
+ ⟨⟨H'.H ∘ m'.k,
+   by rw [←associativity, m'.hki₀, associativity, H'.Hi₀],
+   by rw [←associativity, m'.hki₁, associativity, H'.Hi₁]⟩⟩⟩
+
+end congr_right
+
 end homotopy_theory.cofibrations
