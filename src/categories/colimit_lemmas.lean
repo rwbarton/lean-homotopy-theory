@@ -419,7 +419,7 @@ Is_pushout.mk $ λ x,
            | qq.1 ∘ coprod_of_maps f₀ f₀' = qq.2 ∘ coprod_of_maps f₁ f₁'},
   begin
     convert this,
-    funext k, apply prod.ext.mpr, split; apply coprod.uniqueness;
+    funext k, apply prod.ext; apply coprod.uniqueness;
     { change _ ∘ _ ∘ _ = _ ∘ _, simp [coproduct_comparison],
       rw ←associativity, simp, refl },
   end

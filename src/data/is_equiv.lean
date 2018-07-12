@@ -1,4 +1,4 @@
-import data.equiv
+import data.equiv.basic
 
 universes u v w
 variables {α : Sort u} {β : Sort v} {γ : Sort w}

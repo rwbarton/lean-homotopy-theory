@@ -128,7 +128,7 @@ lemma vHvH (p : D × I) : v (H (v (H p))) = p :=
 begin
   rw [H] { occs := occurrences.pos [1] },
   rw [v] { occs := occurrences.pos [1] },
-  apply prod.ext.mpr, split; apply subtype.eq; dsimp; rw αvH p,
+  apply prod.ext; apply subtype.eq; dsimp; rw αvH p,
   { rw [H, v], dsimp,
     transitivity ((1 + (p.snd).val)⁻¹ * (1 + (p.snd).val)) • ((α p).val * ((α p).val)⁻¹) • (p.fst).val,
     { rw [←mul_smul', ←mul_smul'], congr' 1, ring },
@@ -140,7 +140,7 @@ end
 
 lemma vv (p : D × I) : v (v p) = p :=
 begin
-  dsimp [v], apply prod.ext.mpr, split, refl, apply subtype.eq, dsimp, ring
+  dsimp [v], apply prod.ext, { refl }, { apply subtype.eq, dsimp, ring }
 end
 
 lemma HvHv (p : D × I) : H (v (H (v p))) = p :=

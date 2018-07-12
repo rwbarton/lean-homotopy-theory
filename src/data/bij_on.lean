@@ -1,4 +1,4 @@
-import data.equiv
+import data.equiv.basic
 import data.set.function
 import for_mathlib
 

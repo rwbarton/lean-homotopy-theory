@@ -58,9 +58,9 @@ instance : has_cylinder_with_involution Top :=
   v := Top.product_by_trans I01.v,
   vi := assume ε, by cases ε; refl,
   vv := begin
-    ext X p, rcases p with ⟨x, t, h⟩,
-    change (x, subtype.mk (1 - (1 - t)) _) = (x, subtype.mk t _),
-    simp
+    ext X p, { refl },
+    { rcases p with ⟨x, t, h⟩,
+      change subtype.mk (1 - (1 - t)) _ = subtype.mk t _, simp }
   end,
   pv := rfl }
 

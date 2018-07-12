@@ -102,14 +102,14 @@ def homeomorphism.prod_congr_right (h : homeomorphism Y Z) :
 { morphism := Top.prod_maps 1 h,
   inverse := Top.prod_maps 1 h.symm,
   witness_1 := begin
-    ext pq, cases pq with p q,
-    change (p, h.equiv.symm (h.equiv q)) = (p, q),
-    simp
+    ext pq, { refl },
+    { cases pq with p q,
+      change h.equiv.symm (h.equiv q) = q, simp }
   end,
   witness_2 := begin
-    ext pr, cases pr with p r,
-    change (p, h.equiv (h.equiv.symm r)) = (p, r),
-    simp
+    ext pr, { refl },
+    { cases pr with p r,
+      change h.equiv (h.equiv.symm r) = r, simp }
   end }
 
 def prod_singleton (h : * ≃ Y) : homeomorphism X (Top.prod X Y) :=
@@ -117,9 +117,10 @@ def prod_singleton (h : * ≃ Y) : homeomorphism X (Top.prod X Y) :=
   inverse := Top.pr₁,
   witness_1 := by ext; refl,
   witness_2 := begin
-    ext p, rcases p with ⟨x, y⟩, change (x, _) = (x, y), congr,
-    convert h.right_inv y, change h punit.star = h (h.symm y),
-    cases h.symm y, refl
+    ext p, { refl },
+    { rcases p with ⟨x, y⟩,
+      convert h.right_inv y, change h punit.star = h (h.symm y),
+      cases h.symm y, refl }
   end }
 
 def prod_comm {X Y : Top} : homeomorphism (Top.prod X Y) (Top.prod Y X) :=

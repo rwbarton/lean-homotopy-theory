@@ -73,8 +73,8 @@ lemma disjoint_i₀_i₁ : set.range (i 0 @> A) ∩ set.range (i 1 @> A) = ∅ :
 begin
   apply set.eq_empty_of_subset_empty, intros p hp,
   cases p with a t, rcases hp with ⟨⟨_, hp₀⟩, ⟨_, hp₁⟩⟩,
-  cases prod.ext.mp hp₀ with _ hp₀', change 0 = t at hp₀',
-  cases prod.ext.mp hp₁ with _ hp₁', change 1 = t at hp₁',
+  have hp₀' : 0 = t := congr_arg prod.snd hp₀,
+  have hp₁' : 1 = t := congr_arg prod.snd hp₁,
   have : (0 : I01) = 1 := hp₀'.trans hp₁'.symm,
   exact absurd (congr_arg subtype.val this)
     (show ¬(0 : ℝ) = 1, by norm_num)

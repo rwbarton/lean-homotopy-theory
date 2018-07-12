@@ -152,8 +152,9 @@ def Is_coproduct.mk'
       inv_fun := λ p, induced p.1 p.2,
       left_inv := assume h, by
         apply uniqueness; rw induced_commutes₀ <|> rw induced_commutes₁; refl,
-      right_inv := assume p, prod.ext.mpr $
-        ⟨induced_commutes₀ p.1 p.2, induced_commutes₁ p.1 p.2⟩ },
+      right_inv := assume p, prod.ext
+        (induced_commutes₀ p.1 p.2)
+        (induced_commutes₁ p.1 p.2) },
     h := rfl } }
 
 parameters (H : Is_coproduct)
@@ -170,7 +171,7 @@ congr_arg prod.snd (H.universal x).cancel_right
 
 lemma Is_coproduct.uniqueness {x : C} {k k' : b ⟶ x}
   (e₀ : k ∘ f₀ = k' ∘ f₀) (e₁ : k ∘ f₁ = k' ∘ f₁) : k = k' :=
-(H.universal x).bijective.1 (prod.ext.mpr ⟨e₀, e₁⟩)
+(H.universal x).bijective.1 (prod.ext e₀ e₁)
 
 end Is
 
@@ -296,9 +297,9 @@ def Is_pushout.mk'
       inv_fun := λ p, induced p.val.1 p.val.2 p.property,
       left_inv := assume h, by
         apply uniqueness; rw induced_commutes₀ <|> rw induced_commutes₁; refl,
-      right_inv := assume p, subtype.eq $ prod.ext.mpr $
-        ⟨induced_commutes₀ p.val.1 p.val.2 p.property,
-         induced_commutes₁ p.val.1 p.val.2 p.property⟩ }
+      right_inv := assume p, subtype.eq $ prod.ext
+        (induced_commutes₀ p.val.1 p.val.2 p.property)
+        (induced_commutes₁ p.val.1 p.val.2 p.property) }
     (assume p, rfl) }
 
 parameters (H : Is_pushout)
@@ -324,7 +325,7 @@ congr_arg prod.snd (Is_pushout.induced_commutes' h₀ h₁ e)
 
 lemma Is_pushout.uniqueness {x} {k k' : c ⟶ x}
   (e₀ : k ∘ g₀ = k' ∘ g₀) (e₁ : k ∘ g₁ = k' ∘ g₁) : k = k' :=
-(H.universal x).injective (prod.ext.mpr ⟨e₀, e₁⟩)
+(H.universal x).injective (prod.ext e₀ e₁)
 
 end Is
 
