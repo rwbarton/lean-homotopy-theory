@@ -2,6 +2,7 @@ import categories.category
 import categories.colimits
 import categories.colimit_lemmas
 import categories.replete
+import categories.pasting_pushouts
 
 universes u v
 
@@ -41,6 +42,8 @@ class precofibration_category (C : Type u) [category.{u v} C]
 (pushout_is_cof : ∀ ⦃a b a' b' : C⦄ {f : a ⟶ b} {g : a ⟶ a'} {f' : a' ⟶ b'} {g' : b ⟶ b'},
   Is_pushout f g g' f' → is_cof f → is_cof f')
 
+open precofibration_category
+
 variables {C : Type u} [cat : category.{u v} C] [precofibration_category C]
 include cat
 lemma cof_id (a : C) : is_cof (𝟙 a) := mem_id a
@@ -52,7 +55,7 @@ instance precofibration_category.replete
   (C : Type u) [category.{u v} C] [p : precofibration_category.{u v} C] :
   replete_wide_subcategory.{u v} C is_cof :=
 { mem_iso := assume a b i,
-    precofibration_category.pushout_is_cof
+    pushout_is_cof
       (by convert Is_pushout_of_isomorphic' (Is_pushout.refl (𝟙 a)) i; simp; refl)
       (cof_id a) }
 
@@ -67,10 +70,30 @@ lemma cof_coprod [has_initial_object.{u v} C] [has_coproducts.{u v} C]
   is_cof (coprod_of_maps j₀ j₁) :=
 begin
   convert cof_comp
-    (precofibration_category.pushout_is_cof (Is_pushout_i₀ j₀) h₀)
-    (precofibration_category.pushout_is_cof (Is_pushout_i₁ j₁) h₁),
+    (pushout_is_cof (Is_pushout_i₀ j₀) h₀)
+    (pushout_is_cof (Is_pushout_i₁ j₁) h₁),
   apply coprod.uniqueness; { rw ←associativity, simp }
 end
+
+-- Basically the same as above, but in the slice category a/C and for
+-- arbitrary (rather than chosen) pushouts.
+lemma cof_pushout {a b₀ b₁ c b₀' b₁' c' : C} {f₀ : a ⟶ b₀} {f₁ : a ⟶ b₁}
+  {g₀ : b₀ ⟶ c} {g₁ : b₁ ⟶ c} {g₀' : b₀' ⟶ c'} {g₁' : b₁' ⟶ c'}
+  {h₀ : b₀ ⟶ b₀'} {h₁ : b₁ ⟶ b₁'} (hh₀ : is_cof h₀) (hh₁ : is_cof h₁)
+  (po : Is_pushout f₀ f₁ g₀ g₁) (po' : Is_pushout (h₀ ∘ f₀) (h₁ ∘ f₁) g₀' g₁') (e) :
+  is_cof (po.induced (g₀' ∘ h₀) (g₁' ∘ h₁) e) :=
+let po₀ := pushout_by_cof h₀ g₀ hh₀,
+    po₁ := Is_pushout_of_Is_pushout_of_Is_pushout_vert po po₀.is_pushout,
+    k₁ := po₁.induced g₀' (g₁' ∘ h₁) (by simpa using e) in
+have k₁ ∘ po₀.map₀ = g₀', by simp,
+let po₂ := Is_pushout_of_Is_pushout_of_Is_pushout' po₁ (by convert po') (by simp) in
+have k₁ ∘ po₀.map₁ = po.induced (g₀' ∘ h₀) (g₁' ∘ h₁) e, begin
+  apply po.uniqueness,
+  { rw [←associativity, ←po₀.is_pushout.commutes], simp },
+  { rw [←associativity, po₂.commutes], simp }
+end,
+by rw ←this;
+   exact cof_comp (pushout_is_cof po₀.is_pushout hh₀) (pushout_is_cof po₂.transpose hh₁)
 
 -- Suppose C has an initial object ∅. Then an object A of C is
 -- cofibrant if the unique map ∅ → A is a cofibration.

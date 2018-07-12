@@ -23,6 +23,21 @@ structure homotopy_on (c : relative_cylinder hj) {x : C} (f₀ f₁ : b ⟶ x) :
 (Hi₀ : H ∘ c.i₀ = f₀)
 (Hi₁ : H ∘ c.i₁ = f₁)
 
+def homotopy_on.refl {c : relative_cylinder hj} {x : C} (f : b ⟶ x) :
+  homotopy_on c f f :=
+⟨f ∘ c.p, by rw [←associativity, c.pi₀]; simp, by rw [←associativity, c.pi₁]; simp⟩
+
+def homotopy_on.symm {c : relative_cylinder hj} {x : C} {f₀ f₁ : b ⟶ x} :
+  homotopy_on c f₀ f₁ → homotopy_on c.reverse f₁ f₀ :=
+λ H, ⟨H.H, by convert H.Hi₁; simp, by convert H.Hi₀; simp⟩
+
+def homotopy_on.trans {c₀ c₁ : relative_cylinder hj} {x : C} {f₀ f₁ f₂ : b ⟶ x} :
+  homotopy_on c₀ f₀ f₁ → homotopy_on c₁ f₁ f₂ → homotopy_on (c₀.glue c₁) f₀ f₂ :=
+λ H₀ H₁,
+⟨(pushout_by_cof c₀.i₁ c₁.i₀ c₀.acof_i₁.1).is_pushout.induced
+  H₀.H H₁.H (H₀.Hi₁.trans H₁.Hi₀.symm),
+ by convert H₀.Hi₀ using 1; simp, by convert H₁.Hi₁ using 1; simp⟩
+
 -- Two maps f₀, f₁ are homotopic rel j with respect to a chosen
 -- cylinder object on j if there exists a homotopy from f₀ to f₁
 -- defined on that cylinder.
@@ -58,19 +73,16 @@ let ⟨c', hw⟩ := h in (homotopic_iff c' c hx f₀ f₁).mp hw
 
 @[refl] lemma homotopic_rel.refl {x} (f : b ⟶ x) : homotopic_rel hj f f :=
 let ⟨c⟩ := exists_relative_cylinder hj in
-⟨c, ⟨⟨f ∘ c.p, by rw [←associativity, c.pi₀]; simp, by rw [←associativity, c.pi₁]; simp⟩⟩⟩
+⟨c, ⟨homotopy_on.refl f⟩⟩
 
 @[symm] lemma homotopic_rel.symm {x} {f₀ f₁ : b ⟶ x} :
   homotopic_rel hj f₀ f₁ → homotopic_rel hj f₁ f₀ :=
-assume ⟨c, ⟨⟨H, Hi₀, Hi₁⟩⟩⟩,
-⟨c.reverse, ⟨⟨H, by convert Hi₁; simp, by convert Hi₀; simp⟩⟩⟩
+assume ⟨c, ⟨H⟩⟩, ⟨c.reverse, ⟨homotopy_on.symm H⟩⟩
 
 @[trans] lemma homotopic_rel.trans {x} {f₀ f₁ f₂ : b ⟶ x} :
   homotopic_rel hj f₀ f₁ → homotopic_rel hj f₁ f₂ → homotopic_rel hj f₀ f₂ :=
-assume ⟨c₀, ⟨⟨H₀, H₀i₀, H₀i₁⟩⟩⟩ ⟨c₁, ⟨⟨H₁, H₁i₀, H₁i₁⟩⟩⟩,
-⟨c₀.glue c₁,
-  ⟨⟨(pushout_by_cof c₀.i₁ c₁.i₀ c₀.acof_i₁.1).is_pushout.induced H₀ H₁ (H₀i₁.trans H₁i₀.symm),
-    by convert H₀i₀ using 1; simp, by convert H₁i₁ using 1; simp⟩⟩⟩
+assume ⟨c₀, ⟨H₀⟩⟩ ⟨c₁, ⟨H₁⟩⟩,
+⟨c₀.glue c₁, ⟨H₀.trans H₁⟩⟩
 
 lemma homotopic_rel_is_equivalence {x : C} :
   equivalence (homotopic_rel hj : (b ⟶ x) → (b ⟶ x) → Prop) :=

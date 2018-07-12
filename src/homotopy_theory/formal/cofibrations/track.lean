@@ -103,4 +103,43 @@ instance homotopy_equiv.setoid : setoid (homotopy hj f₀ f₁) :=
 variables (hj f₀ f₁)
 def track := quotient (homotopy_equiv.setoid : setoid (homotopy hj f₀ f₁))
 
+variables {hj f₀ f₁}
+noncomputable def track.refl (f : b ⟶ x) : track hj f f :=
+⟦⟨classical.choice (exists_relative_cylinder hj), homotopy_on.refl f⟩⟧
+
+lemma track.refl_eq {f : b ⟶ x} (c : relative_cylinder hj) :
+  (track.refl f : track hj f f) = ⟦⟨c, homotopy_on.refl f⟩⟧ :=
+quot.sound $
+  let c₀ := classical.choice (exists_relative_cylinder hj),
+      ⟨c', m₀, m₁, ⟨⟩⟩ := exists_common_embedding c₀ c in
+  ⟨⟨c', homotopy_on.refl f⟩,
+   ⟨m₀, show f ∘ c'.p ∘ m₀.k = f ∘ c₀.p, by rw [←associativity, m₀.hpk]⟩,
+   ⟨m₁, show f ∘ c'.p ∘ m₁.k = f ∘ c.p, by rw [←associativity, m₁.hpk]⟩, ⟨⟩⟩
+
+local attribute [elab_with_expected_type] quotient.lift_on quotient.lift_on₂
+
+def track.symm {f₀ f₁ : b ⟶ x} : track hj f₀ f₁ → track hj f₁ f₀ :=
+λ t, quotient.lift_on t
+  (λ t, ⟦⟨t.c.reverse, t.h.symm⟩⟧)
+  (assume t t' ⟨t'', m₀, m₁, ⟨⟩⟩, quotient.sound $
+    ⟨⟨t''.c.reverse, t''.h.symm⟩, ⟨m₀.m.reverse, m₀.e⟩, ⟨m₁.m.reverse, m₁.e⟩, ⟨⟩⟩)
+
+def track.trans {f₀ f₁ f₂ : b ⟶ x} : track hj f₀ f₁ → track hj f₁ f₂ → track hj f₀ f₂ :=
+λ t₀ t₁, quotient.lift_on₂ t₀ t₁
+  (λ t₀ t₁, ⟦⟨t₀.c.glue t₁.c, t₀.h.trans t₁.h⟩⟧)
+  (assume t₀ t₁ t₀' t₁' ⟨t₀'', m₀₀, m₀₁, ⟨⟩⟩ ⟨t₁'', m₁₀, m₁₁, ⟨⟩⟩, quotient.sound $
+    ⟨⟨t₀''.c.glue t₁''.c, t₀''.h.trans t₁''.h⟩,
+     ⟨m₀₀.m.glue m₁₀.m,
+      begin
+        apply (pushout_by_cof t₀.c.i₁ t₁.c.i₀ t₀.c.acof_i₁.1).is_pushout.uniqueness;
+        dsimp [homotopy_on.trans, cylinder_embedding.glue]; rw ←associativity;
+        simp [m₀₀.e, m₁₀.e],
+      end⟩,
+     ⟨m₀₁.m.glue m₁₁.m,
+      begin
+        apply (pushout_by_cof t₀'.c.i₁ t₁'.c.i₀ t₀'.c.acof_i₁.1).is_pushout.uniqueness;
+        dsimp [homotopy_on.trans, cylinder_embedding.glue]; rw ←associativity;
+        simp [m₀₁.e, m₁₁.e],
+      end⟩, ⟨⟩⟩)
+
 end homotopy_theory.cofibrations

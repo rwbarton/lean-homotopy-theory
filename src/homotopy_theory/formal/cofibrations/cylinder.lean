@@ -178,6 +178,10 @@ by rw [←associativity]; simp; refl
 show c.ii ∘ (pushout_by_cof j j hj).is_pushout.induced _ _ _ ∘ (pushout_by_cof j j hj).map₁ = _,
 by rw [←associativity]; simp; refl
 
+def cylinder_embedding.reverse {c c' : relative_cylinder hj}
+  (m : cylinder_embedding c c') : cylinder_embedding c.reverse c'.reverse :=
+⟨m.k, m.hk, show m.k ∘ (c.ii ∘ _) = c'.ii ∘ _, by simp [m.hkii], m.hpk⟩
+
 def relative_cylinder.glue (c₀ c₁ : relative_cylinder hj) : relative_cylinder.{u v} hj :=
 let po := pushout_by_cof c₀.i₁ c₁.i₀ c₀.acof_i₁.1 in
 ⟨po.ob,
@@ -243,6 +247,30 @@ let po := pushout_by_cof c₀.i₁ c₁.i₀ c₀.acof_i₁.1 in
 show
   (pushout_by_cof j j hj).is_pushout.induced (po.map₀ ∘ c₀.i₀) (po.map₁ ∘ c₁.i₁) _ ∘
     (pushout_by_cof j j hj).map₁ = _, by simp
+
+def cylinder_embedding.glue {c₀ c₁ c₀' c₁' : relative_cylinder hj}
+  (m₀ : cylinder_embedding c₀ c₀') (m₁ : cylinder_embedding c₁ c₁') :
+  cylinder_embedding (c₀.glue c₁) (c₀'.glue c₁') :=
+⟨(pushout_by_cof c₀.i₁ c₁.i₀ c₀.acof_i₁.1).is_pushout.induced
+   ((pushout_by_cof c₀'.i₁ c₁'.i₀ c₀'.acof_i₁.1).map₀ ∘ m₀.k)
+   ((pushout_by_cof c₀'.i₁ c₁'.i₀ c₀'.acof_i₁.1).map₁ ∘ m₁.k)
+   (by rw [←associativity, ←associativity, m₀.hki₁, m₁.hki₀];
+       exact (pushout_by_cof c₀'.i₁ c₁'.i₀ c₀'.acof_i₁.1).is_pushout.commutes),
+ begin
+   apply cof_pushout m₀.hk m₁.hk,
+   convert (pushout_by_cof c₀'.i₁ c₁'.i₀ c₀'.acof_i₁.1).is_pushout using 1,
+   exact m₀.hki₁, exact m₁.hki₀
+ end,
+ begin
+   apply (pushout_by_cof j j hj).is_pushout.uniqueness; rw ←associativity,
+   { change _ ∘ (c₀.glue c₁).i₀ = (c₀'.glue c₁').i₀, simp [m₀.hki₀.symm] },
+   { change _ ∘ (c₀.glue c₁).i₁ = (c₀'.glue c₁').i₁, simp [m₁.hki₁.symm] }
+ end,
+ begin
+   apply (pushout_by_cof c₀.i₁ c₁.i₀ c₀.acof_i₁.1).is_pushout.uniqueness; rw ←associativity;
+   change Is_pushout.induced _ _ _ _ ∘ _ = Is_pushout.induced _ _ _ _ ∘ _;
+   simp [m₀.hpk, m₁.hpk]
+ end⟩
 
 section pair_map
 variables (hj)
