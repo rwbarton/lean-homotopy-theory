@@ -1,4 +1,3 @@
-import .algebra_order_functions
 import .analysis_topology_continuity
 import .analysis_topology_topological_space
 import .analysis_topology_locally_compact

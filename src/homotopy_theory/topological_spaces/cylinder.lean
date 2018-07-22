@@ -34,7 +34,7 @@ instance : t2_space I01 :=
 by dsimp [I01, Top.mk_ob]; apply_instance
 
 instance : locally_compact_space I01 :=
-locally_compact_of_compact (compactness_intrinsic compact_ivl)
+locally_compact_of_compact (compactness_intrinsic compact_Icc)
 
 -- The endpoint of [0,1] corresponding to an abstract endpoint.
 def I01_of_endpoint : endpoint → I01

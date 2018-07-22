@@ -13,11 +13,4 @@ set.ext $ by simp
 theorem injective_subtype_val {p : α → Prop} : function.injective (@subtype.val α p) :=
 assume a₁ a₂ h, subtype.eq h
 
-lemma diff_subset_iff {s t u : set α} : s \ t ⊆ u ↔ s ⊆ t ∪ u :=
-⟨assume h x xs, classical.by_cases or.inl (assume nxt, or.inr (h ⟨xs, nxt⟩)),
- assume h x ⟨xs, nxt⟩, or.resolve_left (h xs) nxt⟩
-
-lemma diff_subset_comm {s t u : set α} : s \ t ⊆ u ↔ s \ u ⊆ t :=
-by rw [diff_subset_iff, diff_subset_iff, union_comm]
-
 end set
