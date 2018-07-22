@@ -1,3 +1,4 @@
+import categories.assoc_pushouts
 import .homotopy
 
 universes u v
@@ -7,7 +8,8 @@ open categories.category
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
 namespace homotopy_theory.cofibrations
-open precofibration_category -- cofibration_category
+open homotopy_theory.weak_equivalences
+open precofibration_category cofibration_category
 
 variables {C : Type u} [cat : category.{u v} C] [cofibration_category.{u v} C]
 include cat
@@ -93,6 +95,16 @@ assume ⟨t, m₀, m₁, ⟨⟩⟩ ⟨t', m₁', m₂', ⟨⟩⟩,
  m₂'.trans (homotopy_extension.pushout.map₁ m₁ m₁'),
  ⟨⟩⟩
 
+structure homotopy_iso (t t' : homotopy hj f₀ f₁) :=
+(k : t.c.ob ≅ t'.c.ob)
+(hkii : ↑k ∘ t.c.ii = t'.c.ii)
+(hpk : t'.c.p ∘ ↑k = t.c.p)
+(e : t'.h.H ∘ ↑k = t.h.H)
+
+lemma homotopy_equiv_of_iso {t t' : homotopy hj f₀ f₁} (i : homotopy_iso t t') :
+  homotopy_equiv t t' :=
+⟨t', ⟨⟨i.k, cof_iso _, i.hkii, i.hpk⟩, i.e⟩, homotopy_extension.refl t', ⟨⟩⟩
+
 instance homotopy_equiv.setoid : setoid (homotopy hj f₀ f₁) :=
 { r := homotopy_equiv,
   iseqv :=
@@ -103,15 +115,18 @@ instance homotopy_equiv.setoid : setoid (homotopy hj f₀ f₁) :=
 variables (hj f₀ f₁)
 def track := quotient (homotopy_equiv.setoid : setoid (homotopy hj f₀ f₁))
 
+private noncomputable def chosen_cylinder : relative_cylinder hj :=
+classical.choice (exists_relative_cylinder hj)
+
 variables {hj f₀ f₁}
 noncomputable def track.refl (f : b ⟶ x) : track hj f f :=
-⟦⟨classical.choice (exists_relative_cylinder hj), homotopy_on.refl f⟩⟧
+⟦⟨chosen_cylinder hj, homotopy_on.refl f⟩⟧
 
 lemma track.refl_eq {f : b ⟶ x} (c : relative_cylinder hj) :
   (track.refl f : track hj f f) = ⟦⟨c, homotopy_on.refl f⟩⟧ :=
 quot.sound $
-  let c₀ := classical.choice (exists_relative_cylinder hj),
-      ⟨c', m₀, m₁, ⟨⟩⟩ := exists_common_embedding c₀ c in
+  let c₀ := chosen_cylinder hj,
+      ⟨⟨c', m₀, m₁⟩⟩ := exists_common_embedding c₀ c in
   ⟨⟨c', homotopy_on.refl f⟩,
    ⟨m₀, show f ∘ c'.p ∘ m₀.k = f ∘ c₀.p, by rw [←associativity, m₀.hpk]⟩,
    ⟨m₁, show f ∘ c'.p ∘ m₁.k = f ∘ c.p, by rw [←associativity, m₁.hpk]⟩, ⟨⟩⟩
@@ -141,5 +156,179 @@ def track.trans {f₀ f₁ f₂ : b ⟶ x} : track hj f₀ f₁ → track hj f�
         dsimp [homotopy_on.trans, cylinder_embedding.glue]; rw ←associativity;
         simp [m₀₁.e, m₁₁.e],
       end⟩, ⟨⟩⟩)
+
+-- The groupoid laws.
+
+lemma track.left_identity {f₀ f₁ : b ⟶ x} (t : track hj f₀ f₁) :
+  track.trans (track.refl _) t = t :=
+quotient.induction_on t $ λ ⟨c₁, h⟩, quotient.sound $
+  -- Set up variable names to match `exists_common_embedding` as
+  -- closely as possible, so that what we construct is, in particular,
+  -- a common embedding of c₀ and c₁.
+  let c := chosen_cylinder hj,
+      c₀ := c.glue c₁,
+      p' : c₀.ob ⟶ c₁.ob :=
+        (pushout_by_cof c.i₁ c₁.i₀ c.acof_i₁.1).is_pushout.induced
+          (c₁.i₀ ∘ c.p) (𝟙 c₁.ob) (by rw [←associativity, c.pi₁]; simp),
+      po := pushout_by_cof c₀.ii c₁.ii c₀.hii,
+      pp := po.is_pushout.induced p' (𝟙 c₁.ob) $ begin
+        apply (pushout_by_cof j j hj).is_pushout.uniqueness,
+        { rw [←associativity, ←associativity], change _ ∘ c₀.i₀ = _ ∘ c₁.i₀, simp,
+          rw [←associativity, c.pi₀], simp },
+        { rw [←associativity, ←associativity], change _ ∘ c₀.i₁ = _ ∘ c₁.i₁, simp }
+      end,
+      ⟨c'_ob, l, q', hl, hq', q'l⟩ := factorization pp,
+      cem :=
+        common_embedding_of_factorization c₀ c₁ po c'_ob l (c₁.p ∘ q')
+          hl (weq_comp hq' c₁.hp) $ begin
+            rw [←associativity, q'l],
+            apply po.is_pushout.uniqueness; rw ←associativity; simp,
+            apply (pushout_by_cof c.i₁ c₁.i₀ c.acof_i₁.1).is_pushout.uniqueness;
+              rw ←associativity; simp; change _ = Is_pushout.induced _ _ _ _ ∘ _,
+            { simp [c₁.pi₀] }, { simp },
+          end,
+      h' : homotopy_on cem.c' f₀ f₁ :=
+        ⟨h.H ∘ q',
+         calc
+           h.H ∘ q' ∘ (l ∘ po.map₁ ∘ c₁.ii ∘ _)
+             = h.H ∘ (q' ∘ l ∘ po.map₁) ∘ c₁.i₀  : by simp [relative_cylinder.i₀]
+         ... = h.H ∘ c₁.i₀                       : by rw q'l; simp
+         ... = f₀                                : h.Hi₀,
+         calc
+           h.H ∘ q' ∘ (l ∘ po.map₁ ∘ c₁.ii ∘ _)
+             = h.H ∘ (q' ∘ l ∘ po.map₁) ∘ c₁.i₁  : by simp [relative_cylinder.i₁]
+         ... = h.H ∘ c₁.i₁                       : by rw q'l; simp
+         ... = f₁                                : h.Hi₁⟩ in
+  ⟨⟨cem.c', h'⟩,
+   ⟨cem.m₀, calc
+      h.H ∘ q' ∘ (l ∘ po.map₀)
+        = h.H ∘ ((q' ∘ l) ∘ po.map₀)  : by simp
+    ... = h.H ∘ (pp ∘ po.map₀)        : by rw q'l
+    ... = h.H ∘ p'                    : by simp
+    ... = (homotopy_on.trans (homotopy_on.refl f₀) h).H  : begin
+      unfold homotopy_on.trans homotopy_on.refl,
+      apply (pushout_by_cof c.i₁ c₁.i₀ c.acof_i₁.1).is_pushout.uniqueness;
+        rw ←associativity; simp [h.Hi₀]
+    end⟩,
+   ⟨cem.m₁, calc
+      h.H ∘ q' ∘ (l ∘ po.map₁)
+        = h.H ∘ ((q' ∘ l) ∘ po.map₁)  : by simp
+    ... = h.H ∘ (pp ∘ po.map₁)        : by rw q'l
+    ... = h.H                         : by simp⟩,
+   ⟨⟩⟩
+
+lemma track.left_inverse {f₀ f₁ : b ⟶ x} (t : track hj f₀ f₁) :
+  track.trans t.symm t = track.refl _ :=
+quotient.induction_on t $ λ ⟨c, h⟩, quotient.sound $
+  -- Set up variable names to match `exists_common_embedding` as
+  -- closely as possible, so that what we construct is, in particular,
+  -- a common embedding of c₀ and c₁.
+  let c₁ := chosen_cylinder hj,
+      c₀ := c.reverse.glue c,
+      p' : c₀.ob ⟶ c.ob :=
+        (pushout_by_cof c.reverse.i₁ c.i₀ c.reverse.acof_i₁.1).is_pushout.induced
+          (𝟙 c.ob) (𝟙 c.ob) (by simp; erw right_identity_lemma), -- Yuck
+      po := pushout_by_cof c₀.ii c₁.ii c₀.hii,
+      pp := po.is_pushout.induced p' (c.i₁ ∘ c₁.p) $ begin
+        apply (pushout_by_cof j j hj).is_pushout.uniqueness;
+          rw [←associativity, ←associativity],
+        { change _ ∘ c₀.i₀ = _ ∘ c₁.i₀, simp,
+          erw [←associativity, c₁.pi₀, right_identity_lemma], simp },
+        { change _ ∘ c₀.i₁ = _ ∘ c₁.i₁, simp, rw [←associativity, c₁.pi₁], simp }
+      end,
+      ⟨c'_ob, l, q', hl, hq', q'l⟩ := factorization pp,
+      cem :=
+        common_embedding_of_factorization c₀ c₁ po c'_ob l (c.p ∘ q')
+          hl (weq_comp hq' c.hp) $ begin
+            rw [←associativity, q'l],
+            apply po.is_pushout.uniqueness; rw ←associativity; simp,
+            apply (pushout_by_cof c.reverse.i₁ c.i₀ c.reverse.acof_i₁.1).is_pushout.uniqueness;
+              rw ←associativity; simp; change _ = Is_pushout.induced _ _ _ _ ∘ _,
+            { erw [left_identity_lemma, Is_pushout.induced_commutes₀], refl },
+            { simp },
+            { simp [c.pi₁] }    -- What is this even for?
+          end,
+      h' : homotopy_on cem.c' f₁ f₁ :=
+        ⟨h.H ∘ q',
+         calc
+           h.H ∘ q' ∘ (l ∘ po.map₁ ∘ c₁.ii ∘ _)
+             = h.H ∘ (q' ∘ l ∘ po.map₁) ∘ c₁.i₀  : by simp [relative_cylinder.i₀]
+         ... = h.H ∘ c.i₁ ∘ (c₁.p ∘ c₁.i₀)       : by rw q'l; simp
+         ... = f₁                                : by rw [c₁.pi₀, h.Hi₁]; simp,
+         calc
+           h.H ∘ q' ∘ (l ∘ po.map₁ ∘ c₁.ii ∘ _)
+             = h.H ∘ (q' ∘ l ∘ po.map₁) ∘ c₁.i₁  : by simp [relative_cylinder.i₁]
+         ... = h.H ∘ c.i₁ ∘ (c₁.p ∘ c₁.i₁)       : by rw q'l; simp
+         ... = f₁                                : by rw [c₁.pi₁, h.Hi₁]; simp⟩ in
+  ⟨⟨cem.c', h'⟩,
+   ⟨cem.m₀, calc
+      h.H ∘ q' ∘ (l ∘ po.map₀)
+        = h.H ∘ ((q' ∘ l) ∘ po.map₀)  : by simp
+    ... = h.H ∘ (pp ∘ po.map₀)        : by rw q'l
+    ... = h.H ∘ p'                    : by simp
+    ... = (homotopy_on.trans h.symm h).H  : begin
+      unfold homotopy_on.trans homotopy_on.symm,
+      apply (pushout_by_cof c.reverse.i₁ c.i₀ c.reverse.acof_i₁.1).is_pushout.uniqueness;
+        rw ←associativity; simp; erw left_identity_lemma
+    end⟩,
+   ⟨cem.m₁, calc
+      h.H ∘ q' ∘ (l ∘ po.map₁)
+        = h.H ∘ ((q' ∘ l) ∘ po.map₁)  : by simp
+    ... = h.H ∘ (pp ∘ po.map₁)        : by rw q'l
+    ... = h.H ∘ c.i₁ ∘ c₁.p           : by simp
+    ... = (homotopy_on.refl f₁).H     : by rw h.Hi₁; refl⟩,
+   ⟨⟩⟩
+
+lemma track.inverse_inverse {f₀ f₁ : b ⟶ x} {t : track hj f₀ f₁} :
+  t.symm.symm = t :=
+-- t.symm.symm and t are homotopies defined on cylinder objects which
+-- are equal, but not definitionally equal. Rather than dealing with
+-- heterogeneous equality between the homotopies, it's easier to just
+-- use `homotopy_equiv_of_iso`.
+quotient.induction_on t $ λ t, quotient.sound $ homotopy_equiv_of_iso $
+  ⟨isomorphism.Isomorphism.refl _,
+   by apply (pushout_by_cof j j hj).is_pushout.uniqueness;
+      dsimp [relative_cylinder.reverse, Is_pushout.swap];
+      rw [←associativity, ←associativity, ←associativity]; simp,
+   by dsimp [relative_cylinder.reverse]; simp,
+   by simp [homotopy_on.symm]⟩
+
+lemma track.right_inverse {f₀ f₁ : b ⟶ x} (t : track hj f₀ f₁) :
+  track.trans t t.symm = track.refl _ :=
+by convert track.left_inverse t.symm; rw track.inverse_inverse
+
+lemma track.assoc {f₀ f₁ f₂ f₃ : b ⟶ x}
+  (t₀ : track hj f₀ f₁) (t₁ : track hj f₁ f₂) (t₂ : track hj f₂ f₃) :
+  (t₀.trans t₁).trans t₂ = t₀.trans (t₁.trans t₂) :=
+quotient.induction_on₃ t₀ t₁ t₂ $ λ t₀ t₁ t₂, quotient.sound $ homotopy_equiv_of_iso
+  ⟨Is_pushout_assoc
+     (pushout_by_cof t₀.c.i₁ t₁.c.i₀ t₀.c.acof_i₁.1).is_pushout
+     (by convert (pushout_by_cof (t₀.c.glue t₁.c).i₁ t₂.c.i₀ _).is_pushout using 1; simp)
+     (pushout_by_cof t₁.c.i₁ t₂.c.i₀ t₁.c.acof_i₁.1).is_pushout
+     (by convert (pushout_by_cof t₀.c.i₁ (t₁.c.glue t₂.c).i₀ _).is_pushout using 1; simp),
+   begin
+     apply (pushout_by_cof j j hj).is_pushout.uniqueness; rw ←associativity,
+     { change _ ∘ relative_cylinder.i₀ _ = relative_cylinder.i₀ _, simp },
+     { change _ ∘ relative_cylinder.i₁ _ = relative_cylinder.i₁ _, simp }
+   end,
+   begin
+     symmetry,
+     apply Is_pushout_assoc_uniqueness;
+       dsimp [relative_cylinder.glue]; simp
+   end,
+   begin
+     symmetry,
+     apply Is_pushout_assoc_uniqueness;
+       dsimp [relative_cylinder.glue, homotopy_on.trans]; simp
+   end⟩
+
+lemma track.right_identity {f₀ f₁ : b ⟶ x} (t : track hj f₀ f₁) :
+  track.trans t (track.refl _) = t :=
+calc
+  t.trans (track.refl _)
+    = t.trans (t.symm.trans t) : by rw track.left_inverse
+... = (t.trans t.symm).trans t : by rw track.assoc
+... = (track.refl _).trans t   : by rw track.right_inverse
+... = t                        : by rw track.left_identity
 
 end homotopy_theory.cofibrations

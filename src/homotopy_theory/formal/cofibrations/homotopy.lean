@@ -58,7 +58,7 @@ iff.intro
 
 lemma homotopic_iff (c₀ c₁ : relative_cylinder hj) {x : C} (hx : fibrant x) (f₀ f₁ : b ⟶ x) :
   homotopic_wrt c₀ f₀ f₁ ↔ homotopic_wrt c₁ f₀ f₁ :=
-let ⟨c', m₀, m₁, ⟨⟩⟩ := exists_common_embedding c₀ c₁ in
+let ⟨⟨c', m₀, m₁⟩⟩ := exists_common_embedding c₀ c₁ in
 (homotopic_iff_of_embedding m₀ hx f₀ f₁).trans
   (homotopic_iff_of_embedding m₁ hx f₀ f₁).symm
 

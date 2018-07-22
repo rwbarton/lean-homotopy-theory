@@ -99,11 +99,21 @@ def cylinder_embedding.trans {c₀ c₁ c₂ : relative_cylinder hj}
 
 -- Any two relative cylinders on the same cofibration can be embedded
 -- in a third.
-lemma exists_common_embedding (c₀ c₁ : relative_cylinder hj) :
-  ∃ c' (m₀ : cylinder_embedding c₀ c') (m₁ : cylinder_embedding c₁ c'), true :=
-let po := pushout_by_cof c₀.ii c₁.ii c₀.hii,
-    pp := po.is_pushout.induced c₀.p c₁.p (by rw [c₀.pii, c₁.pii]),
-    ⟨c'_ob, l, q, hl, hq, ql⟩ := factorization pp in
+
+structure common_embedding (c₀ c₁ : relative_cylinder hj) :=
+(c' : relative_cylinder hj)
+(m₀ : cylinder_embedding c₀ c')
+(m₁ : cylinder_embedding c₁ c')
+
+-- Factor out the second part of the construction of a common
+-- embedding, since we will need to apply it to a particular form of
+-- factorization later, when verifying the identity and inverse laws
+-- for track composition.
+def common_embedding_of_factorization (c₀ c₁ : relative_cylinder hj)
+  (po : pushout c₀.ii c₁.ii) (c'_ob : C) (l : po.ob ⟶ c'_ob) (q : c'_ob ⟶ b)
+  (hl : is_cof l) (hq : is_weq q)
+  (ql : q ∘ l = po.is_pushout.induced c₀.p c₁.p (by simp [c₀.pii, c₁.pii])) :
+  common_embedding c₀ c₁ :=
 let c' : relative_cylinder hj :=
   ⟨c'_ob, l ∘ po.map₁ ∘ c₁.ii, q,
    cof_comp c₁.hii (cof_comp (pushout_is_cof po.is_pushout c₀.hii) hl),
@@ -116,8 +126,14 @@ let c' : relative_cylinder hj :=
  ⟨l ∘ po.map₁,
   cof_comp (pushout_is_cof po.is_pushout c₀.hii) hl,
   rfl,
-  by simp [ql]⟩,
- trivial⟩
+  by simp [ql]⟩⟩
+
+lemma exists_common_embedding (c₀ c₁ : relative_cylinder hj) :
+  nonempty (common_embedding c₀ c₁) :=
+let po := pushout_by_cof c₀.ii c₁.ii c₀.hii,
+    pp := po.is_pushout.induced c₀.p c₁.p (by rw [c₀.pii, c₁.pii]),
+    ⟨c'_ob, l, q, hl, hq, ql⟩ := factorization pp in
+⟨common_embedding_of_factorization c₀ c₁ po c'_ob l q hl hq ql⟩
 
 def cylinder_embedding.pushout {c c₀ c₁ : relative_cylinder hj}
   (m₀ : cylinder_embedding c c₀) (m₁ : cylinder_embedding c c₁) : relative_cylinder hj :=
@@ -182,6 +198,7 @@ def cylinder_embedding.reverse {c c' : relative_cylinder hj}
   (m : cylinder_embedding c c') : cylinder_embedding c.reverse c'.reverse :=
 ⟨m.k, m.hk, show m.k ∘ (c.ii ∘ _) = c'.ii ∘ _, by simp [m.hkii], m.hpk⟩
 
+-- TODO: Should really have this `pushout_by_cof` exposed somewhere
 def relative_cylinder.glue (c₀ c₁ : relative_cylinder hj) : relative_cylinder.{u v} hj :=
 let po := pushout_by_cof c₀.i₁ c₁.i₀ c₀.acof_i₁.1 in
 ⟨po.ob,
