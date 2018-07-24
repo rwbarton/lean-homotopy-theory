@@ -23,6 +23,10 @@ structure homotopy_on (c : relative_cylinder hj) {x : C} (f₀ f₁ : b ⟶ x) :
 (Hi₀ : H ∘ c.i₀ = f₀)
 (Hi₁ : H ∘ c.i₁ = f₁)
 
+@[extensionality] lemma homotopy_on.ext (c : relative_cylinder hj) {x : C} (f₀ f₁ : b ⟶ x)
+  (H H' : homotopy_on c f₀ f₁) (e : H.H = H'.H) : H = H' :=
+by cases H; cases H'; simpa
+
 def homotopy_on.refl {c : relative_cylinder hj} {x : C} (f : b ⟶ x) :
   homotopy_on c f f :=
 ⟨f ∘ c.p, by rw [←associativity, c.pi₀]; simp, by rw [←associativity, c.pi₁]; simp⟩
@@ -108,6 +112,15 @@ let ⟨c⟩ := exists_relative_cylinder hj.1,
     ⟨H, h⟩ := fibrant_iff_rlp.mp hx (c.acof_ii hj.2)
       ((pushout_by_cof j j hj.1).is_pushout.induced g₀ g₁ (hg₀.trans hg₁.symm)) in
 ⟨c, ⟨⟨H, by simp [relative_cylinder.i₀, h], by simp [relative_cylinder.i₁, h]⟩⟩⟩
+
+section congr_left
+variables {x y : C} (g : x ⟶ y)
+
+def homotopy_on.congr_left {c : relative_cylinder hj} {f₀ f₁ : b ⟶ x} :
+  homotopy_on c f₀ f₁ → homotopy_on c (g ∘ f₀) (g ∘ f₁) :=
+λ H, ⟨g ∘ H.H, by rw [←associativity, H.Hi₀], by rw [←associativity, H.Hi₁]⟩
+
+end congr_left
 
 section congr_right
 variables {a' b' : C} {j' : a' ⟶ b'} (hj' : is_cof j')

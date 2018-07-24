@@ -1,4 +1,5 @@
 import categories.assoc_pushouts
+import categories.groupoid
 import .homotopy
 
 universes u v
@@ -330,5 +331,57 @@ calc
 ... = (t.trans t.symm).trans t : by rw track.assoc
 ... = (track.refl _).trans t   : by rw track.right_inverse
 ... = t                        : by rw track.left_identity
+
+variables {y : C} (g : x ⟶ y)
+
+def track.congr_left {f₀ f₁ : b ⟶ x} (t : track hj f₀ f₁) :
+  track hj (g ∘ f₀) (g ∘ f₁) :=
+quotient.lift_on t
+  (λ t, ⟦⟨t.c, t.h.congr_left hj g⟩⟧)
+  (λ t t' ⟨t'', m₀, m₁, ⟨⟩⟩, quotient.sound
+     ⟨⟨t''.c, t''.h.congr_left hj g⟩,
+      ⟨m₀.m, show (g ∘ _) ∘ _ = _, by rw [←associativity, m₀.e]; refl⟩,
+      ⟨m₁.m, show (g ∘ _) ∘ _ = _, by rw [←associativity, m₁.e]; refl⟩,
+      ⟨⟩⟩)
+
+variables (hj x)
+include hj
+def track_groupoid_rel := b ⟶ x
+omit hj
+
+noncomputable instance : groupoid (track_groupoid_rel hj x) :=
+{ Hom := λ f₀ f₁, track hj f₀ f₁,
+  identity := λ f, track.refl f,
+  compose := λ f₀ f₁ f₂ t₀ t₁, t₀.trans t₁,
+  inverse := λ f₀ f₁ t, t.symm,
+
+  left_identity := λ f₀ f₁, track.left_identity,
+  right_identity := λ f₀ f₁, track.right_identity,
+  associativity := λ f₀ f₁ f₂ f₃, track.assoc,
+  left_inverse := λ f₀ f₁, track.left_inverse,
+  right_inverse := λ f₀ f₁, track.right_inverse }
+
+variables {x}
+noncomputable def track_groupoid_rel_functor {y} (g : x ⟶ y) :
+  track_groupoid_rel hj x ↝ track_groupoid_rel hj y :=
+{ onObjects := λ f, g ∘ f,
+  onMorphisms := λ f₀ f₁ t, t.congr_left g,
+  identities := λ f,
+    show (track.refl f).congr_left g = track.refl (g ∘ f),
+    begin
+      apply congr_arg quotient.mk,
+      unfold homotopy_on.refl homotopy_on.congr_left,
+      congr' 2,
+      rw ←associativity, refl
+    end,
+  functoriality := λ f₀ f₁ f₂ t₀ t₁,
+    show (t₀.trans t₁).congr_left g = (t₀.congr_left g).trans (t₁.congr_left g),
+    begin
+      induction t₀ using quot.ind,
+      induction t₁ using quot.ind,
+      apply congr_arg quotient.mk,
+      congr', apply homotopy_on.ext,
+      apply pushout_induced_comp
+    end }
 
 end homotopy_theory.cofibrations
