@@ -10,6 +10,7 @@ local notation f ` ∘ `:80 g:80 := g ≫ f
 
 namespace homotopy_theory.cofibrations
 open homotopy_theory.weak_equivalences
+open homotopy_theory.weak_equivalences.category_with_weak_equivalences
 open precofibration_category cofibration_category
 
 variables {C : Type u} [cat : category.{u v} C] [cofibration_category.{u v} C]
@@ -332,22 +333,11 @@ calc
 ... = (track.refl _).trans t   : by rw track.right_inverse
 ... = t                        : by rw track.left_identity
 
-variables {y : C} (g : x ⟶ y)
-
-def track.congr_left {f₀ f₁ : b ⟶ x} (t : track hj f₀ f₁) :
-  track hj (g ∘ f₀) (g ∘ f₁) :=
-quotient.lift_on t
-  (λ t, ⟦⟨t.c, t.h.congr_left hj g⟩⟧)
-  (λ t t' ⟨t'', m₀, m₁, ⟨⟩⟩, quotient.sound
-     ⟨⟨t''.c, t''.h.congr_left hj g⟩,
-      ⟨m₀.m, show (g ∘ _) ∘ _ = _, by rw [←associativity, m₀.e]; refl⟩,
-      ⟨m₁.m, show (g ∘ _) ∘ _ = _, by rw [←associativity, m₁.e]; refl⟩,
-      ⟨⟩⟩)
-
+section
 variables (hj x)
 include hj
 def track_groupoid_rel := b ⟶ x
-omit hj
+end
 
 noncomputable instance : groupoid (track_groupoid_rel hj x) :=
 { Hom := λ f₀ f₁, track hj f₀ f₁,
@@ -361,7 +351,20 @@ noncomputable instance : groupoid (track_groupoid_rel hj x) :=
   left_inverse := λ f₀ f₁, track.left_inverse,
   right_inverse := λ f₀ f₁, track.right_inverse }
 
-variables {x}
+section functoriality
+
+variables {y : C} (g : x ⟶ y)
+
+def track.congr_left {f₀ f₁ : b ⟶ x} (t : track hj f₀ f₁) :
+  track hj (g ∘ f₀) (g ∘ f₁) :=
+quotient.lift_on t
+  (λ t, ⟦⟨t.c, t.h.congr_left hj g⟩⟧)
+  (λ t t' ⟨t'', m₀, m₁, ⟨⟩⟩, quotient.sound
+     ⟨⟨t''.c, t''.h.congr_left hj g⟩,
+      ⟨m₀.m, show (g ∘ _) ∘ _ = _, by rw [←associativity, m₀.e]; refl⟩,
+      ⟨m₁.m, show (g ∘ _) ∘ _ = _, by rw [←associativity, m₁.e]; refl⟩,
+      ⟨⟩⟩)
+
 noncomputable def track_groupoid_rel_functor {y} (g : x ⟶ y) :
   track_groupoid_rel hj x ↝ track_groupoid_rel hj y :=
 { onObjects := λ f, g ∘ f,
@@ -383,5 +386,123 @@ noncomputable def track_groupoid_rel_functor {y} (g : x ⟶ y) :
       congr', apply homotopy_on.ext,
       apply pushout_induced_comp
     end }
+
+-- TODO: Precomposition is also a functor, & they are compatible,
+-- interchange, etc.
+
+end functoriality
+
+-- We next relate tracks back to the original notion of "homotopies up
+-- to homotopy", showing that for any particular relative cylinder
+-- object c on a → b, tracks from f₀ : b → x to f₁ : b → x are in
+-- one-to-one correspondence with homotopy classes rel b ⊔ₐ b → c of
+-- homotopies from f₀ to f₁ defined on the given relative cylinder c,
+-- provided that x is fibrant.
+
+section track_homotopy_class
+variables {c : relative_cylinder hj}
+-- Use g₀ g₁ instead of f₀ f₁, so that we can put the variables in the
+-- correct order (c first).
+variables (hx : fibrant x)
+variables {g₀ g₁ : b ⟶ x}
+
+section correspondence
+
+-- One direction of the correspondence is easy.
+def track_of_homotopy_on (h : homotopy_on c g₀ g₁) : track hj g₀ g₁ := ⟦⟨c, h⟩⟧
+
+def homotopic_homotopies (h₀ h₁ : homotopy_on c g₀ g₁) : Prop :=
+homotopic_rel c.hii h₀.H h₁.H
+
+variables (c g₀ g₁)
+instance homotopic_homotopies.setoid : setoid (homotopy_on c g₀ g₁) :=
+{ r := homotopic_homotopies,
+  iseqv :=
+    ⟨λ h, homotopic_rel.refl _,
+     λ h₀ h₁, homotopic_rel.symm,
+     λ h₀ h₁ h₂, homotopic_rel.trans⟩ }
+
+def homotopy_up_to_homotopy : Type v :=
+quotient (homotopic_homotopies.setoid c g₀ g₁)
+
+variables {x c g₀ g₁}
+lemma eq_track_of_homotopic_rel (h₀ h₁ : homotopy_on c g₀ g₁) :
+  homotopic_homotopies h₀ h₁ → track_of_homotopy_on h₀ = track_of_homotopy_on h₁ :=
+assume ⟨c', ⟨⟨H, Hi₀, Hi₁⟩⟩⟩, quotient.sound $
+  -- c' is a relative cylinder on b ⊔ₐ b → c. We can also view its
+  -- underlying object as a relative cylinder on the original map a → b,
+  -- and then H as a homotopy from g₀ to g₁ rel a → b.
+  let c'' : relative_cylinder hj :=
+        ⟨c'.ob, c'.i₀ ∘ c.ii, c.p ∘ c'.p,
+         cof_comp c.hii c'.acof_i₀.1, weq_comp c'.hp c.hp, calc
+           (c.p ∘ c'.p) ∘ (c'.i₀ ∘ c.ii)
+             = c.p ∘ (c'.p ∘ c'.i₀) ∘ c.ii  : by simp
+         ... = c.p ∘ c.ii                   : by rw c'.pi₀; simp
+         ... = _                            : c.pii⟩ in
+  ⟨⟨c'',
+   ⟨H,
+    show H ∘ (c'.i₀ ∘ c.ii ∘ _) = _, by simp [Hi₀]; rw ←associativity; exact h₀.Hi₀,
+    show H ∘ (c'.i₀ ∘ c.ii ∘ _) = _, by simp [Hi₀]; rw ←associativity; exact h₀.Hi₁⟩⟩,
+   ⟨⟨c'.i₀, c'.acof_i₀.1, rfl, by rw ←associativity; simp [c'.pi₀]⟩, Hi₀⟩,
+   ⟨⟨c'.i₁, c'.acof_i₁.1, c'.ij.symm, by rw ←associativity; simp [c'.pi₁]⟩, Hi₁⟩, ⟨⟩⟩
+
+local attribute [elab_with_expected_type] quotient.lift
+def track_of_homotopy_class : homotopy_up_to_homotopy c g₀ g₁ → track hj g₀ g₁ :=
+quotient.lift track_of_homotopy_on (λ h₀ h₁, eq_track_of_homotopic_rel h₀ h₁)
+
+-- Similar to `homotopic_iff`. We choose a common embedding of c and
+-- the cylinder on which t is defined, use the hypothesis that x is
+-- fibrant to extend the homotopy to this new cylinder, and then
+-- restrict it to c.
+private def surj (t : track hj g₀ g₁) :
+  ∃ h : homotopy_up_to_homotopy c g₀ g₁, track_of_homotopy_class h = t :=
+quotient.induction_on t $ λ ⟨c', ⟨H, Hi₀, Hi₁⟩⟩,
+  let ⟨⟨c'', m₀, m₁⟩⟩ := exists_common_embedding c c',
+      ⟨H', hH'⟩ := fibrant_iff_rlp.mp hx m₁.acof_k H in
+  ⟨⟦⟨H' ∘ m₀.k,
+     by rw [←associativity, m₀.hki₀, ←m₁.hki₀, associativity, hH', Hi₀],
+     by rw [←associativity, m₀.hki₁, ←m₁.hki₁, associativity, hH', Hi₁]⟩⟧,
+   quotient.sound
+     ⟨⟨c'',
+      ⟨H',
+       by rw [←m₁.hki₀, associativity, hH', Hi₀],
+       by rw [←m₁.hki₁, associativity, hH', Hi₁]⟩⟩,
+      ⟨m₀, rfl⟩, ⟨m₁, hH'⟩, ⟨⟩⟩⟩
+
+set_option eqn_compiler.zeta true
+private def inj (h₀ h₁ : homotopy_up_to_homotopy c g₀ g₁) :
+  track_of_homotopy_class h₀ = track_of_homotopy_class h₁ → h₀ = h₁ :=
+quotient.induction_on₂ h₀ h₁ $ λ h₀ h₁ e, quotient.sound $
+  let ⟨t', m₀, m₁, ⟨⟩⟩ := quotient.exact e,
+      c' := chosen_cylinder c.hii,
+      po :=
+        pushout_by_cof c'.ii
+          ((pushout_by_cof c.ii c.ii c.hii).is_pushout.induced
+            m₀.m.k m₁.m.k (by rw [m₀.m.hkii, m₁.m.hkii])) c'.hii,
+      p' := po.is_pushout.induced (c.p ∘ c'.p) t'.c.p $ begin
+         rw [←associativity, c'.pii],
+         rw [pushout_induced_comp, pushout_induced_comp], congr' 1,
+         { simp [m₀.m.hpk] }, { simp [m₁.m.hpk] }
+      end,
+      ⟨z, l, q, hl, hq, ql⟩ := factorization p' in
+  have is_acof (l ∘ po.map₁), from
+    ⟨cof_comp (pushout_is_cof po.is_pushout c'.hii) hl,
+     weq_of_comp_weq_right hq (by convert t'.c.hp; simp [ql])⟩,
+  let ⟨H', hH'⟩ := fibrant_iff_rlp.mp hx this t'.h.H in
+  begin
+    rw associativity at hH',
+    refine ⟨c', ⟨⟨H' ∘ l ∘ po.map₀, _, _⟩⟩⟩;
+    { change _ ∘ _ ∘ _ ∘ (_ ∘ _) = _, rw associativity,
+      conv { to_lhs, congr, skip, rw ←associativity },
+      rw po.is_pushout.commutes,
+      simp [hH'], rw ←associativity, simp [m₀.e, m₁.e] }
+  end
+
+noncomputable def homotopy_class_equiv_track :
+  homotopy_up_to_homotopy c g₀ g₁ ≃ track hj g₀ g₁ :=
+equiv.of_bijective ⟨inj hx, surj hx⟩
+
+end correspondence
+end track_homotopy_class
 
 end homotopy_theory.cofibrations
