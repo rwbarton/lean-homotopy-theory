@@ -47,34 +47,29 @@ variables {n : Δ}
 
 /-- The i-th face map from [n] to [n+1] -/
 def δ (i : [n+1]) : n ⟶ ((n + 1) : ℕ) :=
-begin
-  dsimp [category.Hom],
-  constructor, swap,
-  { exact λ a, if h : i.val ≤ a.val then a.succ else a.raise },
-  { intros a b H,
+⟨λ a, if h : i.val ≤ a.val then a.succ else a.raise,
+  begin
+    intros a b H,
+    dsimp,
     split_ifs with ha hb,
     { show a.succ.val ≤ b.succ.val,
-      simp,
-      exact nat.succ_le_succ H },
+      simpa using nat.succ_le_succ H },
     { exfalso,
       exact hb (nat.le_trans ha H) },
     { show a.val ≤ b.succ.val,
-      simp,
-      exact nat.le_trans H (nat.le_succ b) },
-    { exact H } }
-end
+      simpa using nat.le_trans H (nat.le_succ b) },
+    { exact H }
+  end⟩
 
 /-- The i-th degeneracy map from [n+1] to [n] -/
 def σ (i : [n]) : @category.Hom Δ _ ((n + 1) : ℕ) n :=
-begin
-  dsimp [category.Hom],
-  constructor, swap,
-  { exact λ a, if h : a.val ≤ i.val
+⟨λ a, if h : a.val ≤ i.val
     then ⟨a.val, lt_of_le_of_lt h i.is_lt⟩
     else ⟨a.val.pred,
-      (nat.sub_lt_right_iff_lt_add (lt_of_le_of_lt i.val.zero_le (not_le.mp h))).mpr a.is_lt⟩ },
-  {
+      (nat.sub_lt_right_iff_lt_add (lt_of_le_of_lt i.val.zero_le (not_le.mp h))).mpr a.is_lt⟩,
+  begin
     intros a b H,
+    dsimp,
     split_ifs with ha hb,
     { exact H },
     { simp at hb,
@@ -86,8 +81,8 @@ begin
       exact nat.le_trans ha hb' },
     { exfalso,
       exact ha (nat.le_trans H h) },
-    { exact nat.pred_le_pred H } }
-end
+    { exact nat.pred_le_pred H }
+  end⟩
 
 lemma simplicial_identity₁ {i j : [n+1]} (H : i ≤ j) : δ i ≫ δ j.succ = δ j ≫ δ i.raise :=
 begin
