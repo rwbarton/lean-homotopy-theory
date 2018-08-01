@@ -1,3 +1,6 @@
+*~
 *.olean
 /_target
 /leanpkg.path
+/OLD
+/tmp
