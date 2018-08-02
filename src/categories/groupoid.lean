@@ -14,6 +14,8 @@ notation f `⁻¹` := groupoid.inverse f
 make_lemma groupoid.left_inverse
 make_lemma groupoid.right_inverse
 
+attribute [simp] groupoid.left_inverse_lemma groupoid.right_inverse_lemma
+
 abbreviation large_groupoid (C : Type (u+1)) : Type (u+1) := groupoid.{u+1 u} C
 abbreviation small_groupoid (C : Type u) : Type (u+1) := groupoid.{u u} C
 

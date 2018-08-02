@@ -1,5 +1,6 @@
 import categories.assoc_pushouts
 import categories.groupoid
+import categories.transport
 import .homotopy
 
 universes u v
@@ -408,9 +409,6 @@ variables {g₀ g₁ : b ⟶ x}
 
 section correspondence
 
--- One direction of the correspondence is easy.
-def track_of_homotopy_on (h : homotopy_on c g₀ g₁) : track hj g₀ g₁ := ⟦⟨c, h⟩⟧
-
 def homotopic_homotopies (h₀ h₁ : homotopy_on c g₀ g₁) : Prop :=
 homotopic_rel c.hii h₀.H h₁.H
 
@@ -424,6 +422,10 @@ instance homotopic_homotopies.setoid : setoid (homotopy_on c g₀ g₁) :=
 
 def homotopy_up_to_homotopy : Type v :=
 quotient (homotopic_homotopies.setoid c g₀ g₁)
+
+variables {c g₀ g₁}
+-- One direction of the correspondence is easy.
+def track_of_homotopy_on (h : homotopy_on c g₀ g₁) : track hj g₀ g₁ := ⟦⟨c, h⟩⟧
 
 variables {x c g₀ g₁}
 lemma eq_track_of_homotopic_rel (h₀ h₁ : homotopy_on c g₀ g₁) :
@@ -498,9 +500,67 @@ quotient.induction_on₂ h₀ h₁ $ λ h₀ h₁ e, quotient.sound $
       simp [hH'], rw ←associativity, simp [m₀.e, m₁.e] }
   end
 
+variables (c)
 noncomputable def homotopy_class_equiv_track :
   homotopy_up_to_homotopy c g₀ g₁ ≃ track hj g₀ g₁ :=
 equiv.of_bijective ⟨inj hx, surj hx⟩
+
+section
+variables (hj hx)
+include hj c hx
+def homotopy_class_groupoid := b ⟶ x
+end
+
+noncomputable instance homotopy_class_groupoid.groupoid :
+  groupoid (homotopy_class_groupoid hj c hx) :=
+transported_groupoid
+  (by apply_instance : groupoid (track_groupoid_rel hj x))
+  (λ g₀ g₁, (homotopy_class_equiv_track c hx).symm)
+
+-- This is definitionally equal to .to_category of the above,
+-- but helps with defining homotopy_class_functor somehow.
+private noncomputable def homotopy_class_groupoid.category :
+  category (homotopy_class_groupoid hj c hx) :=
+transported_category
+  (by apply_instance : category (track_groupoid_rel hj x))
+  (λ g₀ g₁, (homotopy_class_equiv_track c hx).symm)
+
+section functoriality
+variables {c} {y : C} (hy : fibrant y) (k : x ⟶ y)
+def homotopy_up_to_homotopy.congr_left {g₀ g₁ : b ⟶ x}
+  (h : homotopy_up_to_homotopy c g₀ g₁) :
+  homotopy_up_to_homotopy c (k ∘ g₀) (k ∘ g₁) :=
+quotient.lift_on h
+  (λ h, ⟦h.congr_left hj k⟧)
+  (λ h h' H, quotient.sound (H.congr_left c.hii k))
+
+noncomputable def homotopy_class_functor :
+  homotopy_class_groupoid hj c hx ↝ homotopy_class_groupoid hj c hy :=
+show @functor.Functor
+  _ (homotopy_class_groupoid.category c hx)
+  _ (homotopy_class_groupoid.category c hy), from
+transported_functor
+  (λ g₀ g₁, (homotopy_class_equiv_track c hx).symm)
+  (λ g₀ g₁, (homotopy_class_equiv_track c hy).symm)
+  (track_groupoid_rel_functor k)
+
+lemma homotopy_class_functor.onObjects {g : homotopy_class_groupoid hj c hx} :
+  homotopy_class_functor hx hy k +> g = k ∘ g :=
+rfl
+
+lemma homotopy_class_functor.onMorphisms {g₀ g₁ : homotopy_class_groupoid hj c hx}
+  {h : g₀ ⟶ g₁} : homotopy_class_functor hx hy k &> h = h.congr_left k :=
+quotient.induction_on h $ λ h,
+begin
+  dsimp [homotopy_class_functor, transported_functor],
+  rw equiv.apply_eq_iff_eq_inverse_apply,
+  rw [equiv.symm_symm, equiv.symm_symm],
+  dsimp [homotopy_class_equiv_track],
+  rw [equiv.of_bijective_to_fun, equiv.of_bijective_to_fun],
+  refl
+end
+
+end functoriality
 
 end correspondence
 end track_homotopy_class

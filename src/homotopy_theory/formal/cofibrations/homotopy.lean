@@ -120,6 +120,10 @@ def homotopy_on.congr_left {c : relative_cylinder hj} {f₀ f₁ : b ⟶ x} :
   homotopy_on c f₀ f₁ → homotopy_on c (g ∘ f₀) (g ∘ f₁) :=
 λ H, ⟨g ∘ H.H, by rw [←associativity, H.Hi₀], by rw [←associativity, H.Hi₁]⟩
 
+lemma homotopic_rel.congr_left {f₀ f₁ : b ⟶ x} :
+  homotopic_rel hj f₀ f₁ → homotopic_rel hj (g ∘ f₀) (g ∘ f₁) :=
+λ ⟨c, ⟨H⟩⟩, ⟨c, ⟨H.congr_left hj g⟩⟩
+
 end congr_left
 
 section congr_right
