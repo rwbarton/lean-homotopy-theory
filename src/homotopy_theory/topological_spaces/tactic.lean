@@ -51,12 +51,8 @@ meta def continuity_tactics : list (tactic string) :=
 ]
 
 meta def continuity (cfg : tidy_cfg := {}) : tactic unit :=
-let tactics := continuity_tactics ++ cfg.extra_tactics in
-do
-  results ← chain tactics cfg.to_chain_cfg,
-  try tactic.interactive.resetI,
-  when cfg.trace_result $
-    interaction_monad.trace ("---\n" ++ (",\n".intercalate results) ++ "\n---")
+let cfg' := { tactics := continuity_tactics, ..cfg } in
+tidy cfg'
 
 -- For use with auto_param
 meta def continuity' : tactic unit := continuity
