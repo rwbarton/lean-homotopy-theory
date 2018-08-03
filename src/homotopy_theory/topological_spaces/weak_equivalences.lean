@@ -1,4 +1,4 @@
-import homotopy_theory.formal.weak_equivalences.definitions
+import homotopy_theory.formal.i_category.homotopy_equivalences
 import .pi_n
 
 open function
@@ -9,6 +9,7 @@ open categories
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
 namespace homotopy_theory.topological_spaces
+open homotopy_theory.cofibrations
 open homotopy_theory.weak_equivalences
 open Top
 local notation `Top` := Top.{0}
@@ -68,5 +69,22 @@ def Top_weak_equivalences : category_with_weak_equivalences Top :=
     ⟨iso_of_comp_iso_right hg.1 (by rw ←π₀.functoriality; exact hgf.1),
      assume n x, iso_of_comp_iso_right (hg.2 n (f x))
        (by rw ←π_induced_comp; exact hgf.2 n x)⟩ }
+
+lemma is_weak_equivalence_of_heq {X Y : Top} (f : X ⟶ Y)
+  (h : homotopy_equivalence f) : is_weak_equivalence f :=
+let ⟨g, gf1, fg1⟩ := homotopy_equivalence_iff.mp h in
+⟨⟨⟨π₀ &> f, π₀ &> g,
+   by rw [←π₀.functoriality, ←π₀.identities]; exact π₀_induced_homotopic gf1,
+   by rw [←π₀.functoriality, ←π₀.identities]; exact π₀_induced_homotopic fg1⟩,
+  rfl⟩,
+ assume n x,
+   have gf : _ := π_induced_homotopic_id n x gf1.symm,
+   have fg : _ := π_induced_homotopic_id n (f x) fg1.symm,
+   begin
+     rw π_induced_comp at gf fg,
+     letI : homotopical_category Set := isomorphisms_as_homotopical_category,
+     change is_weq (π_induced n x f),
+     exact weq_two_out_of_six_f fg gf
+   end⟩
 
 end homotopy_theory.topological_spaces

@@ -2,6 +2,7 @@ import categories.category
 import categories.replete
 
 open categories
+open categories.category
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
 universes u v
@@ -36,6 +37,31 @@ lemma weq_comp {a b c : C} {f : a ⟶ b} {g : b ⟶ c} :
 lemma weq_iso {a b : C} (i : a ≅ b) : is_weq (i : a ⟶ b) := mem_iso i
 end
 
+-- The two-out-of-six property.
+class homotopical_category (C : Type u) [category.{u v} C]
+  extends category_with_weak_equivalences C :=
+(two_out_of_six : ∀ ⦃a b c d : C⦄ {f : a ⟶ b} {g : b ⟶ c} {h : c ⟶ d},
+  is_weq (h ∘ g) → is_weq (g ∘ f) → is_weq g)
+
+section
+variables {C : Type u} [cat : category.{u v} C] [homotopical_category C]
+include cat
+
+lemma weq_two_out_of_six_g {a b c d : C} {f : a ⟶ b} {g : b ⟶ c} {h : c ⟶ d}
+  (hg : is_weq (h ∘ g)) (gf : is_weq (g ∘ f)) : is_weq g :=
+homotopical_category.two_out_of_six hg gf
+
+lemma weq_two_out_of_six_f {a b c d : C} {f : a ⟶ b} {g : b ⟶ c} {h : c ⟶ d}
+  (hg : is_weq (h ∘ g)) (gf : is_weq (g ∘ f)) : is_weq f :=
+have wg : is_weq g := weq_two_out_of_six_g hg gf,
+category_with_weak_equivalences.weq_of_comp_weq_right wg gf
+
+lemma weq_two_out_of_six_h {a b c d : C} {f : a ⟶ b} {g : b ⟶ c} {h : c ⟶ d}
+  (hg : is_weq (h ∘ g)) (gf : is_weq (g ∘ f)) : is_weq h :=
+have wg : is_weq g := weq_two_out_of_six_g hg gf,
+category_with_weak_equivalences.weq_of_comp_weq_left wg hg
+end
+
 section isomorphisms
 variables {C : Type u} [cat : category.{u v} C]
 include cat
@@ -56,6 +82,19 @@ lemma iso_of_comp_iso_right ⦃a b c : C⦄ {f : a ⟶ b} {g : b ⟶ c} :
 assume ⟨i, hi⟩ ⟨j, hj⟩,
   ⟨j.trans i.symm, show i.inverse ∘ j.morphism = f, by rw [hj, ←hi]; simp⟩
 
+lemma iso_two_out_of_six ⦃a b c d : C⦄ {f : a ⟶ b} {g : b ⟶ c} {h : c ⟶ d} :
+  is_iso (h ∘ g) → is_iso (g ∘ f) → is_iso g :=
+assume ⟨i, hi⟩ ⟨j, hj⟩,
+  let g' := i.inverse ∘ h in
+  have g'g : g' ∘ g = 𝟙 _, by rw [←associativity, ←hi]; simp,
+  let g'' := f ∘ j.inverse in
+  have gg'' : g ∘ g'' = 𝟙 _, by rw [associativity, ←hj]; simp,
+  have g' = g'', from calc
+    g' = g' ∘ (g ∘ g'')  : by rw gg''; simp
+   ... = (g' ∘ g) ∘ g''  : by simp
+   ... = g''             : by rw g'g; simp,
+  ⟨⟨g, g', g'g, by rw this; exact gg''⟩, rfl⟩
+
 instance is_iso.replete_wide_subcategory : replete_wide_subcategory.{u v} C is_iso :=
 replete_wide_subcategory.mk' iso_iso iso_comp
 
@@ -63,6 +102,10 @@ def isomorphisms_as_weak_equivalences : category_with_weak_equivalences C :=
 { is_weq := is_iso,
   weq_of_comp_weq_left := iso_of_comp_iso_left,
   weq_of_comp_weq_right := iso_of_comp_iso_right }
+
+def isomorphisms_as_homotopical_category : homotopical_category C :=
+{ two_out_of_six := iso_two_out_of_six,
+  .. isomorphisms_as_weak_equivalences }
 
 end isomorphisms
 

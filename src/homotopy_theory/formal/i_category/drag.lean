@@ -156,6 +156,24 @@ begin
   rw ←drag_equiv_apply
 end
 
+-- Now we can state and prove the fact that homotopic maps g ≃ g'
+-- induce the same map on homotopy classes extending u, up to the drag
+-- identification.
+
+variables {x y : C} {u : a ⟶ x} {g g' : x ⟶ y} (h : homotopy g g')
+lemma hcer_induced_homotopic (f : homotopy_classes_extending_rel j hj u) :
+  drag_equiv (h.congr_right u) (hcer_induced g f) = hcer_induced g' f :=
+quotient.induction_on f $ λ f, begin
+  dsimp [hcer_induced],
+  rw drag_equiv_apply,
+  existsi [_, _],
+  split, exact rfl,
+  split, exact rfl,
+  existsi h.congr_right f.val,
+  dsimp [homotopy.congr_right],
+  rw [←associativity, ←I.functoriality, f.property]
+end
+
 end C
 
 end homotopy_theory.cofibrations

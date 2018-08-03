@@ -1,3 +1,4 @@
+import categories.isomorphism
 import categories.types
 import homotopy_theory.formal.i_category.homotopy_classes
 import homotopy_theory.formal.i_category.drag
@@ -9,11 +10,13 @@ import .pointed
 noncomputable theory
 
 open categories
+open categories.isomorphism
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
 namespace homotopy_theory.topological_spaces
 open homotopy_theory.cofibrations
 open homotopy_theory.cylinder
+open homotopy_theory.weak_equivalences
 open Top
 local notation `Top` := Top.{0}
 local notation `Set` := Type.{0}
@@ -77,6 +80,10 @@ def path {X : Top} (x x' : X) : Type := homotopy (Top.const x : * ⟶ X) (Top.co
 def path.induced {X Y : Top} (f : X ⟶ Y) {x x' : X} (γ : path x x') : path (f x) (f x') :=
 γ.congr_left f
 
+def path_of_homotopy {X Y : Top} (x : X) {f f' : X ⟶ Y} (H : homotopy f f') :
+  path (f x) (f' x) :=
+H.congr_right (Top.const x)
+
 -- TODO: Move this
 def iso_of_equiv {X Y : Set} (e : X ≃ Y) : X ≅ Y :=
 { morphism := e.to_fun,
@@ -91,5 +98,25 @@ lemma change_of_basepoint_induced (n : ℕ) {X Y : Top} {x x' : X} (γ : path x 
   π_induced n x' f ∘ (change_of_basepoint n γ).morphism =
   (change_of_basepoint n (γ.induced f)).morphism ∘ π_induced n x f :=
 funext $ drag_equiv_induced _ _
+
+lemma π₀_induced_homotopic {X Y : Top} {f f' : X ⟶ Y} (h : f ≃ f') :
+  π₀ &> f = π₀ &> f' :=
+have ⟦f⟧ = ⟦f'⟧, from quotient.sound h,
+funext $ λ x, show ⟦f⟧ ∘ x = ⟦f'⟧ ∘ x, by rw this
+
+-- Homotopic maps induce the same map on πₙ, up to change-of-basepoint
+-- identifications.
+lemma π_induced_homotopic (n : ℕ) {X Y : Top} (x : X) {f f' : X ⟶ Y} (H : homotopy f f') :
+  (change_of_basepoint n (path_of_homotopy x H)).morphism ∘ π_induced n x f =
+  π_induced n x f' :=
+funext $ hcer_induced_homotopic _
+
+lemma π_induced_homotopic_id (n : ℕ) {X : Top} (x : X) {f : X ⟶ X} (h : 𝟙 X ≃ f) :
+  is_iso (π_induced n x f) :=
+let ⟨H⟩ := h in
+begin
+  rw [←π_induced_homotopic n x H, π_induced_id],
+  apply iso_iso
+end
 
 end homotopy_theory.topological_spaces
