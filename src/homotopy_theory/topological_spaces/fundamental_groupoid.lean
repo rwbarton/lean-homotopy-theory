@@ -1,3 +1,5 @@
+import categories.bundled
+import categories.induced
 import homotopy_theory.formal.cofibrations.track
 import homotopy_theory.formal.i_category.cofibration_category
 import .pi_n
@@ -12,12 +14,36 @@ open homotopy_theory.cofibrations
 open Top
 local notation `Top` := Top.{0}
 
-def Pi₁ (X : Top) : Type :=
-homotopy_class_groupoid
-  (all_objects_cofibrant.cofibrant Top.point)
-  (canonical_cylinder.{1 0} Top.point)
-  (all_objects_fibrant X)
+def Pi₁_ (X : Top) : Type := X
 
-instance {X : Top} : groupoid (Pi₁ X) := by unfold Pi₁; apply_instance
+instance {X : Top} : groupoid (Pi₁_ X) :=
+induced_groupoid (λ x, (Top.const x : Top.point ⟶ X))
+  (homotopy_class_groupoid.groupoid _ _ : groupoid $
+    homotopy_class_groupoid
+      (all_objects_cofibrant.cofibrant Top.point)
+      (canonical_cylinder.{1 0} Top.point)
+      (all_objects_fibrant X))
+
+def Pi₁_induced {X Y : Top} (f : X ⟶ Y) : Pi₁_ X ↝ Pi₁_ Y :=
+induced_functor_gpd _ _
+  (homotopy_class_functor (all_objects_fibrant X) (all_objects_fibrant Y) f)
+  f
+  (by intros; refl)
+
+def Pi₁ : Top ↝ Gpd :=
+{ onObjects := λ X, Gpd.mk_ob (Pi₁_ X),
+  onMorphisms := λ X Y f, Gpd.mk_hom (Pi₁_induced f),
+  identities := λ X, begin
+    dsimp [Pi₁_induced], simp only [homotopy_class_functor.map_id],
+    apply induced_functor_id
+  end,
+  functoriality := λ X Y Z f g, begin
+    dsimp [Gpd.mk_hom, Pi₁_induced, induced_functor_gpd, Gpd.category],
+    have : ∀ W : Top, fibrant W := all_objects_fibrant,
+    simp only [homotopy_class_functor.map_comp
+      (all_objects_fibrant X) (all_objects_fibrant Y) _
+      (all_objects_fibrant Z)],
+    apply induced_functor_comp
+  end }
 
 end homotopy_theory.topological_spaces

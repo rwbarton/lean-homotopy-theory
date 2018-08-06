@@ -1,4 +1,5 @@
 import categories.assoc_pushouts
+import categories.eq
 import categories.groupoid
 import categories.transport
 import .homotopy
@@ -558,6 +559,44 @@ begin
   dsimp [homotopy_class_equiv_track],
   rw [equiv.of_bijective_to_fun, equiv.of_bijective_to_fun],
   refl
+end
+
+private lemma heq_of_homotopies_eq
+  {g₀ g₀' g₁ g₁' : homotopy_class_groupoid hj c hx} (e₀ : g₀ = g₀') (e₁ : g₁ = g₁')
+  (H : homotopy_on c g₀ g₁) (H' : homotopy_on c g₀' g₁') (e : H.H = H'.H) :
+  (⟦H⟧ : g₀ ⟶ g₁) == (⟦H'⟧ : g₀' ⟶ g₁') :=
+begin
+  subst e₀, subst e₁,
+  congr,
+  cases H, cases H',
+  congr,
+  exact e
+end
+
+-- Next we show that homotopy_class_functor is functorial in "k".
+lemma homotopy_class_functor.map_id :
+  homotopy_class_functor hx hx (𝟙 x) = functor.IdentityFunctor (homotopy_class_groupoid hj c hx) :=
+begin
+  fapply functor.Functor.hext,
+  { intro g, rw homotopy_class_functor.onObjects, simp },
+  { intros g₀ g₁ h, rw homotopy_class_functor.onMorphisms,
+    induction h using quot.ind,
+    apply heq_of_homotopies_eq; { simp [homotopy_on.congr_left] } }
+end
+
+lemma homotopy_class_functor.map_comp {z : C} (hz : fibrant z) (k' : y ⟶ z) :
+  (homotopy_class_functor hx hz (k' ∘ k) : homotopy_class_groupoid hj c hx ↝ _) =
+  functor.FunctorComposition (homotopy_class_functor hx hy k) (homotopy_class_functor hy hz k') :=
+begin
+  fapply functor.Functor.hext,
+  { intro g, rw homotopy_class_functor.onObjects,
+    rw [←associativity], refl },
+  { intros g₀ g₁ h,
+    rw [functor.FunctorComposition.onMorphisms],
+    repeat { rw homotopy_class_functor.onMorphisms },
+    induction h using quot.ind,
+    apply heq_of_homotopies_eq hz;
+    { simp [homotopy_class_functor.onObjects, homotopy_on.congr_left] } }
 end
 
 end functoriality
