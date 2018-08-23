@@ -1,9 +1,9 @@
-import categories.category
-import categories.functor
+import category_theory.base
+import category_theory.functor
 
 universes u v
 
-namespace categories
+namespace category_theory
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
 variables {C : Type u} [cat : category.{u v} C]
@@ -32,12 +32,12 @@ instance Hom.setoid (a b : C) : setoid (a ⟶ b) :=
 { r := @r a b, iseqv := congruence.is_equiv r }
 
 instance : category (category_mod_congruence C r) :=
-{ Hom := λ a b, quotient (Hom.setoid C r a b),
-  identity := λ a, ⟦𝟙 a⟧,
-  compose := λ a b c f₀ g₀, quotient.lift_on₂ f₀ g₀ (λ f g, ⟦g ∘ f⟧)
+{ hom := λ a b, quotient (Hom.setoid C r a b),
+  id := λ a, ⟦𝟙 a⟧,
+  comp := λ a b c f₀ g₀, quotient.lift_on₂ f₀ g₀ (λ f g, ⟦g ∘ f⟧)
     (λ f g f' g' rff' rgg', quotient.sound (congruence.congr C rff' rgg' : r _ _)) }
 
 def quotient_functor : C ↝ category_mod_congruence C r :=
-{ onObjects := λ a, a, onMorphisms := λ a b f, ⟦f⟧ }
+{ obj := λ a, a, map := λ a b f, ⟦f⟧ }
 
-end categories
+end category_theory

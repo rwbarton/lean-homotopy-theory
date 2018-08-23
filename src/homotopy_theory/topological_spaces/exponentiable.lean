@@ -1,11 +1,11 @@
-import categories.adjunctions
+import category_theory.adjunctions
 import for_mathlib
 
 import .category
 
 universe u
 
-open categories
+open category_theory
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
 namespace homotopy_theory.topological_spaces
@@ -62,17 +62,17 @@ def exponential_induced (A : Top) [exponentiable A] (X X' : Top) (g : X ⟶ X')
 Top.mk_hom (induced A g) (exponentiable.functorial A X X' g)
 
 def exponential_functor (A : Top) [exponentiable A] : Top ↝ Top :=
-{ onObjects := exponential A,
-  onMorphisms := exponential_induced A,
-  identities := by intro X; ext g x; refl,
-  functoriality := by intros X X' X'' f g; refl }
+{ obj := exponential A,
+  map := exponential_induced A,
+  map_id := by intro X; ext g x; refl,
+  map_comp := by intros X X' X'' f g; refl }
 
 def exponential_adjunction (A : Top) [exponentiable A] :
   adjunction (-× A) (exponential_functor A) :=
 { unit :=
-    { components := λ X, Top.mk_hom (coev A X) (exponentiable.continuous_coev A X) },
+    { app := λ X, Top.mk_hom (coev A X) (exponentiable.continuous_coev A X) },
   counit :=
-    { components := λ X, Top.mk_hom (ev A X) (exponentiable.continuous_ev A X) },
+    { app := λ X, Top.mk_hom (ev A X) (exponentiable.continuous_ev A X) },
   left_triangle := by intro X; ext xa; cases xa; refl,
   right_triangle := by intro X; ext f a; refl }
 

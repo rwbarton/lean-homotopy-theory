@@ -1,6 +1,6 @@
 import .pasting_pushouts
 
-open categories.category
+open category_theory.category
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
 /-
@@ -15,7 +15,7 @@ local notation f ` ∘ `:80 g:80 := g ≫ f
 
 universes u v
 
-namespace categories
+namespace category_theory
 
 section
 
@@ -36,20 +36,20 @@ include po₀ po₁ po₂ po₃
 def Is_pushout_assoc : d ≅ d' :=
 begin
   refine {
-    morphism := po₁.induced (po₀.induced h₀' (h₁' ∘ g₂) _) (h₁' ∘ g₃) _,
-    inverse := po₃.induced (h₀ ∘ g₀) (po₂.induced (h₀ ∘ g₁) h₁ _) _,
-    witness_1 := _,
-    witness_2 := _,
+    hom := po₁.induced (po₀.induced h₀' (h₁' ∘ g₂) _) (h₁' ∘ g₃) _,
+    inv := po₃.induced (h₀ ∘ g₀) (po₂.induced (h₀ ∘ g₁) h₁ _) _,
+    hom_inv_id := _,
+    inv_hom_id := _,
   },
   { rw po₃.commutes, simp },
   -- TODO: Is_pushout.commutes_assoc
-  { simp, rw [←associativity, ←associativity], rw po₂.commutes },
-  { rw [←associativity, po₁.commutes] },
-  { simp, rw [←associativity, ←associativity], rw po₀.commutes },
-  { apply po₁.uniqueness; rw ←associativity; simp,
-    { apply po₀.uniqueness; rw ←associativity; simp } },
-  { apply po₃.uniqueness; rw ←associativity; simp,
-    { apply po₂.uniqueness; rw ←associativity; simp } }
+  { simp, rw [←assoc, ←assoc], rw po₂.commutes },
+  { rw [←assoc, po₁.commutes] },
+  { simp, rw [←assoc, ←assoc], rw po₀.commutes },
+  { apply po₁.uniqueness; rw ←assoc; simp,
+    { apply po₀.uniqueness; rw ←assoc; simp } },
+  { apply po₃.uniqueness; rw ←assoc; simp,
+    { apply po₂.uniqueness; rw ←assoc; simp } }
 end
 
 @[simp] lemma Is_pushout_assoc_i₀ : ↑Is_pushout_assoc ∘ h₀ ∘ g₀ = h₀' :=
@@ -67,8 +67,8 @@ lemma Is_pushout_assoc_uniqueness
   k = k' ∘ ↑Is_pushout_assoc :=
 begin
   change k = k' ∘ Is_pushout.induced _ _ _ _,
-  apply po₁.uniqueness; rw ←associativity,
-  { apply po₀.uniqueness; conv { to_rhs, rw ←associativity },
+  apply po₁.uniqueness; rw ←assoc,
+  { apply po₀.uniqueness; conv { to_rhs, rw ←assoc },
     { rw hk₀, simp },
     { rw hk₁, simp } },
   { rw hk₂, simp }
@@ -76,4 +76,4 @@ end
 
 end
 
-end categories
+end category_theory

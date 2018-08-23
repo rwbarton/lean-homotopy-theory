@@ -1,6 +1,6 @@
-import categories.eq
-import categories.functor
-import categories.groupoid
+import category_theory.eq
+import category_theory.functor
+import category_theory.groupoid
 
 universe u
 
@@ -8,11 +8,8 @@ universe u
 
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
-namespace categories
-open categories.functor
-
--- TODO: Deduplicate
-infixr ` &> `:85 := functor.Functor.onMorphisms
+namespace category_theory
+open category_theory.functor
 
 section Cat
 
@@ -30,11 +27,11 @@ instance Cat.as_category (C : Cat) : category.{u u} C.carrier := C.cat
 def Cat.functor (C D : Cat) : Type u := C ↝ D
 
 instance Cat.category : category Cat :=
-{ Hom := Cat.functor,
-  identity := λ C, IdentityFunctor C,
-  compose := λ _ _ _ F G, FunctorComposition F G,
-  left_identity := λ _ _ F, by cases F; refl,
-  right_identity := λ _ _ F, by cases F; refl }
+{ hom := Cat.functor,
+  id := λ C, functor.id C,
+  comp := λ _ _ _ F G, F.comp G,
+  id_comp := λ _ _ F, by cases F; refl,
+  comp_id := λ _ _ F, by cases F; refl }
 
 end «Cat»
 
@@ -55,15 +52,15 @@ instance Gpd.as_groupoid (C : Gpd) : groupoid.{u u} C.carrier := C.gpd
 def Gpd.functor (C D : Gpd) : Type u := C ↝ D
 
 instance Gpd.category : category Gpd :=
-{ Hom := Gpd.functor,
-  identity := λ C, IdentityFunctor C,
-  compose := λ _ _ _ F G, FunctorComposition F G,
-  left_identity := λ _ _ F, by cases F; refl,
-  right_identity := λ _ _ F, by cases F; refl }
+{ hom := Gpd.functor,
+  id := λ C, functor.id C,
+  comp := λ _ _ _ F G, F.comp G,
+  id_comp := λ _ _ F, by cases F; refl,
+  comp_id := λ _ _ F, by cases F; refl }
 
 def Gpd.mk_ob (α : Type u) [gpd : groupoid α] : Gpd := ⟨α, gpd⟩
 def Gpd.mk_hom {C D : Gpd} (f : C ↝ D) : C ⟶ D := f
 
 end «Gpd»
 
-end categories
+end category_theory

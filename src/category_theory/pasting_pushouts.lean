@@ -3,12 +3,12 @@ import .colimit_lemmas
 
 open set
 
-open categories.category
+open category_theory.category
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
 universes u v
 
-namespace categories
+namespace category_theory
 
 section
 
@@ -58,7 +58,7 @@ def Is_pushout_of_Is_pushout_of_Is_pushout' (po : Is_pushout i f f' i')
 Is_pushout.mk $ λ x,
   Bij_on.trans_symm
     (assume p ⟨⟩, show p ∘ g' ∘ i' = p ∘ i'' ∘ g,
-      by rw [←associativity, ←associativity, commutes])
+      by rw [←assoc, ←assoc, commutes])
     (by convert po''.universal x; simp) (pasting_core po x)
 
 def Is_pushout_of_Is_pushout_of_Is_pushout_vert (po : Is_pushout f i i' f')
@@ -72,4 +72,4 @@ def Is_pushout_of_Is_pushout_of_Is_pushout_vert' (po : Is_pushout f i i' f')
 
 end
 
-end categories
+end category_theory

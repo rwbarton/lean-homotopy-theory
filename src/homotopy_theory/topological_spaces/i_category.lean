@@ -4,8 +4,8 @@ import .precofibration_category
 
 noncomputable theory
 
-open categories
-open categories.category
+open category_theory
+open category_theory.category
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
 namespace homotopy_theory.topological_spaces
@@ -24,6 +24,6 @@ instance : I_category.{1 0} Top :=
     show is_cof (po.is_pushout.induced (ii @> b) (I &> j) (ii.naturality _)), from
     let ⟨po', h⟩ := relative_cylinder' j hj.2 hj.1 in
     by convert cof_comp (cof_iso (pushout.unique po.is_pushout po'.is_pushout)) h;
-       apply po.is_pushout.uniqueness; rw ←associativity; simp }
+       apply po.is_pushout.uniqueness; rw ←assoc; simp }
 
 end homotopy_theory.topological_spaces

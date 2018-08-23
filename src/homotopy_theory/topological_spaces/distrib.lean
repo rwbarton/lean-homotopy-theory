@@ -1,6 +1,6 @@
 import for_mathlib
 
-import categories.colimit_lemmas
+import category_theory.colimit_lemmas
 
 import .category
 import .colimits
@@ -15,7 +15,7 @@ The distributivity law in Top: X × Y ⊔ X × Z ≅ X × (Y ⊔ Z).
 -/
 
 open set
-open categories
+open category_theory
 
 universe u
 
@@ -79,10 +79,10 @@ continuous_iff_is_closed.mp continuous_snd _ Z'_closed
 -- TODO: Eliminate duplication with pair.l2
 def XxA_XA {B : Top} (A : set B) :
   homeomorphism (Top.prod X (Top.mk_ob A)) (Top.mk_ob {p : Top.prod X B | p.2 ∈ A}) :=
-{ morphism := Top.mk_hom (λ p, ⟨(p.1, p.2.val), p.2.property⟩) (by continuity),
-  inverse := Top.mk_hom (λ p, (p.val.1, ⟨p.val.2, p.property⟩)) (by continuity),
-  witness_1 := by ext p; rcases p with ⟨x, ⟨b, hb⟩⟩; refl,
-  witness_2 := by ext p; rcases p with ⟨⟨x, b⟩, hb⟩; refl }
+{ hom := Top.mk_hom (λ p, ⟨(p.1, p.2.val), p.2.property⟩) (by continuity),
+  inv := Top.mk_hom (λ p, (p.val.1, ⟨p.val.2, p.property⟩)) (by continuity),
+  hom_inv_id := by ext p; rcases p with ⟨x, ⟨b, hb⟩⟩; refl,
+  inv_hom_id := by ext p; rcases p with ⟨⟨x, b⟩, hb⟩; refl }
 
 def XxY_XY' : homeomorphism (Top.prod X Y) (Top.mk_ob XY) :=
 Y_Y'.prod_congr_right.trans (XxA_XA Y')

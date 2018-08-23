@@ -1,10 +1,10 @@
-import categories.pasting_pushouts
+import category_theory.pasting_pushouts
 import .cofibration_category
 
 universes u v
 
-open categories
-open categories.category
+open category_theory
+open category_theory.category
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
 namespace homotopy_theory.cofibrations
@@ -71,7 +71,7 @@ have is_weq q, from
   weq_of_comp_weq_left this.2 $ by convert (weq_id _); simp,
 have q ∘ j = f, from calc
   q ∘ j = q ∘ po'.map₁ ∘ (coprod_of_maps (𝟙 a) f ∘ i₀)  : by simp
-  ...   = q ∘ (po'.map₁ ∘ coprod_of_maps (𝟙 a) f) ∘ i₀  : by simp only [associativity]
+  ...   = q ∘ (po'.map₁ ∘ coprod_of_maps (𝟙 a) f) ∘ i₀  : by simp only [assoc]
   ...   = q ∘ (po'.map₀ ∘ i) ∘ i₀                : by rw po'.is_pushout.commutes
   ...   = f ∘ ((p ∘ i) ∘ i₀)                     : by simp
   ...   = f ∘ (coprod.induced (𝟙 a) (𝟙 a) ∘ i₀)  : by rw pi

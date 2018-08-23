@@ -1,15 +1,15 @@
-import categories.colimit_lemmas
+import category_theory.colimit_lemmas
 import .definitions
 
 universes u v
 
-open categories
-open categories.category
+open category_theory
+open category_theory.category
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
 namespace homotopy_theory.cofibrations
-open categories.has_initial_object categories.preserves_initial_object
-open categories.preserves_coproducts
+open category_theory.has_initial_object category_theory.preserves_initial_object
+open category_theory.preserves_coproducts
 open homotopy_theory.cylinder
 open I_category
 
@@ -17,7 +17,7 @@ variables {C : Type u} [category.{u v} C] [has_initial_object.{u v} C]
   [has_coproducts.{u v} C] [Icat : I_category.{u v} C]
 include Icat
 
-def Ii_initial : Is_initial_object.{u v} (I +> ∅ : C) :=
+def Ii_initial : Is_initial_object.{u v} (I.obj ∅ : C) :=
 Is_initial_object_of_Is_initial_object.{u v} I
   (initial_object.{u v} C).is_initial_object
 

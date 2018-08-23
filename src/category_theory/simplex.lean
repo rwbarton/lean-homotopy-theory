@@ -1,15 +1,7 @@
 import data.fin order.basic tactic.split_ifs
-import categories.category
+import category_theory.base
 
-open categories
-
-instance (n : ℕ) : decidable_linear_order (fin n) :=
-{ le_refl := λ ⟨i, hi⟩, nat.le_refl i,
-  le_trans := λ ⟨i, hi⟩ ⟨j, hj⟩ ⟨k, hk⟩ hij hjk, nat.le_trans hij hjk,
-  le_antisymm := λ ⟨i, hi⟩ ⟨j, hj⟩ hij hji, fin.eq_of_veq $ nat.le_antisymm hij hji,
-  le_total := λ ⟨i, hi⟩ ⟨j, hj⟩, or.cases_on (@nat.le_total i j) or.inl or.inr,
-  decidable_le := fin.decidable_le,
-  .. fin.has_le, .. }
+open category_theory
 
 def simplex_category := ℕ
 
@@ -35,9 +27,9 @@ instance {m n : Δ} : has_coe_to_fun (order_preserving_map m n) :=
 { F := λ _, m → n, coe := λ f, f.val }
 
 instance : category Δ :=
-{ Hom := order_preserving_map, --λ m n : Δ, {f : m → n // monotone f},
-  identity := λ X, ⟨id, monotone_id⟩,
-  compose := λ _ _ _ f g, ⟨g.val ∘ f.val, monotone_comp f.2 g.2⟩ }
+{ hom := order_preserving_map, --λ m n : Δ, {f : m → n // monotone f},
+  id := λ X, ⟨id, monotone_id⟩,
+  comp := λ _ _ _ f g, ⟨g.val ∘ f.val, monotone_comp f.2 g.2⟩ }
 
 namespace simplex_category
 
@@ -62,7 +54,7 @@ def δ (i : [n+1]) : n ⟶ ((n + 1) : ℕ) :=
   end⟩
 
 /-- The i-th degeneracy map from [n+1] to [n] -/
-def σ (i : [n]) : @category.Hom Δ _ ((n + 1) : ℕ) n :=
+def σ (i : [n]) : @category.hom Δ _ ((n + 1) : ℕ) n :=
 ⟨λ a, if h : a.val ≤ i.val
     then ⟨a.val, lt_of_le_of_lt h i.is_lt⟩
     else ⟨a.val.pred,
@@ -87,7 +79,7 @@ def σ (i : [n]) : @category.Hom Δ _ ((n + 1) : ℕ) n :=
 lemma simplicial_identity₁ {i j : [n+1]} (H : i ≤ j) : δ i ≫ δ j.succ = δ j ≫ δ i.raise :=
 begin
   rw simplex_category.hom_eq2,
-  dsimp [category.compose, function.comp, δ],
+  dsimp [category.comp, function.comp, δ],
   funext a,
   by_cases hja : (j.val ≤ a.val),
   { have hja' : ((fin.succ j).val ≤ (fin.succ a).val) := by simp; exact nat.succ_le_succ hja,

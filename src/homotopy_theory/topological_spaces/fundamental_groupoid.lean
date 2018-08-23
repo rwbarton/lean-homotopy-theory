@@ -1,12 +1,12 @@
-import categories.bundled
-import categories.induced
+import category_theory.bundled
+import category_theory.induced
 import homotopy_theory.formal.cofibrations.track
 import homotopy_theory.formal.i_category.cofibration_category
 import .pi_n
 
 noncomputable theory
 
-open categories
+open category_theory
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
 namespace homotopy_theory.topological_spaces
@@ -31,13 +31,13 @@ induced_functor_gpd _ _
   (by intros; refl)
 
 def Pi₁ : Top ↝ Gpd :=
-{ onObjects := λ X, Gpd.mk_ob (Pi₁_ X),
-  onMorphisms := λ X Y f, Gpd.mk_hom (Pi₁_induced f),
-  identities := λ X, begin
+{ obj := λ X, Gpd.mk_ob (Pi₁_ X),
+  map := λ X Y f, Gpd.mk_hom (Pi₁_induced f),
+  map_id := λ X, begin
     dsimp [Pi₁_induced], simp only [homotopy_class_functor.map_id],
     apply induced_functor_id
   end,
-  functoriality := λ X Y Z f g, begin
+  map_comp := λ X Y Z f g, begin
     dsimp [Gpd.mk_hom, Pi₁_induced, induced_functor_gpd, Gpd.category],
     have : ∀ W : Top, fibrant W := all_objects_fibrant,
     simp only [homotopy_class_functor.map_comp

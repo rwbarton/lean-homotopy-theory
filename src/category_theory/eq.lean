@@ -1,5 +1,5 @@
-import categories.category
-import categories.functor
+import category_theory.base
+import category_theory.functor
 
 /-
 
@@ -28,7 +28,7 @@ universes u v w x
 
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
-namespace categories
+namespace category_theory
 
 variables {C : Type u} [catC : category.{u v} C]
 include catC
@@ -50,34 +50,31 @@ variables {D : Type w} [catD : category.{w x} D]
 include catD
 
 @[simp] lemma id_of_eq.map {a b : C} (F : C ↝ D) (e : a = b) :
-  F &> id_of_eq e = id_of_eq (congr_arg F.onObjects e) :=
+  F &> id_of_eq e = id_of_eq (congr_arg F.obj e) :=
 by cases e; simp
 
 -- Proving equality between functors.
--- TODO: Deduplicate
-infixr ` &> `:85 := functor.Functor.onMorphisms
-
-lemma functor.Functor.ext {F G : C ↝ D}
-  (h_ob : ∀ a, F +> a = G +> a)
+lemma functor.ext {F G : C ↝ D}
+  (h_ob : ∀ a, F a = G a)
   (h_mor : ∀ {a b : C} (f : a ⟶ b),
     id_of_eq (h_ob b) ∘ F &> f = G &> f ∘ id_of_eq (h_ob a)) : F = G :=
 begin
   cases F, cases G,
-  have : F_onObjects = G_onObjects := funext h_ob, subst this,
+  have : F_obj = G_obj := funext h_ob, subst this,
   congr,
   funext a b f,
   have := h_mor f, simp at this, exact this
 end
 
-lemma functor.Functor.hext {F G : C ↝ D}
-  (h_ob : ∀ a, F +> a = G +> a)
+lemma functor.hext {F G : C ↝ D}
+  (h_ob : ∀ a, F a = G a)
   (h_mor : ∀ {a b : C} (f : a ⟶ b), F &> f == G &> f) : F = G :=
 begin
   cases F, cases G,
-  have : F_onObjects = G_onObjects := funext h_ob, subst this,
+  have : F_obj = G_obj := funext h_ob, subst this,
   congr,
   funext a b f,
   have := h_mor f, simp at this, exact this
 end
 
-end categories
+end category_theory

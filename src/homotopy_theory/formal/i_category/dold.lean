@@ -14,13 +14,13 @@ homotopy equivalence under A.
 
 universes u v
 
-open categories
-open categories.category
+open category_theory
+open category_theory.category
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
 namespace homotopy_theory.cofibrations
 section C
-open categories.has_initial_object
+open category_theory.has_initial_object
 open homotopy_theory.cylinder
 open precofibration_category
 open I_category
@@ -46,7 +46,7 @@ let ψhg : homotopy g (g' ∘ g) :=
 have ψhg.H ∘ I &> j = φ'.H, begin
   convert hψ₂ using 1, rw homotopy.eq_rec_on_left,
   change ψ ∘ I &> g ∘ I &> j = ψ ∘ I &> j,
-  rw [←associativity, ←I.functoriality, hg]
+  rw [←assoc, ←I.map_comp, hg]
 end,
 equiv_private.f₁_f₂ j hj homotopy.refl_is_rel 0 this rfl
 
@@ -86,7 +86,7 @@ let ⟨H⟩ := this,
 have f' ≃ f'', from ⟨⟨H', hH'₁, rfl⟩⟩,
 have f'' ∘ j' = j, by dsimp [f'']; rw [i_nat_assoc, hH'₂, H.Hi₁],
 let ⟨h, hh₁, hh₂⟩ :=
-      dold_lemma' hj f f'' (by rw [←associativity, hf, this]) $ calc
+      dold_lemma' hj f f'' (by rw [←assoc, hf, this]) $ calc
         f'' ∘ f ≃ f' ∘ f : ‹f' ≃ f''›.symm.congr_right f
         ...     ≃ 𝟙 x    : hf'₁ in
 have f ∘ h ≃ 𝟙 x', from calc
@@ -96,7 +96,7 @@ have f ∘ h ≃ 𝟙 x', from calc
   ...   ≃ f ∘ 𝟙 x ∘ f''     : (hh₂.forget_rel.congr_left f).congr_right f''
   ...   ≃ f ∘ f'            : by convert ‹f' ≃ f''›.symm.congr_left f; simp
   ...   ≃ 𝟙 x'              : hf'₂,
-have fhj' : f ∘ h ∘ j' = j', by rw [←hf, ←associativity]; congr; simp [hh₁],
+have fhj' : f ∘ h ∘ j' = j', by rw [←hf, ←assoc]; congr; simp [hh₁],
 let ⟨k, hk₁, hk₂⟩ := dold_lemma' hj' h f fhj' this in
 have hk₂' : k ∘ h ≃ 𝟙 x' rel f ∘ h ∘ j', by convert hk₂; exact fhj',
 have hh₂' : h ∘ f ≃ 𝟙 x rel h ∘ j', by convert hh₂; rw [←hf]; simp [hh₁],

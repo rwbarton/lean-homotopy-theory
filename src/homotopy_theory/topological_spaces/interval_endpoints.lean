@@ -1,4 +1,4 @@
-import categories.isomorphism
+import category_theory.isomorphism
 
 import .category
 import .colimits
@@ -10,8 +10,7 @@ noncomputable theory
 
 open set
 
-open categories
-open categories.isomorphism
+open category_theory
 
 namespace homotopy_theory.topological_spaces
 open Top
@@ -21,9 +20,6 @@ local notation `Top` := Top.{0}
 def I01_endpoints : Top := Top.mk_ob ({0, 1} : set I01)
 instance I01_endpoints.has_zero : has_zero I01_endpoints := ⟨⟨0, by simp⟩⟩
 instance I01_endpoints.has_one : has_one I01_endpoints := ⟨⟨1, by simp⟩⟩
-
-local attribute [refl] Isomorphism.refl
-local attribute [trans] Isomorphism.trans
 
 instance Top.point.discrete_space : discrete_space Top.point :=
 { to_topological_space := ⊥,
@@ -84,11 +80,11 @@ end,
 (homeomorphism_to_image_of_embedding this).trans
   (subspace_equiv_subspace rj)
 
-def prod_doubleton {X : Top} : homeomorphism (∂I +> X) (Top.prod X I01_endpoints) :=
+def prod_doubleton {X : Top} : homeomorphism (∂I.obj X) (Top.prod X I01_endpoints) :=
 calc
-  ∂I +> X
-    ≅ ∂I +> Top.prod X Top.point
-    : (∂I).onIsomorphisms (prod_singleton (by refl))
+  ∂I.obj X
+    ≅ ∂I.obj (Top.prod X Top.point)
+    : (∂I).on_isos (prod_singleton (by refl))
 ... ≅ Top.prod X Top.point ⊔ Top.prod X Top.point
     : by refl
 ... ≅ Top.prod X (* ⊔ *)

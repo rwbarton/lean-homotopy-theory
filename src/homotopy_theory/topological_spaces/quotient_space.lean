@@ -1,6 +1,6 @@
 import data.pfun
 
-import categories.colimits
+import category_theory.colimits
 import .category
 import .homeomorphism
 import for_mathlib
@@ -32,7 +32,7 @@ added. When A is nonempty, q : X → X/A is a quotient map.
 
 -/
 
-open categories set
+open category_theory set
 
 universe u
 
@@ -356,10 +356,10 @@ Top.mk_hom (q'_inv i)
 -- The map X-A → X/A - {*} as a homeomorphism.
 def quotient_space.homeomorphism_complement :
   Top.homeomorphism (quotient_space.image_complement i) (quotient_space.minus_base_point i) :=
-{ morphism := quotient_space.map_complement i,
-  inverse := quotient_space.map_complement_inverse i h,
-  witness_1 := Top.hom_eq (q'_equiv i).left_inv,
-  witness_2 := Top.hom_eq (q'_equiv i).right_inv }
+{ hom := quotient_space.map_complement i,
+  inv := quotient_space.map_complement_inverse i h,
+  hom_inv_id := Top.hom_eq (q'_equiv i).left_inv,
+  inv_hom_id := Top.hom_eq (q'_equiv i).right_inv }
 
 end inverse
 

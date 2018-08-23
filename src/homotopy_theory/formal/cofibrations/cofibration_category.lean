@@ -3,7 +3,7 @@ import .precofibration_category
 
 universes u v
 
-open categories
+open category_theory
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
 namespace homotopy_theory.cofibrations

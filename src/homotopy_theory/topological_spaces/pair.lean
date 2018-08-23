@@ -1,4 +1,4 @@
-import categories.colimit_lemmas
+import category_theory.colimit_lemmas
 import homotopy_theory.formal.cylinder.hep
 
 import .category
@@ -12,7 +12,7 @@ noncomputable theory
 
 open set
 
-open categories
+open category_theory
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
 namespace homotopy_theory.topological_spaces
@@ -166,28 +166,28 @@ local notation `XY` := Top.prod X Y
 -- Establish an isomorphism to the intersection-union pushout square
 -- of subspaces of X × Y.
 protected def pair.k : homeomorphism (Top.prod A' B') (Top.mk_ob {p : XY | p.1 ∈ A ∧ p.2 ∈ B}) :=
-{ morphism :=
+{ hom :=
     Top.mk_hom
       (λ p, ⟨(p.1.val, p.2.val), ⟨p.1.property, p.2.property⟩⟩)
       (by continuity),
-  inverse :=
+  inv :=
     Top.mk_hom
       (λ p, (⟨p.val.1, p.property.left⟩, ⟨p.val.2, p.property.right⟩))
       (by continuity),
-  witness_1 := by ext p; rcases p with ⟨⟨a, ha⟩, ⟨b, hb⟩⟩; refl,
-  witness_2 := by ext p; rcases p with ⟨⟨a, b⟩, ⟨ha, hb⟩⟩; refl }
+  hom_inv_id := by ext p; rcases p with ⟨⟨a, ha⟩, ⟨b, hb⟩⟩; refl,
+  inv_hom_id := by ext p; rcases p with ⟨⟨a, b⟩, ⟨ha, hb⟩⟩; refl }
 
 protected def pair.l1 : homeomorphism (Top.prod A' Y) (Top.mk_ob {p : XY | p.1 ∈ A}) :=
-{ morphism := Top.mk_hom (λ p, ⟨(p.1.val, p.2), p.1.property⟩) (by continuity),
-  inverse := Top.mk_hom (λ p, (⟨p.val.1, p.property⟩, p.val.2)) (by continuity),
-  witness_1 := by ext p; rcases p with ⟨⟨a, ha⟩, y⟩; refl,
-  witness_2 := by ext p; rcases p with ⟨⟨a, y⟩, ha⟩; refl }
+{ hom := Top.mk_hom (λ p, ⟨(p.1.val, p.2), p.1.property⟩) (by continuity),
+  inv := Top.mk_hom (λ p, (⟨p.val.1, p.property⟩, p.val.2)) (by continuity),
+  hom_inv_id := by ext p; rcases p with ⟨⟨a, ha⟩, y⟩; refl,
+  inv_hom_id := by ext p; rcases p with ⟨⟨a, y⟩, ha⟩; refl }
 
 protected def pair.l2 : homeomorphism (Top.prod X B') (Top.mk_ob {p : XY | p.2 ∈ B}) :=
-{ morphism := Top.mk_hom (λ p, ⟨(p.1, p.2.val), p.2.property⟩) (by continuity),
-  inverse := Top.mk_hom (λ p, (p.val.1, ⟨p.val.2, p.property⟩)) (by continuity),
-  witness_1 := by ext p; rcases p with ⟨x, ⟨b, hb⟩⟩; refl,
-  witness_2 := by ext p; rcases p with ⟨⟨x, b⟩, hb⟩; refl }
+{ hom := Top.mk_hom (λ p, ⟨(p.1, p.2.val), p.2.property⟩) (by continuity),
+  inv := Top.mk_hom (λ p, (p.val.1, ⟨p.val.2, p.property⟩)) (by continuity),
+  hom_inv_id := by ext p; rcases p with ⟨x, ⟨b, hb⟩⟩; refl,
+  inv_hom_id := by ext p; rcases p with ⟨⟨x, b⟩, hb⟩; refl }
 
 protected def pair.po :
   Is_pushout (pair.i₀ P Q) (pair.i₁ P Q) (pair.j₀ P Q) (pair.j₁ P Q) :=
@@ -229,7 +229,7 @@ have Is_initial_object.{1 0} (pair.empty W).subspace, from
 hep_initial_induced 0 this
   (preserves_initial_object.Is_initial_object_of_Is_initial_object I.{1 0} this)
 
-def pair.admits_retract : Prop := ∃ r : X ⟶ A', r ∘ P.incl = 1
+def pair.admits_retract : Prop := ∃ r : X ⟶ A', r ∘ P.incl = 𝟙 A'
 
 -- A pair (X, A) is cofibered if and only if the inclusion map of the
 -- pair (X × I, A × I ∪ X × {0}) admits a retract.
@@ -261,11 +261,11 @@ variables {P Q}
 -- TODO: Should these be ↔?
 lemma admits_retract_congr (h : P ≅ₚ Q) : P.admits_retract → Q.admits_retract :=
 assume ⟨r, hr⟩,
-⟨h.on_subspaces.morphism ∘ r ∘ h.h.inverse, calc
-  h.on_subspaces.morphism ∘ r ∘ h.h.inverse ∘ Q.incl
-    = h.on_subspaces.morphism ∘ r ∘ h.h.inverse ∘
-      (Q.incl ∘ h.on_subspaces.morphism) ∘ h.on_subspaces.inverse      : by simp
-... = h.on_subspaces.morphism ∘ (r ∘ P.incl) ∘ h.on_subspaces.inverse
+⟨h.on_subspaces.hom ∘ r ∘ h.h.inv, calc
+  h.on_subspaces.hom ∘ r ∘ h.h.inv ∘ Q.incl
+    = h.on_subspaces.hom ∘ r ∘ h.h.inv ∘
+      (Q.incl ∘ h.on_subspaces.hom) ∘ h.on_subspaces.inv      : by simp
+... = h.on_subspaces.hom ∘ (r ∘ P.incl) ∘ h.on_subspaces.inv
     : by simp [pair.homeomorphism.on_subspaces, homeomorphism.restriction_commutes]
 ... = 𝟙 _  : by rw hr; simp⟩
 
@@ -284,13 +284,13 @@ lemma prod_empty_admits_retract (K : Top) :
   P.admits_retract → (P ⊗ pair.empty K).admits_retract :=
 assume ⟨r, hr⟩,
 let r' : Top.prod X K ⟶ (P ⊗ pair.empty K).subspace :=
-  pair.j₀ P (pair.empty K) ∘ Top.prod_maps r 1 in
+  pair.j₀ P (pair.empty K) ∘ Top.prod_maps r (𝟙 K) in
 begin
   existsi r',
-  ext p, rcases p with ⟨⟨a, k⟩, h|⟨⟨⟩⟩⟩,
-  apply subtype.eq,
-  change ((r a).val, k) = (a, k), congr,
-  exact congr_arg subtype.val (@@Top.hom_congr hr ⟨a, h⟩),
+  ext p; rcases p with ⟨⟨a, k⟩, h|⟨⟨⟩⟩⟩,
+  { change (r a).val = a,
+    exact congr_arg subtype.val (@@Top.hom_congr hr ⟨a, h⟩) },
+  { refl }
 end
 
 -- A condition for the product of closed pairs to be
@@ -350,7 +350,7 @@ end smush
 def I_01 := pair.mk I01 {0, 1}
 def I_01_is_D1_S0 : I_01 ≅ₚ unit_disk_sphere ℝ :=
 pair.homeomorphism.mk
-  { morphism :=
+  { hom :=
       Top.mk_hom
         (λ t,
           ⟨2 * t.val - 1,
@@ -360,7 +360,7 @@ pair.homeomorphism.mk
               calc 2 * t.val - 1 ≤ 2 * 1 - 1  : sub_le_sub_right (mul_le_mul_of_nonneg_left t.property.right (by norm_num)) _
                              ... = 1          : by norm_num⟩⟩)
         (by continuity),
-    inverse :=
+    inv :=
       Top.mk_hom
         (λ t,
           ⟨(1 / 2) * (t.val + 1),
@@ -368,13 +368,13 @@ pair.homeomorphism.mk
            calc (1 / 2) * (t.val + 1) ≤ (1 / 2) * (1 + 1)  : mul_le_mul_of_nonneg_left (add_le_add_right (abs_le.mp t.property).right _) (by norm_num)
                                   ... = 1                  : by norm_num⟩)
         (by continuity),
-    witness_1 := begin
-      ext t, apply subtype.eq,
+    hom_inv_id := begin
+      ext t,
       change (1 / 2) * ((2 * t.val - 1) + 1) = t.val,
       ring
     end,
-    witness_2 := begin
-      ext t, apply subtype.eq,
+    inv_hom_id := begin
+      ext t,
       change 2 * ((1 / 2) * (t.val + 1)) - 1 = t.val,
       ring
     end }

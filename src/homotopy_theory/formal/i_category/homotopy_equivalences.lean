@@ -2,7 +2,7 @@ import .homotopy_classes
 
 universes u v
 
-open categories
+open category_theory
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
 namespace homotopy_theory.cofibrations
@@ -30,14 +30,14 @@ lemma homotopy_equivalence_iff {x y : C} {f : x ⟶ y} :
 begin
   split,
   { intro h, cases h with i hi,
-    cases quotient.exists_rep i.inverse with g hg,
+    cases quotient.exists_rep i.inv with g hg,
     existsi g, split; rw homotopic_iff_equal_in_ho,
-    { have := i.witness_1_lemma,
+    { have := i.hom_inv_id,
       rw [hi, ←hg] at this, exact this },
-    { have := i.witness_2_lemma,
+    { have := i.inv_hom_id,
       rw [hi, ←hg] at this, exact this } },
   { intro h, rcases h with ⟨g, h₁, h₂⟩,
-    refine ⟨isomorphism.Isomorphism.mk ⟦f⟧ ⟦g⟧ _ _, rfl⟩;
+    refine ⟨iso.mk ⟦f⟧ ⟦g⟧ _ _, rfl⟩;
     { dsimp [auto_param], change ⟦_⟧ = ⟦_⟧, rw ←homotopic_iff_equal_in_ho,
       exact h₁ <|> exact h₂ } }
 end

@@ -1,11 +1,11 @@
-import categories.category
-import categories.colimit_lemmas
+import category_theory.category
+import category_theory.colimit_lemmas
 import .definitions
 
-open categories
-open categories.category
+open category_theory
+open category_theory.category
 local notation f ` ∘ `:80 g:80 := g ≫ f
-local notation t ` @> `:90 X:90 := t.components X
+local notation t ` @> `:90 X:90 := t.app X
 
 universes u v
 
@@ -16,28 +16,28 @@ include cat
 
 -- Homotopy with respect to a given cylinder functor.
 structure homotopy {x y : C} (f₀ f₁ : x ⟶ y) :=
-(H : I +> x ⟶ y)
+(H : I.obj x ⟶ y)
 (Hi₀ : H ∘ i 0 @> x = f₀)
 (Hi₁ : H ∘ i 1 @> x = f₁)
 
 -- The constant homotopy on a map.
 def homotopy.refl {x y : C} (f : x ⟶ y) : homotopy f f :=
 by refine { H := f ∘ p @> x, Hi₀ := _, Hi₁ := _ };
-   rw [←associativity]; dsimp; simp
+   rw [←assoc]; dsimp; simp
 
 -- The image of a homotopy under a map.
 def homotopy.congr_left {x y y' : C} (g : y ⟶ y') {f₀ f₁ : x ⟶ y} (H : homotopy f₀ f₁) :
   homotopy (g ∘ f₀) (g ∘ f₁) :=
 { H := g ∘ H.H,
-  Hi₀ := by rw [←associativity, H.Hi₀],
-  Hi₁ := by rw [←associativity, H.Hi₁] }
+  Hi₀ := by rw [←assoc, H.Hi₀],
+  Hi₁ := by rw [←assoc, H.Hi₁] }
 
 -- The precomposition of a homotopy by a map.
 def homotopy.congr_right {x' x y : C} (g : x' ⟶ x) {f₀ f₁ : x ⟶ y} (H : homotopy f₀ f₁) :
   homotopy (f₀ ∘ g) (f₁ ∘ g) :=
 { H := H.H ∘ I &> g,
-  Hi₀ := by rw [←associativity, ←(i _).naturality]; simp [H.Hi₀],
-  Hi₁ := by rw [←associativity, ←(i _).naturality]; simp [H.Hi₁] }
+  Hi₀ := by rw [←assoc, ←(i _).naturality]; simp [H.Hi₀],
+  Hi₁ := by rw [←assoc, ←(i _).naturality]; simp [H.Hi₁] }
 
 -- Annoying equality stuff.
 -- If we rewrite the starting point of the homotopy by an equality, it doesn't change H.
@@ -60,7 +60,7 @@ lemma agree_of_is_rel {H : homotopy f₀ f₁} (h : H.is_rel j) : f₀ ∘ j = f
 calc
   f₀ ∘ j
     = (f₀ ∘ j) ∘ (p @> a ∘ i 1 @> a) : by simp
-... = f₀ ∘ j ∘ p @> a ∘ i 1 @> a     : by rw associativity
+... = f₀ ∘ j ∘ p @> a ∘ i 1 @> a     : by rw assoc
 ... = H.H ∘ I &> j ∘ i 1 @> a        : by unfold homotopy.is_rel at h; simp [h]
 ... = H.H ∘ (I &> j ∘ i 1 @> a)      : by simp
 ... = H.H ∘ (i 1 @> x ∘ j)           : by rw ←(i 1).naturality; refl
@@ -68,24 +68,24 @@ calc
 
 lemma homotopy.refl_is_rel {f : x ⟶ y} : (homotopy.refl f).is_rel j :=
 show f ∘ p @> x ∘ I &> j = f ∘ j ∘ p @> a,
-by rw [←associativity, ←associativity, p.naturality]; refl
+by rw [←assoc, ←assoc, p.naturality]; refl
 
 lemma homotopy.congr_left_is_rel {f₀ f₁ : x ⟶ y} {H : homotopy f₀ f₁}
   {z} (g : y ⟶ z) (h : H.is_rel j) : (H.congr_left g).is_rel j :=
 begin
   unfold homotopy.is_rel at ⊢ h, dsimp [homotopy.congr_left] { iota := tt },
-  rw [←associativity, h], simp
+  rw [←assoc, h], simp
 end
 
 lemma homotopy.congr_right_is_rel {f₀ f₁ : x ⟶ y} {H : homotopy f₀ f₁}
   {x'} {j' : a ⟶ x'} (g : x' ⟶ x) (h : H.is_rel (g ∘ j')) : (H.congr_right g).is_rel j' :=
 begin
   unfold homotopy.is_rel at ⊢ h, dsimp [homotopy.congr_right] { iota := tt },
-  rw [←associativity, ←I.functoriality, h], simp
+  rw [←assoc, ←I.map_comp, h], simp
 end
 
 -- In practice, `a` is initial and `I` preserves initial objects.
-lemma homotopy.is_rel_initial (Iai : Is_initial_object.{u v} (I +> a))
+lemma homotopy.is_rel_initial (Iai : Is_initial_object.{u v} (I.obj a))
   (H : homotopy f₀ f₁) : H.is_rel j :=
 Iai.uniqueness _ _
 
@@ -101,7 +101,7 @@ match ε with
 end
 
 def homotopy_dir.H {ε} {x y : C} {fε fεv : x ⟶ y} (H : homotopy_dir ε fε fεv) :
-  I +> x ⟶ y :=
+  I.obj x ⟶ y :=
 match ε, H with
 | 0, H := homotopy.H H
 | 1, H := homotopy.H H
@@ -122,7 +122,7 @@ match ε, H with
 end
 
 def homotopy_dir.mk (ε : endpoint) {x y : C} {fε fεv : x ⟶ y}
-  (H : I +> x ⟶ y) (Hiε : H ∘ i ε @> x = fε) (Hiεv : H ∘ i ε.v @> x = fεv) :
+  (H : I.obj x ⟶ y) (Hiε : H ∘ i ε @> x = fε) (Hiεv : H ∘ i ε.v @> x = fεv) :
   homotopy_dir ε fε fεv :=
 match ε, H, Hiε, Hiεv with
 | 0, H, Hiε, Hiεv := { H := H, Hi₀ := Hiε, Hi₁ := Hiεv }
@@ -167,7 +167,7 @@ assume ⟨H, h⟩, ⟨H.congr_right g, homotopy.congr_right_is_rel g h⟩
 lemma homotopic_rel.forget_rel {a x y : C} {j : a ⟶ x} {f₀ f₁ : x ⟶ y} : f₀ ≃ f₁ rel j → f₀ ≃ f₁ :=
 assume ⟨H, h⟩, ⟨H⟩
 
-lemma homotopic_rel_initial {a x y : C} (Iai : Is_initial_object.{u v} (I +> a))
+lemma homotopic_rel_initial {a x y : C} (Iai : Is_initial_object.{u v} (I.obj a))
   (j : a ⟶ x) (f₀ f₁ : x ⟶ y) : (f₀ ≃ f₁ rel j) = (f₀ ≃ f₁) :=
 propext $ iff.intro
   (assume ⟨H, _⟩, ⟨H⟩)

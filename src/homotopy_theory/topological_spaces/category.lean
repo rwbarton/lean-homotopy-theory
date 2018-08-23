@@ -1,11 +1,11 @@
 import analysis.topology.topological_space
 import analysis.topology.continuity
-import categories.category
-import categories.functor_categories
+import category_theory.base
+import category_theory.functor_category
 
 import .tactic
 
-open categories
+open category_theory
 
 universe u
 
@@ -31,9 +31,9 @@ instance {X Y : Top} : has_coe_to_fun (continuous_map X Y) :=
 { F := λ _, X → Y, coe := λ f, f.val }
 
 instance : category Top :=
-{ Hom := continuous_map,
-  identity := λ X, ⟨id, by continuity⟩,
-  compose := λ _ _ _ f g, ⟨g.val ∘ f.val, by continuity⟩ }
+{ hom := continuous_map,
+  id := λ X, ⟨id, by continuity⟩,
+  comp := λ _ _ _ f g, ⟨g.val ∘ f.val, by continuity⟩ }
 
 protected def mk_ob (α : Type u) [t : topological_space α] : Top := ⟨α, t⟩
 protected def mk_hom {X Y : Top} (f : X → Y) (hf : continuous f . continuity') : X ⟶ Y := subtype.mk f hf
@@ -82,19 +82,19 @@ protected def prod_pt {X Y : Top} (y : Y) : X ⟶ Top.prod X Y :=
 Top.mk_hom (λ x, (x, y)) (by continuity)
 
 protected def product_by (Y : Top) : Top ↝ Top :=
-{ onObjects := λ X, Top.prod X Y,
-  onMorphisms := λ X X' f, Top.prod_maps f 1 }
+{ obj := λ X, Top.prod X Y,
+  map := λ X X' f, Top.prod_maps f (𝟙 Y) }
 
 notation `-×`:35 Y:34 := Top.product_by Y
 
 protected def product_by_trans {Y Y' : Top} (g : Y ⟶ Y') : -×Y ⟶ -×Y' :=
-{ components := λ X, Top.prod_maps 1 g }
+{ app := λ X, Top.prod_maps (𝟙 X) g }
 
-protected def prod_pt_trans {Y : Top} (y : Y) : 1 ⟶ -×Y :=
-{ components := λ X, Top.prod_pt y }
+protected def prod_pt_trans {Y : Top} (y : Y) : functor.id _ ⟶ -×Y :=
+{ app := λ X, Top.prod_pt y }
 
-protected def pr₁_trans {Y : Top} : -×Y ⟶ 1 :=
-{ components := λ X, Top.pr₁ }
+protected def pr₁_trans {Y : Top} : -×Y ⟶ functor.id _ :=
+{ app := λ X, Top.pr₁ }
 
 end product
 

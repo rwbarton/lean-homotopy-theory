@@ -2,8 +2,8 @@ import .homotopy_classes
 
 universes u v
 
-open categories
-open categories.category
+open category_theory
+open category_theory.category
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
 namespace homotopy_theory.cofibrations
@@ -140,11 +140,11 @@ lemma drag_rel_homotopy_induced {x y : C} {u u' : a ⟶ x} (G : homotopy u u') (
   drag_rel_homotopy G g₀ g₁ →
   drag_rel_homotopy (G.congr_left g) (hcer_induced g g₀) (hcer_induced g g₁) :=
 assume ⟨f₀, f₁, hf₀, hf₁, H, hH⟩,
-⟨⟨g ∘ f₀.val, by rw [←associativity, f₀.property]⟩,
- ⟨g ∘ f₁.val, by rw [←associativity, f₁.property]⟩,
+⟨⟨g ∘ f₀.val, by rw [←assoc, f₀.property]⟩,
+ ⟨g ∘ f₁.val, by rw [←assoc, f₁.property]⟩,
  by rw ←hf₀; refl, by rw ←hf₁; refl,
  H.congr_left g,
- by unfold homotopy.congr_left; rw [←associativity, hH]⟩
+ by unfold homotopy.congr_left; rw [←assoc, hH]⟩
 
 lemma drag_equiv_induced {x y : C} {u u' : a ⟶ x} (G : homotopy u u') (g : x ⟶ y)
   (g₀ : homotopy_classes_extending_rel j hj u) :
@@ -171,7 +171,7 @@ quotient.induction_on f $ λ f, begin
   split, exact rfl,
   existsi h.congr_right f.val,
   dsimp [homotopy.congr_right],
-  rw [←associativity, ←I.functoriality, f.property]
+  rw [←assoc, ←I.map_comp, f.property]
 end
 
 end C

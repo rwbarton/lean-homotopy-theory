@@ -1,7 +1,7 @@
 import .category
 import .homeomorphism
 
-open categories
+open category_theory
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
 universe u
@@ -29,10 +29,13 @@ def ptd_map (X Y : Top_ptd) : Type u :=
 instance {X Y : Top_ptd} : has_coe_to_fun (ptd_map X Y) :=
 { F := λ _, X → Y, coe := λ f, f.val.val }
 
+-- TODO: Remove this when `obviously` no longer traces?
+local attribute [obviously] obviously_
+
 instance : category Top_ptd :=
-{ Hom := ptd_map,
-  identity := λ X, ⟨𝟙 X, rfl⟩,
-  compose := λ _ _ _ f g,
+{ hom := ptd_map,
+  id := λ X, ⟨𝟙 X, rfl⟩,
+  comp := λ _ _ _ f g,
     ⟨g.val ∘ f.val,
      show g.val (f.val _) = _, by rw [f.property, g.property]⟩ }
 
@@ -43,12 +46,12 @@ subtype.mk f hf
 
 protected def mk_iso {X Y : Top_ptd} (i : Top.homeomorphism X.space Y.space)
   (hi : i X.pt = Y.pt) : X ≅ Y :=
-{ morphism := ⟨i, hi⟩,
-  inverse := ⟨i.inverse, begin
+{ hom := ⟨i, hi⟩,
+  inv := ⟨i.inv, begin
       rw ←hi, change i.equiv.symm (i.equiv X.pt) = X.pt, simp
     end⟩,
-  witness_1 := subtype.eq i.witness_1,
-  witness_2 := subtype.eq i.witness_2 }
+  hom_inv_id := subtype.eq i.hom_inv_id,
+  inv_hom_id := subtype.eq i.inv_hom_id }
 
 protected def mk_iso' {X Y : Top} (i : Top.homeomorphism X Y) (x : X) :
   Top_ptd.mk_ob X x ≅ Top_ptd.mk_ob Y (i x) :=

@@ -1,5 +1,5 @@
-import categories.colimits
-import categories.colimit_lemmas
+import category_theory.colimits
+import category_theory.colimit_lemmas
 
 import .category
 
@@ -12,7 +12,7 @@ Construction of the basic finite colimits in Top.
 -- TODO: Move this instance to mathlib? But pempty is not from there!
 instance : topological_space pempty := ⊤
 
-open categories
+open category_theory
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
 universe u

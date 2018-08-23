@@ -189,14 +189,14 @@ lemma continuous_smul {β : Type*} [topological_space β]
 
 @[tidy] meta def apply_continuous_smul := `[refine continuous_smul _ _]
 
-@[applicable] lemma continuous_norm : continuous (admissible.norm : V → ℝ) :=
+@[back] lemma continuous_norm : continuous (admissible.norm : V → ℝ) :=
 admissible'.continuous_norm V
 
 lemma continuous_α : continuous α := by unfold α; continuity
 
 section
 local attribute [elab_simple] continuous.comp
-@[applicable] lemma continuous_α_inv : continuous (λ p, (α p).val⁻¹) :=
+@[back] lemma continuous_α_inv : continuous (λ p, (α p).val⁻¹) :=
 continuous.comp continuous_α real.continuous_inv'
 end
 

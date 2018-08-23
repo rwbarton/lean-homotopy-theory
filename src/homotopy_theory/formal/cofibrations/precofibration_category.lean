@@ -1,13 +1,13 @@
-import categories.category
-import categories.colimits
-import categories.colimit_lemmas
-import categories.replete
-import categories.pasting_pushouts
+import category_theory.category
+import category_theory.colimits
+import category_theory.colimit_lemmas
+import category_theory.replete
+import category_theory.pasting_pushouts
 
 universes u v
 
-open categories
-open categories.category
+open category_theory
+open category_theory.category
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
 namespace homotopy_theory.cofibrations
@@ -72,7 +72,7 @@ begin
   convert cof_comp
     (pushout_is_cof (Is_pushout_i₀ j₀) h₀)
     (pushout_is_cof (Is_pushout_i₁ j₁) h₁),
-  apply coprod.uniqueness; { rw ←associativity, simp }
+  apply coprod.uniqueness; { rw ←assoc, simp }
 end
 
 -- Basically the same as above, but in the slice category a/C and for
@@ -89,8 +89,8 @@ have k₁ ∘ po₀.map₀ = g₀', by simp,
 let po₂ := Is_pushout_of_Is_pushout_of_Is_pushout' po₁ (by convert po') (by simp) in
 have k₁ ∘ po₀.map₁ = po.induced (g₀' ∘ h₀) (g₁' ∘ h₁) e, begin
   apply po.uniqueness,
-  { rw [←associativity, ←po₀.is_pushout.commutes], simp },
-  { rw [←associativity, po₂.commutes], simp }
+  { rw [←assoc, ←po₀.is_pushout.commutes], simp },
+  { rw [←assoc, po₂.commutes], simp }
 end,
 by rw ←this;
    exact cof_comp (pushout_is_cof po₀.is_pushout hh₀) (pushout_is_cof po₂.transpose hh₁)

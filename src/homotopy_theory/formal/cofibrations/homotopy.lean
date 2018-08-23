@@ -4,8 +4,8 @@ import .lifting
 
 universes u v
 
-open categories
-open categories.category
+open category_theory
+open category_theory.category
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
 namespace homotopy_theory.cofibrations
@@ -29,7 +29,7 @@ by cases H; cases H'; simpa
 
 def homotopy_on.refl {c : relative_cylinder hj} {x : C} (f : b ⟶ x) :
   homotopy_on c f f :=
-⟨f ∘ c.p, by rw [←associativity, c.pi₀]; simp, by rw [←associativity, c.pi₁]; simp⟩
+⟨f ∘ c.p, by rw [←assoc, c.pi₀]; simp, by rw [←assoc, c.pi₁]; simp⟩
 
 def homotopy_on.symm {c : relative_cylinder hj} {x : C} {f₀ f₁ : b ⟶ x} :
   homotopy_on c f₀ f₁ → homotopy_on c.reverse f₁ f₀ :=
@@ -58,7 +58,7 @@ iff.intro
     let ⟨H', hH'⟩ := fibrant_iff_rlp.mp hx m.acof_k H in
     ⟨⟨H', by rw ←m.hki₀; simp [hH', Hi₀], by rw ←m.hki₁; simp [hH', Hi₁]⟩⟩)
   (assume ⟨⟨H, Hi₀, Hi₁⟩⟩,
-    ⟨⟨H ∘ m.k, by rw [←associativity, m.hki₀, Hi₀], by rw [←associativity, m.hki₁, Hi₁]⟩⟩)
+    ⟨⟨H ∘ m.k, by rw [←assoc, m.hki₀, Hi₀], by rw [←assoc, m.hki₁, Hi₁]⟩⟩)
 
 lemma homotopic_iff (c₀ c₁ : relative_cylinder hj) {x : C} (hx : fibrant x) (f₀ f₁ : b ⟶ x) :
   homotopic_wrt c₀ f₀ f₁ ↔ homotopic_wrt c₁ f₀ f₁ :=
@@ -118,7 +118,7 @@ variables {x y : C} (g : x ⟶ y)
 
 def homotopy_on.congr_left {c : relative_cylinder hj} {f₀ f₁ : b ⟶ x} :
   homotopy_on c f₀ f₁ → homotopy_on c (g ∘ f₀) (g ∘ f₁) :=
-λ H, ⟨g ∘ H.H, by rw [←associativity, H.Hi₀], by rw [←associativity, H.Hi₁]⟩
+λ H, ⟨g ∘ H.H, by rw [←assoc, H.Hi₀], by rw [←assoc, H.Hi₁]⟩
 
 lemma homotopic_rel.congr_left {f₀ f₁ : b ⟶ x} :
   homotopic_rel hj f₀ f₁ → homotopic_rel hj (g ∘ f₀) (g ∘ f₁) :=
@@ -137,8 +137,8 @@ let ⟨c'⟩ := exists_relative_cylinder hj',
     ⟨H'⟩ := (homotopic_iff_of_embedding m hx f₀ f₁).mp H in
 ⟨c',
  ⟨⟨H'.H ∘ m'.k,
-   by rw [←associativity, m'.hki₀, associativity, H'.Hi₀],
-   by rw [←associativity, m'.hki₁, associativity, H'.Hi₁]⟩⟩⟩
+   by rw [←assoc, m'.hki₀, assoc, H'.Hi₀],
+   by rw [←assoc, m'.hki₁, assoc, H'.Hi₁]⟩⟩⟩
 
 end congr_right
 

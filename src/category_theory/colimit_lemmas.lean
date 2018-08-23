@@ -1,4 +1,5 @@
-import categories.isomorphism
+import category_theory.isomorphism
+import category_theory.iso_lemmas
 
 import .colimits
 
@@ -12,11 +13,10 @@ import .colimits
 
 open set
 
-open categories.category
-open categories.isomorphism
+open category_theory.category
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
-namespace categories
+namespace category_theory
 
 universes u v
 
@@ -106,42 +106,42 @@ coprod.induced_commutes₀ _ _
 coprod.induced_commutes₁ _ _
 
 def isomorphic_coprod_of_Is_coproduct {a₀ a₁ b : C} {f₀ : a₀ ⟶ b} {f₁ : a₁ ⟶ b}
-  (h : Is_coproduct f₀ f₁) : Isomorphism (a₀ ⊔ a₁) b :=
-{ morphism := coprod.induced f₀ f₁,
-  inverse := h.induced i₀ i₁,
-  witness_1 := by apply coprod.uniqueness; { rw ←associativity, simp },
-  witness_2 := by apply h.uniqueness; { rw ←associativity, simp } }
+  (h : Is_coproduct f₀ f₁) : iso (a₀ ⊔ a₁) b :=
+{ hom := coprod.induced f₀ f₁,
+  inv := h.induced i₀ i₁,
+  hom_inv_id := by apply coprod.uniqueness; { rw ←assoc, simp },
+  inv_hom_id := by apply h.uniqueness; { rw ←assoc, simp } }
 
-def coprod_of_isomorphisms {a₀ a₁ b₀ b₁ : C} (j₀ : Isomorphism a₀ b₀) (j₁ : Isomorphism a₁ b₁) :
-  Isomorphism (a₀ ⊔ a₁) (b₀ ⊔ b₁) :=
-{ morphism := coprod_of_maps j₀.morphism j₁.morphism,
-  inverse := coprod_of_maps j₀.inverse j₁.inverse,
-  witness_1 := by apply coprod.uniqueness; rw ←associativity; simp,
-  witness_2 := by apply coprod.uniqueness; rw ←associativity; simp }
+def coprod_of_isomorphisms {a₀ a₁ b₀ b₁ : C} (j₀ : iso a₀ b₀) (j₁ : iso a₁ b₁) :
+  iso (a₀ ⊔ a₁) (b₀ ⊔ b₁) :=
+{ hom := coprod_of_maps j₀.hom j₁.hom,
+  inv := coprod_of_maps j₀.inv j₁.inv,
+  hom_inv_id := by apply coprod.uniqueness; rw ←assoc; simp,
+  inv_hom_id := by apply coprod.uniqueness; rw ←assoc; simp }
 
 variables [has_initial_object.{u v} C]
 
 def coprod_initial_right (a : C) : a ≅ a ⊔ ∅ :=
-{ morphism := i₀,
-  inverse := coprod.induced (𝟙 a) (! a),
-  witness_1 := by simp,
-  witness_2 :=
+{ hom := i₀,
+  inv := coprod.induced (𝟙 a) (! a),
+  hom_inv_id := by simp,
+  inv_hom_id :=
     by apply coprod.uniqueness; try { apply initial.uniqueness };
-       rw ←associativity; simp }
+       rw ←assoc; simp }
 
-@[simp] lemma coprod_initial_right_morphism {a : C} :
+@[simp] lemma coprod_initial_right_hom {a : C} :
   (↑(coprod_initial_right a) : a ⟶ a ⊔ ∅) = i₀ :=
 rfl
 
 def coprod_initial_left (a : C) : a ≅ ∅ ⊔ a :=
-{ morphism := i₁,
-  inverse := coprod.induced (! a) (𝟙 a),
-  witness_1 := by simp,
-  witness_2 :=
+{ hom := i₁,
+  inv := coprod.induced (! a) (𝟙 a),
+  hom_inv_id := by simp,
+  inv_hom_id :=
     by apply coprod.uniqueness; try { apply initial.uniqueness };
-       rw ←associativity; simp }
+       rw ←assoc; simp }
 
-@[simp] lemma coprod_initial_left_morphism {a : C} :
+@[simp] lemma coprod_initial_left_hom {a : C} :
   (↑(coprod_initial_left a) : a ⟶ ∅ ⊔ a) = i₁ :=
 rfl
 
@@ -156,8 +156,8 @@ parameters {g₀ : b₀ ⟶ c} {g₁ : b₁ ⟶ c} (po : Is_pushout f₀ f₁ g�
 
 lemma pushout_induced_comp {x y : C} {h₀ : b₀ ⟶ x} {h₁ : b₁ ⟶ x} {k : x ⟶ y} {e} :
   k ∘ po.induced h₀ h₁ e = po.induced (k ∘ h₀) (k ∘ h₁)
-    (by rw [←associativity, ←associativity, e]) :=
-by apply po.uniqueness; rw ←associativity; simp
+    (by rw [←assoc, ←assoc, e]) :=
+by apply po.uniqueness; rw ←assoc; simp
 
 end pushout_induced_comp
 
@@ -172,23 +172,23 @@ def Is_pushout_of_Is_coequalizer
   (H : Is_coequalizer (i₀ ∘ f₀) (i₁ ∘ f₁) (coprod.induced g₀ g₁)) :
   Is_pushout f₀ f₁ g₀ g₁ :=
 Is_pushout.mk'
-  (begin convert H.commutes using 1; rw associativity; simp end)
+  (begin convert H.commutes using 1; rw assoc; simp end)
   (λ x h₀ h₁ e, H.induced (coprod.induced h₀ h₁)
-    (begin rw [associativity, associativity], simpa using e end))
+    (begin rw [assoc, assoc], simpa using e end))
   (assume x h₀ h₁ e,
     -- Weird trick to avoid repeating the proof argument
     (λ p, let K := H.induced (coprod.induced h₀ h₁) p in calc
       K ∘ g₀ = K ∘ (coprod.induced g₀ g₁ ∘ i₀)  : by simp
-      ...    = (K ∘ coprod.induced g₀ g₁) ∘ i₀  : by rw associativity
+      ...    = (K ∘ coprod.induced g₀ g₁) ∘ i₀  : by rw assoc
       ...    = h₀ : by simp) _)
   (assume x h₀ h₁ e,
     (λ p, let K := H.induced (coprod.induced h₀ h₁) p in calc
       K ∘ g₁ = K ∘ (coprod.induced g₀ g₁ ∘ i₁)  : by simp
-      ...    = (K ∘ coprod.induced g₀ g₁) ∘ i₁  : by rw associativity
+      ...    = (K ∘ coprod.induced g₀ g₁) ∘ i₁  : by rw assoc
       ...    = h₁ : by simp) _)
   (assume x k k' e₀ e₁, H.uniqueness $ coprod.uniqueness
-    (by rw [←associativity, ←associativity]; simpa using e₀)
-    (by rw [←associativity, ←associativity]; simpa using e₁))
+    (by rw [←assoc, ←assoc]; simpa using e₀)
+    (by rw [←assoc, ←assoc]; simpa using e₁))
 
 def pushout_of_coequalizer (E : coequalizer (i₀ ∘ f₀) (i₁ ∘ f₁)) : pushout f₀ f₁ :=
 { ob := E.ob,
@@ -213,11 +213,11 @@ include cat
 parameters {a : C} (init : Is_initial_object.{u v} a)
 parameters {a' : C} (init' : Is_initial_object.{u v} a')
 
-def initial_object.unique : Isomorphism a a' :=
-{ morphism := init.induced,
-  inverse := init'.induced,
-  witness_1 := init.uniqueness _ _,
-  witness_2 := init'.uniqueness _ _ }
+def initial_object.unique : iso a a' :=
+{ hom := init.induced,
+  inv := init'.induced,
+  hom_inv_id := init.uniqueness _ _,
+  inv_hom_id := init'.uniqueness _ _ }
 
 end uniqueness_of_initial_objects
 
@@ -232,11 +232,11 @@ parameters {g'₀ : b₀ ⟶ c'} {g'₁ : b₁ ⟶ c'} (po' : Is_pushout f₀ f�
 @[reducible] private def h : c ⟶ c' := po.induced g'₀ g'₁ po'.commutes
 @[reducible] private def h' : c' ⟶ c := po'.induced g₀ g₁ po.commutes
 
-def pushout.unique : Isomorphism c c' :=
-{ morphism := h,
-  inverse := h',
-  witness_1 := by apply po.uniqueness; {rw ←category.associativity, simp},
-  witness_2 := by apply po'.uniqueness; {rw ←category.associativity, simp} }
+def pushout.unique : iso c c' :=
+{ hom := h,
+  inv := h',
+  hom_inv_id := by apply po.uniqueness; {rw ←category.assoc, simp},
+  inv_hom_id := by apply po'.uniqueness; {rw ←category.assoc, simp} }
 
 @[simp] lemma pushout.unique_commutes₀ : ↑pushout.unique ∘ g₀ = g'₀ :=
 by apply po.induced_commutes₀
@@ -271,18 +271,18 @@ parameters {C : Type u} [cat : category.{u v} C]
 include cat
 
 -- TODO: Move this somewhere?
-def precomposition_bij {a' a x : C} (i : Isomorphism a' a) :
+def precomposition_bij {a' a x : C} (i : iso a' a) :
   Bij_on (λ (k : a ⟶ x), (k ∘ ↑i : a' ⟶ x)) univ univ :=
 Bij_on.of_equiv $ show (a ⟶ x) ≃ (a' ⟶ x), from
-{ to_fun := λ k, k ∘ i.morphism,
-  inv_fun := λ k', k' ∘ i.inverse,
+{ to_fun := λ k, k ∘ i.hom,
+  inv_fun := λ k', k' ∘ i.inv,
   left_inv := λ k, by simp,
   right_inv := λ k', by simp }
 
 parameters {a b₀ b₁ c : C} {f₀ : a ⟶ b₀} {f₁ : a ⟶ b₁}
 parameters {g₀ : b₀ ⟶ c} {g₁ : b₁ ⟶ c} (po : Is_pushout f₀ f₁ g₀ g₁)
 parameters {a' b'₀ b'₁ : C} (f'₀ : a' ⟶ b'₀) (f'₁ : a' ⟶ b'₁)
-parameters (i : Isomorphism a' a) (j₀ : Isomorphism b'₀ b₀) (j₁ : Isomorphism b'₁ b₁)
+parameters (i : iso a' a) (j₀ : iso b'₀ b₀) (j₁ : iso b'₁ b₁)
 parameters (e₀ : f₀ ∘ ↑i = j₀ ∘ f'₀) (e₁ : f₁ ∘ ↑i = j₁ ∘ f'₁)
 
 include e₀ e₁
@@ -294,7 +294,7 @@ Is_pushout.mk $ λ x,
   ...  ~~ {p : (b₀ ⟶ x) × (b₁ ⟶ x) | (p.1 ∘ ↑j₀) ∘ f'₀ = (p.2 ∘ ↑j₁) ∘ f'₁}
        : begin
            convert Bij_on.refl _, funext p, apply propext,
-           rw [←associativity, ←associativity, ←e₀, ←e₁], simp
+           rw [←assoc, ←assoc, ←e₀, ←e₁], simp
          end
   ...  ~~ {p : (b'₀ ⟶ x) × (b'₁ ⟶ x) | p.1 ∘ f'₀ = p.2 ∘ f'₁}
        : Bij_on.restrict''
@@ -303,7 +303,7 @@ Is_pushout.mk $ λ x,
   by convert this; funext; simp
 omit e₀ e₁
 
-parameters {c' : C} (k : Isomorphism c c')
+parameters {c' : C} (k : iso c c')
 
 def Is_pushout_of_isomorphic' : Is_pushout f₀ f₁ ((k : c ⟶ c') ∘ g₀) ((k : c ⟶ c') ∘ g₁) :=
 Is_pushout.mk $ λ x,
@@ -406,7 +406,7 @@ Is_pushout.mk $ λ x,
   begin
     convert Bij_on.refl _,
     ext qq, change _ = _ ↔ _ = _ ∧ _ = _,
-    rw [coprod.ext, ←associativity, ←associativity, ←associativity, ←associativity],
+    rw [coprod.ext, ←assoc, ←assoc, ←assoc, ←assoc],
     simp
   end
   ...  ~~ {qq : (b₀ ⊔ b₀' ⟶ x) × (b₁ ⊔ b₁' ⟶ x)
@@ -421,13 +421,13 @@ Is_pushout.mk $ λ x,
     convert this,
     funext k, apply prod.ext; apply coprod.uniqueness;
     { change _ ∘ _ ∘ _ = _ ∘ _, simp [coproduct_comparison],
-      rw ←associativity, simp, refl },
+      rw ←assoc, simp, refl },
   end
 
 end coprod_of_pushouts
 
-@[simp] lemma Isomorphism.refl_morphism {C : Type u} [category C] {a : C} :
-  (↑(Isomorphism.refl a) : a ⟶ a) = 𝟙 a :=
+@[simp] lemma iso.refl_hom {C : Type u} [category C] {a : C} :
+  (↑(iso.refl a) : a ⟶ a) = 𝟙 a :=
 rfl
 
 section pushout_i
@@ -447,7 +447,7 @@ parameters {a b c : C} (f : a ⟶ b)
 def Is_pushout_i₀ : Is_pushout f i₀ i₀ (coprod_of_maps f (𝟙 c)) :=
 let po := Is_pushout_coprod (Is_pushout.refl f) (Is_pushout.refl (! c)).transpose in
 by convert Is_pushout_of_isomorphic po f i₀
-     (coprod_initial_right a) (coprod_initial_right b) (Isomorphism.refl _) _ _; simp
+     (coprod_initial_right a) (coprod_initial_right b) (iso.refl _) _ _; simp
 
 /-
   a → c ⊔ a
@@ -458,7 +458,7 @@ by convert Is_pushout_of_isomorphic po f i₀
 def Is_pushout_i₁ : Is_pushout f i₁ i₁ (coprod_of_maps (𝟙 c) f) :=
 let po := Is_pushout_coprod (Is_pushout.refl (! c)).transpose (Is_pushout.refl f) in
 by convert Is_pushout_of_isomorphic po f i₁
-     (coprod_initial_left a) (coprod_initial_left b) (Isomorphism.refl _) _ _; simp
+     (coprod_initial_left a) (coprod_initial_left b) (iso.refl _) _ _; simp
 
 end pushout_i
 
@@ -470,14 +470,14 @@ parameters {a b c : C} {f : a ⟶ b} {g₀ g₁ : b ⟶ c} (po : Is_pushout f f 
 def Is_pushout.swap : c ⟶ c := po.induced g₁ g₀ po.commutes.symm
 
 def Is_pushout.swap_iso : c ≅ c :=
-{ morphism := po.swap,
-  inverse := po.swap,
-  witness_1 := by apply po.uniqueness; unfold Is_pushout.swap; rw ←associativity; simp,
-  witness_2 := by apply po.uniqueness; unfold Is_pushout.swap; rw ←associativity; simp }
+{ hom := po.swap,
+  inv := po.swap,
+  hom_inv_id := by apply po.uniqueness; unfold Is_pushout.swap; rw ←assoc; simp,
+  inv_hom_id := by apply po.uniqueness; unfold Is_pushout.swap; rw ←assoc; simp }
 
 @[simp] def Is_pushout.induced_swap {x} {h₀ h₁ : b ⟶ x} {p p'} :
   po.induced h₀ h₁ p ∘ po.swap = po.induced h₁ h₀ p' :=
-by apply po.uniqueness; unfold Is_pushout.swap; rw ←associativity; simp
+by apply po.uniqueness; unfold Is_pushout.swap; rw ←assoc; simp
 
 end pushout_swap
 
@@ -494,16 +494,16 @@ include po po' h₀ h₁
 
 def pushout_of_maps : c ⟶ c' :=
 po.induced (g₀' ∘ hb₀) (g₁' ∘ hb₁)
-  (by rw [←associativity, ←associativity, h₀, h₁]; simp [po'.commutes])
+  (by rw [←assoc, ←assoc, h₀, h₁]; simp [po'.commutes])
 
 def induced_pushout_of_maps {x : C} {k₀ : b₀' ⟶ x} {k₁ : b₁' ⟶ x} {e} :
   po'.induced k₀ k₁ e ∘ pushout_of_maps = po.induced (k₀ ∘ hb₀) (k₁ ∘ hb₁)
-    (by rw [←associativity, ←associativity, h₀, h₁]; simp [e]) :=
+    (by rw [←assoc, ←assoc, h₀, h₁]; simp [e]) :=
 begin
   unfold pushout_of_maps,
-  apply po.uniqueness; { rw ←associativity, simp }
+  apply po.uniqueness; { rw ←assoc, simp }
 end
 
 end pushout_of_maps
 
-end categories
+end category_theory

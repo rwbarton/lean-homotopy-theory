@@ -2,8 +2,8 @@ import .cofibration_category
 
 universes u v
 
-open categories
-open categories.category
+open category_theory
+open category_theory.category
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
 namespace homotopy_theory.cofibrations
@@ -35,7 +35,7 @@ iff.intro
   (assume h a b j hj f, 
     let po := pushout_by_cof j f hj.1,
         ⟨r, hr⟩ := h (pushout_is_acof po.is_pushout hj) in
-    ⟨r ∘ po.map₀, by rw [←associativity, po.is_pushout.commutes]; simp [hr]⟩)
+    ⟨r ∘ po.map₀, by rw [←assoc, po.is_pushout.commutes]; simp [hr]⟩)
   (assume h y j hj, h hj (𝟙 x))
 
 end homotopy_theory.cofibrations

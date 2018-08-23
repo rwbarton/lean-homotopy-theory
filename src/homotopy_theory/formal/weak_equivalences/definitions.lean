@@ -1,8 +1,9 @@
-import categories.category
-import categories.replete
+import category_theory.base
+import category_theory.iso_lemmas
+import category_theory.replete
 
-open categories
-open categories.category
+open category_theory
+open category_theory.category
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
 universes u v
@@ -66,9 +67,9 @@ section isomorphisms
 variables {C : Type u} [cat : category.{u v} C]
 include cat
 
-def is_iso ⦃a b : C⦄ (f : a ⟶ b) : Prop := ∃ i : a ≅ b, i.morphism = f
+def is_iso ⦃a b : C⦄ (f : a ⟶ b) : Prop := ∃ i : a ≅ b, i.hom = f
 
-lemma iso_iso ⦃a b : C⦄ (i : a ≅ b) : is_iso i.morphism := ⟨i, rfl⟩
+lemma iso_iso ⦃a b : C⦄ (i : a ≅ b) : is_iso i.hom := ⟨i, rfl⟩
 lemma iso_comp ⦃a b c : C⦄ {f : a ⟶ b} {g : b ⟶ c} :
   is_iso f → is_iso g → is_iso (g ∘ f) :=
 assume ⟨i, hi⟩ ⟨j, hj⟩, ⟨i.trans j, by rw [←hi, ←hj]; refl⟩
@@ -76,19 +77,19 @@ assume ⟨i, hi⟩ ⟨j, hj⟩, ⟨i.trans j, by rw [←hi, ←hj]; refl⟩
 lemma iso_of_comp_iso_left ⦃a b c : C⦄ {f : a ⟶ b} {g : b ⟶ c} :
   is_iso f → is_iso (g ∘ f) → is_iso g :=
 assume ⟨i, hi⟩ ⟨j, hj⟩,
-  ⟨i.symm.trans j, show j.morphism ∘ i.inverse = g, by rw [hj, ←hi]; simp⟩
+  ⟨i.symm.trans j, show j.hom ∘ i.inv = g, by rw [hj, ←hi]; simp⟩
 lemma iso_of_comp_iso_right ⦃a b c : C⦄ {f : a ⟶ b} {g : b ⟶ c} :
   is_iso g → is_iso (g ∘ f) → is_iso f :=
 assume ⟨i, hi⟩ ⟨j, hj⟩,
-  ⟨j.trans i.symm, show i.inverse ∘ j.morphism = f, by rw [hj, ←hi]; simp⟩
+  ⟨j.trans i.symm, show i.inv ∘ j.hom = f, by rw [hj, ←hi]; simp⟩
 
 lemma iso_two_out_of_six ⦃a b c d : C⦄ {f : a ⟶ b} {g : b ⟶ c} {h : c ⟶ d} :
   is_iso (h ∘ g) → is_iso (g ∘ f) → is_iso g :=
 assume ⟨i, hi⟩ ⟨j, hj⟩,
-  let g' := i.inverse ∘ h in
-  have g'g : g' ∘ g = 𝟙 _, by rw [←associativity, ←hi]; simp,
-  let g'' := f ∘ j.inverse in
-  have gg'' : g ∘ g'' = 𝟙 _, by rw [associativity, ←hj]; simp,
+  let g' := i.inv ∘ h in
+  have g'g : g' ∘ g = 𝟙 _, by rw [←assoc, ←hi]; simp,
+  let g'' := f ∘ j.inv in
+  have gg'' : g ∘ g'' = 𝟙 _, by rw [assoc, ←hj]; simp,
   have g' = g'', from calc
     g' = g' ∘ (g ∘ g'')  : by rw gg''; simp
    ... = (g' ∘ g) ∘ g''  : by simp
@@ -121,19 +122,19 @@ def preimage_weq (weqD : has_weak_equivalences D) : has_weak_equivalences C :=
 instance preimage_weq.replete_wide_subcategory [weqD : category_with_weak_equivalences D] :
   replete_wide_subcategory.{u v} C (preimage_weq F weqD.to_has_weak_equivalences).is_weq :=
 replete_wide_subcategory.mk'
-    (λ a b i, weq_iso (F.onIsomorphisms i))
+    (λ a b i, weq_iso (F.on_isos i))
     (λ a b c f g hf hg, show is_weq (F &> (g ∘ f)),
-      by rw F.functoriality; exact weq_comp hf hg)
+      by rw F.map_comp; exact weq_comp hf hg)
 
 def preimage_with_weak_equivalences [weqD : category_with_weak_equivalences D] :
   category_with_weak_equivalences C :=
 { to_has_weak_equivalences := preimage_weq F weqD.to_has_weak_equivalences,
   weq_of_comp_weq_left := λ a b c f g hf hgf, begin
-    change is_weq (F &> (g ∘ f)) at hgf, rw F.functoriality at hgf,
+    change is_weq (F &> (g ∘ f)) at hgf, rw F.map_comp at hgf,
     exact category_with_weak_equivalences.weq_of_comp_weq_left hf hgf
   end,
   weq_of_comp_weq_right := λ a b c f g hg hgf, begin
-    change is_weq (F &> (g ∘ f)) at hgf, rw F.functoriality at hgf,
+    change is_weq (F &> (g ∘ f)) at hgf, rw F.map_comp at hgf,
     exact category_with_weak_equivalences.weq_of_comp_weq_right hg hgf
   end }
 

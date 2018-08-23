@@ -1,4 +1,4 @@
-import categories.category
+import category_theory.category
 import data.is_equiv
 import data.bij_on
 
@@ -51,10 +51,10 @@ constructors and lemmas.
 
 -- TODO: "first-order" lemmas for the other notions besides coequalizers
 
-open categories.category
+open category_theory.category
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
-namespace categories
+namespace category_theory
 section
 
 universes u v
@@ -202,7 +202,7 @@ variables (commutes : g ∘ f₀ = g ∘ f₁)
 -- is the same as giving a map b ⟶ x whose two pullback to a ⟶ x
 -- agree.
 def coequalizer_comparison (x : C) : (c ⟶ x) → {h : b ⟶ x // h ∘ f₀ = h ∘ f₁} :=
-λ k, ⟨k ∘ g, have _ := commutes, by rw [←associativity, ←associativity, this]⟩
+λ k, ⟨k ∘ g, have _ := commutes, by rw [←assoc, ←assoc, this]⟩
 
 parameters (f₀ f₁ g)
 -- The (constructive) property of being a coequalizer diagram.
@@ -271,7 +271,7 @@ parameters {a b₀ b₁ c : C} {f₀ : a ⟶ b₀} {f₁ : a ⟶ b₁} {g₀ : b
 -- a ⟶ x agree.
 def pushout_comparison (commutes : g₀ ∘ f₀ = g₁ ∘ f₁) (x : C) :
   (c ⟶ x) → {p : (b₀ ⟶ x) × (b₁ ⟶ x) // p.1 ∘ f₀ = p.2 ∘ f₁} :=
-λ k, ⟨(k ∘ g₀, k ∘ g₁), have _ := commutes, by rw [←associativity, ←associativity, this]⟩
+λ k, ⟨(k ∘ g₀, k ∘ g₁), have _ := commutes, by rw [←assoc, ←assoc, this]⟩
 
 parameters (f₀ f₁ g₀ g₁)
 -- The (constructive) property of being a pushout.
@@ -345,4 +345,4 @@ end pushout
 
 
 end
-end categories
+end category_theory

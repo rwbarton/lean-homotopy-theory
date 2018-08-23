@@ -1,6 +1,6 @@
 import .category
 
-open categories
+open category_theory
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
 universe u

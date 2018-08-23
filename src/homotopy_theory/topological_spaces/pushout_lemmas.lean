@@ -2,7 +2,7 @@ import .colimits
 import .homeomorphism
 import .quotient_space
 import .subspace
-import categories.pasting_pushouts
+import category_theory.pasting_pushouts
 
 /-
 
@@ -32,8 +32,7 @@ j, and in this case g induces a homeomorphism X - A → Y - B.
 
 open set
 
-open categories
-open categories.isomorphism
+open category_theory
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
 universe u
@@ -140,7 +139,7 @@ calc
   ... ≅ Y/B₋ : h'
   ... ≅ Y-B  : (quotient_space.homeomorphism_complement j hyp').symm
 
-lemma g'_g : incl _ ∘ g'.morphism = g ∘ incl _ :=
+lemma g'_g : incl _ ∘ g'.hom = g ∘ incl _ :=
 rfl
 
 parameters {C : Top} {k : C ⟶ X} (hk : embedding k) (hik : range i ∩ range k = ∅)
@@ -149,7 +148,7 @@ def k' : C ⟶ X-A :=
 factor_through_incl k _ (subset_compl_comm.mp $ subset_compl_iff_disjoint.mpr hik)
 
 theorem comp_embedding_of_embedding_of_disjoint : embedding (g ∘ k) :=
-show embedding (incl _ ∘ g'.morphism ∘ k'), from
+show embedding (incl _ ∘ g'.hom ∘ k'), from
 have embedding k', from embedding_of_embedding_comp (incl _) hk,
 embedding_compose this (embedding_compose g'.embedding (embedding_incl _))
 

@@ -1,4 +1,4 @@
-import categories.colimit_lemmas
+import category_theory.colimit_lemmas
 import homotopy_theory.formal.cofibrations.cofibration_category
 import homotopy_theory.formal.cofibrations.cylinder
 import homotopy_theory.formal.cofibrations.factorization_from_cylinder
@@ -7,9 +7,8 @@ import .dold
 
 universes u v
 
-open categories
-open categories.category
-open categories.isomorphism
+open category_theory
+open category_theory.category
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
 namespace homotopy_theory.cofibrations
@@ -35,38 +34,38 @@ instance I_category.cofibration_category : cofibration_category.{u v} C :=
 cofibration_category.mk_from_cylinder
   (assume a b a' b' f g f' g' po ⟨fc, fw⟩,
     ⟨precofibration_category.pushout_is_cof po fc, pushout_is_acof po fc fw⟩)
-  (assume a, ⟨I +> a, ii @> a, p @> a, cof_ii a, heq_p, pii⟩)
+  (assume a, ⟨I.obj a, ii @> a, p @> a, cof_ii a, heq_p, pii⟩)
   (assume x, ⟨x, 𝟙 x, ⟨cof_id x, weq_id x⟩, all_objects_fibrant x⟩)
 
 -- The functor I produces cylinder objects in the general sense of
 -- cofibration categories.
 def canonical_cylinder (b : C) :
   relative_cylinder (all_objects_cofibrant.cofibrant.{u v} b) :=
-⟨I +> b,
+⟨I.obj b,
  (pushout_by_cof (!b) (!b) _).is_pushout.induced (i 0 @> b) (i 1 @> b)
-   (categories.initial.uniqueness _ _),
+   (category_theory.initial.uniqueness _ _),
  p @> b,
  -- We proved ii : b ⊔ b → Ib is a cofibration; need to massage this
  -- into a map from the pushout over the initial object.
  let po := pushout_by_cof (!b) (!b) (all_objects_cofibrant.cofibrant.{u v} b),
      -- The map we need to show is a cofibration
      ii' := po.is_pushout.induced (i 0 @> b) (i 1 @> b)
-       (categories.initial.uniqueness _ _),
+       (category_theory.initial.uniqueness _ _),
      c : Is_coproduct po.map₀ po.map₁ :=
        Is_coproduct_of_Is_pushout_of_Is_initial po.is_pushout
          (has_initial_object.initial_object.{u v} C).is_initial_object,
-     j : Isomorphism (b ⊔ b) po.ob := isomorphic_coprod_of_Is_coproduct c in
- have ii' ∘ j.morphism = ii @> b, begin
+     j : iso (b ⊔ b) po.ob := isomorphic_coprod_of_Is_coproduct c in
+ have ii' ∘ j.hom = ii @> b, begin
    dsimp [j, isomorphic_coprod_of_Is_coproduct];
-   apply coprod.uniqueness; rw ←associativity; simp [ii]
+   apply coprod.uniqueness; rw ←assoc; simp [ii]
  end,
- have ii' = ii @> b ∘ j.inverse, by rw ←this; simp,
+ have ii' = ii @> b ∘ j.inv, by rw ←this; simp,
  show is_cof ii',
  by rw this; exact cof_comp (cof_iso j.symm) (cof_ii b),
  heq_p,
  begin
    apply (pushout_by_cof (!b) (!b) _).is_pushout.uniqueness;
-   { rw ←associativity, simp }
+   { rw ←assoc, simp }
  end⟩
 
 -- TODO: Relative cylinders?

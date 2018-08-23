@@ -1,5 +1,5 @@
 import analysis.real
-import categories.adjunctions
+import category_theory.adjunctions
 import tactic.norm_num
 
 import homotopy_theory.formal.cylinder.definitions
@@ -8,7 +8,7 @@ import .exponentiable
 
 noncomputable theory
 
-open categories
+open category_theory
 open homotopy_theory.cylinder
 
 namespace homotopy_theory.topological_spaces
@@ -47,8 +47,6 @@ Top.mk_hom
   (λ t, ⟨1 - t.val, sub_nonneg_of_le t.property.right, sub_le_self 1 t.property.left⟩)
   (by continuity)
 
-local attribute [extensionality] natural_transformation.NaturalTransformations_componentwise_equal
-
 instance : has_cylinder_with_involution Top :=
 { I := -×I01,
   i := λ ε, Top.prod_pt_trans (I01_of_endpoint ε),
@@ -64,8 +62,11 @@ instance : has_cylinder_with_involution Top :=
   end,
   pv := rfl }
 
+-- TODO: Remove this when `obviously` no longer traces?
+local attribute [obviously] obviously_
+
 instance : cylinder_has_interchange.{1 0} Top :=
-{ T := { components := λ X, Top.mk_hom (λ q, ((q.1.1, q.2), q.1.2)) (by continuity) },
+{ T := { app := λ X, Top.mk_hom (λ q, ((q.1.1, q.2), q.1.2)) (by continuity) },
   Ti := by intros ε X; ext p; refl,
   TIi := by intros ε X; ext p; cases p; refl }
 

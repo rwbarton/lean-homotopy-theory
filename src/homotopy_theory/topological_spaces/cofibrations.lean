@@ -1,4 +1,4 @@
-import categories.isomorphism
+import category_theory.isomorphism
 import homotopy_theory.formal.cylinder.hep
 
 import .category
@@ -10,9 +10,8 @@ import .pushout_lemmas
 
 open set
 
-open categories
-open categories.category
-open categories.isomorphism
+open category_theory
+open category_theory.category
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
 open homotopy_theory.cylinder
@@ -83,11 +82,11 @@ end
 lemma embedding_of_cofibration (h : cofibration j) : embedding j :=
 let po := has_pushouts.pushout (i 0 @> A) j,
     Z := po.ob,
-    k : Z ⟶ I +> X :=
+    k : Z ⟶ I.obj X :=
       po.is_pushout.induced (I &> j) (i 0 @> X) ((i 0).naturality _).symm,
     ⟨r, hr₀, hr₁⟩ := h Z po.map₁ po.map₀ po.is_pushout.commutes.symm in
 have _ := hr₀.symm,
-have hr : r ∘ k = 1, by apply po.is_pushout.uniqueness; { rw ←associativity, simpa },
+have hr : r ∘ k = 𝟙 _, by apply po.is_pushout.uniqueness; { rw ←assoc, simpa },
 have e_z_ix : embedding k, from
   embedding_of_embedding_comp r (by rw hr; exact embedding_id),
 have e_a_z : embedding (po.map₀ ∘ i 1 @> A), from
@@ -109,7 +108,7 @@ let j' := Top.factor_through_incl j (range j) (subset.refl _) in
 show hep 0 j ↔ hep 0 _, from
 mem_iff_mem_of_isomorphic
   (homeomorphism_to_image_of_embedding e)
-  (Isomorphism.refl X)
+  (iso.refl X)
   (by ext p; refl)
 
 lemma cofibration_iff_cofibered :
@@ -134,7 +133,7 @@ let j_ : homeomorphism A P.subspace :=
   homeomorphism_to_image_of_embedding (embedding_of_cofibration hj) in
 let po := pair.po P I_01 ha I_01.is_closed in
 let po' := Is_pushout_of_isomorphic po.transpose (∂I &> j) (ii @> A)
-  ((∂I.onIsomorphisms j_).trans prod_doubleton) prod_doubleton (I.onIsomorphisms j_)
+  ((∂I.on_isos j_).trans prod_doubleton) prod_doubleton (I.on_isos j_)
   (by apply coprod.uniqueness; refl)
   (by apply coprod.uniqueness; refl) in
 let ind := po'.induced (ii @> X) (I &> j) (ii.naturality _) in

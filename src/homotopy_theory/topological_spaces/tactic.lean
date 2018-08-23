@@ -1,7 +1,7 @@
 import analysis.topology.topological_structures
 import tidy.tidy
 
-attribute [applicable]
+attribute [back]
   continuous_id
   continuous_subtype_val
   continuous_fst continuous_snd
@@ -44,7 +44,7 @@ open tactic
 
 meta def continuity_tactics : list (tactic string) :=
 [
-  applicable                             >>= λ n, pure ("apply " ++ n.to_string),
+  backwards_reasoning,
   automatic_induction,
   tactic.interactive.apply_assumption    >> pure "apply_assumption",
   run_tidy_tactics

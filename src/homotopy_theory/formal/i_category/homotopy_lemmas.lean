@@ -4,8 +4,8 @@ import .lemmas
 
 universes u v
 
-open categories
-open categories.category
+open category_theory
+open category_theory.category
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
 namespace homotopy_theory.cofibrations
@@ -13,8 +13,8 @@ open homotopy_theory.cylinder
 
 namespace equiv_private
 section
-open categories.has_initial_object categories.preserves_initial_object
-open categories.preserves_coproducts
+open category_theory.has_initial_object category_theory.preserves_initial_object
+open category_theory.preserves_coproducts
 open precofibration_category I_category
 
 /-
@@ -40,7 +40,7 @@ include Icat
 
 parameters {a b : C} (j : a ⟶ b) (hj : is_cof j)
 parameters {x : C} {f₀ f₀' f₁ f₁' : b ⟶ x}
-parameters {G : I +> a ⟶ x}
+parameters {G : I.obj a ⟶ x}
 parameters {H₀ : homotopy f₀ f₀'} (h₀ : H₀.is_rel j)
 
 -- Furthermore, we generalize over the direction of the homotopies
@@ -68,24 +68,24 @@ I_of_coprod_is_coproduct
 def Ib_Ib : Is_coproduct (I &> (i₀ : b ⟶ b ⊔ b)) (I &> (i₁ : b ⟶ b ⊔ b)) :=
 I_of_coprod_is_coproduct
 -- Thus, we can "glue" the homotopies H and H' to form a map I(b ⊔ b) → X.
-def HH' : I +> (b ⊔ b) ⟶ x :=
+def HH' : I.obj (b ⊔ b) ⟶ x :=
 Ib_Ib.induced H.H H'.H
 -- Because the homotopies agree on a, the restriction of this map to I(a ⊔ a)
 -- extends to a map I(Ia) → X. Then we get an induced map on I(b ⊔ₐ Ia ⊔ₐ b).
-def GIp : I +> I +> a ⟶ x := G ∘ I &> (p @> a)
+def GIp : I.obj (I.obj a) ⟶ x := G ∘ I &> (p @> a)
 
 include h h'
-def HH'' : I +> b_Ia_b ⟶ x :=
+def HH'' : I.obj b_Ia_b ⟶ x :=
 Ipo.induced HH' GIp $
   -- This is a bit awful
   begin
     apply Ia_Ia.uniqueness;
-    rw [←associativity, ←associativity, ←I.functoriality, ←I.functoriality];
+    rw [←assoc, ←assoc, ←I.map_comp, ←I.map_comp];
     change
       _ ∘ I &> (coprod_of_maps j j ∘ _) =
       _ ∘ I &> (coprod.induced (i 0 @> a) (i 1 @> a) ∘ _);
     simp [HH', GIp]; rw h <|> rw h';
-    rw [←associativity, ←I.functoriality]; simp
+    rw [←assoc, ←I.map_comp]; simp
   end
 omit h h'
 
@@ -103,7 +103,7 @@ begin
   { rw i_nat_assoc,
     apply coprod.uniqueness;
     { simp, erw i_nat_assoc, simp,
-      rw t, unfold j' ii, simp, rw ←associativity, simp,
+      rw t, unfold j' ii, simp, rw ←assoc, simp,
       rw H₀.Hi₀ <|> rw H₀.Hi₁,
       rw H.Hiε <|> rw H'.Hiε } },
   { rw [i_nat_assoc, t], unfold j' GIp, simp,
@@ -113,30 +113,30 @@ end
 omit h₀
 
 -- Now we can apply the homotopy extension property of j'
-lemma Ex_E : ∃ (E : I +> (I +> b) ⟶ x),
-  E ∘ i ε @> (I +> b) = H₀.H ∧ E ∘ I &> j' = HH'' :=
+lemma Ex_E : ∃ (E : I.obj (I.obj b) ⟶ x),
+  E ∘ i ε @> (I.obj b) = H₀.H ∧ E ∘ I &> j' = HH'' :=
 hep_cof j' (relative_cylinder j hj) ε _ _ _ HH''iε
 
 section E
-parameters (E : I +> (I +> b) ⟶ x)
-  (hE : E ∘ i ε @> (I +> b) = H₀.H ∧ E ∘ I &> j' = HH'')
+parameters (E : I.obj (I.obj b) ⟶ x)
+  (hE : E ∘ i ε @> I.obj b = H₀.H ∧ E ∘ I &> j' = HH'')
 -- Now E ∘ i ε.v is supposed to be a homotopy from f₁ to f₁' rel j.
 
 include hE
 lemma Eiεvi_ :
-  E ∘ i ε.v @> (I +> b) ∘ i 0 @> b = f₁ ∧
-  E ∘ i ε.v @> (I +> b) ∘ i 1 @> b = f₁' :=
+  E ∘ i ε.v @> I.obj b ∘ i 0 @> b = f₁ ∧
+  E ∘ i ε.v @> I.obj b ∘ i 1 @> b = f₁' :=
 have
-  i.{u v} ε.v @> (I +> b) ∘ i 0 @> b = I &> j' ∘ I &> Po.map₀ ∘ i ε.v @> _ ∘ i₀ ∧
-  i.{u v} ε.v @> (I +> b) ∘ i 1 @> b = I &> j' ∘ I &> Po.map₀ ∘ i ε.v @> _ ∘ i₁, begin
+  i.{u v} ε.v @> I.obj b ∘ i 0 @> b = I &> j' ∘ I &> Po.map₀ ∘ i ε.v @> _ ∘ i₀ ∧
+  i.{u v} ε.v @> I.obj b ∘ i 1 @> b = I &> j' ∘ I &> Po.map₀ ∘ i ε.v @> _ ∘ i₁, begin
   split;
-  { rw ←I.functoriality, unfold j', simp, erw i_nat_assoc,
-    rw ←I.functoriality, unfold ii, simp,
+  { rw ←I.map_comp, unfold j', simp, erw i_nat_assoc,
+    rw ←I.map_comp, unfold ii, simp,
     apply (i _).naturality }
 end,
 begin
   split;
-  { rw ←associativity, rw this.1 <|> rw this.2,
+  { rw ←assoc, rw this.1 <|> rw this.2,
     simp [hE.2, HH'', HH'],
     erw i_nat_assoc, dsimp, simp,
     -- dsimp: coprod vs (has_coproducts.coproduct _ _).ob?
@@ -144,17 +144,16 @@ begin
 end
 
 def Eiε : homotopy f₁ f₁' :=
-{ H := E ∘ i ε.v @> (I +> b), Hi₀ := Eiεvi_.1, Hi₁ := Eiεvi_.2 }
+{ H := E ∘ i ε.v @> I.obj b, Hi₀ := Eiεvi_.1, Hi₁ := Eiεvi_.2 }
 
-local attribute [elab_simple] functor.Functor.onMorphisms
 lemma Eiε_is_rel : Eiε.is_rel j :=
-have i ε.v @> (I +> b) ∘ I &> j = I &> j' ∘ I &> Po.map₁ ∘ _, begin
-  rw ←I.functoriality, unfold j', simp,
+have i ε.v @> I.obj b ∘ I &> j = I &> j' ∘ I &> Po.map₁ ∘ _, begin
+  rw ←I.map_comp, unfold j', simp,
   rw ←(i ε.v).naturality, refl
 end,
 begin
   dsimp [homotopy.is_rel, Eiε] { iota := tt },
-  rw [←associativity, this], simp [hE.2, HH'', GIp],
+  rw [←assoc, this], simp [hE.2, HH'', GIp],
   rw [←h, ←i_nat_assoc, ←i_nat_assoc, H.Hiεv]
 end
 

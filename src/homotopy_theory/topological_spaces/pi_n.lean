@@ -1,5 +1,5 @@
-import categories.isomorphism
-import categories.types
+import category_theory.isomorphism
+import category_theory.types
 import homotopy_theory.formal.i_category.homotopy_classes
 import homotopy_theory.formal.i_category.drag
 
@@ -9,8 +9,7 @@ import .pointed
 
 noncomputable theory
 
-open categories
-open categories.isomorphism
+open category_theory (hiding is_iso)
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
 namespace homotopy_theory.topological_spaces
@@ -28,7 +27,7 @@ local notation `[` A `, ` X `]` := homotopy_classes A X
 -- corepresented on the homotopy category by *.
 
 def π₀ : Top ↝ Set :=
-{ onObjects := λ X, [*, X], onMorphisms := λ X Y f x, ⟦f⟧ ∘ x }
+{ obj := λ X, [*, X], map := λ X Y f x, ⟦f⟧ ∘ x }
 
 -- We define πₙ(X, x) as the set of homotopy classes of maps D[n] → X
 -- which send S[n-1] to x, rel S[n-1].
@@ -53,11 +52,11 @@ lemma π_induced_comp (n : ℕ) {X Y Z : Top} (x : X) (f : X ⟶ Y) (g : Y ⟶ Z
 by funext a; induction a using quot.ind; change ⟦_⟧ = ⟦_⟧; simp; refl
 
 def π (n : ℕ) : Top_ptd ↝ Set :=
-{ onObjects := λ Xx, π_ n Xx.space Xx.pt,
-  onMorphisms := λ Xx Yy f,
+{ obj := λ Xx, π_ n Xx.space Xx.pt,
+  map := λ Xx Yy f,
     by convert π_induced n Xx.pt f.val; rw f.property,
-  identities := assume Xx, π_induced_id n Xx.pt,
-  functoriality := assume Xx Yy Zz f g, begin
+  map_id := assume Xx, π_induced_id n Xx.pt,
+  map_comp := assume Xx Yy Zz f g, begin
     -- This is tricky because the action of π on a morphism f involves
     -- recursion on the equality `f.property` : f x = y. We need to
     -- arrange for z and then y to be "free", i.e., not mentioned
@@ -86,17 +85,17 @@ H.congr_right (Top.const x)
 
 -- TODO: Move this
 def iso_of_equiv {X Y : Set} (e : X ≃ Y) : X ≅ Y :=
-{ morphism := e.to_fun,
-  inverse := e.inv_fun,
-  witness_1 := funext e.left_inv,
-  witness_2 := funext e.right_inv }
+{ hom := e.to_fun,
+  inv := e.inv_fun,
+  hom_inv_id := funext e.left_inv,
+  inv_hom_id := funext e.right_inv }
 
 def change_of_basepoint (n : ℕ) {X : Top} {x x' : X} (γ : path x x') : π_ n X x ≅ π_ n X x' :=
 iso_of_equiv $ drag_equiv (γ.congr_right S[n-1].point_induced)
 
 lemma change_of_basepoint_induced (n : ℕ) {X Y : Top} {x x' : X} (γ : path x x') (f : X ⟶ Y) :
-  π_induced n x' f ∘ (change_of_basepoint n γ).morphism =
-  (change_of_basepoint n (γ.induced f)).morphism ∘ π_induced n x f :=
+  π_induced n x' f ∘ (change_of_basepoint n γ).hom =
+  (change_of_basepoint n (γ.induced f)).hom ∘ π_induced n x f :=
 funext $ drag_equiv_induced _ _
 
 lemma π₀_induced_homotopic {X Y : Top} {f f' : X ⟶ Y} (h : f ≃ f') :
@@ -107,7 +106,7 @@ funext $ λ x, show ⟦f⟧ ∘ x = ⟦f'⟧ ∘ x, by rw this
 -- Homotopic maps induce the same map on πₙ, up to change-of-basepoint
 -- identifications.
 lemma π_induced_homotopic (n : ℕ) {X Y : Top} (x : X) {f f' : X ⟶ Y} (H : homotopy f f') :
-  (change_of_basepoint n (path_of_homotopy x H)).morphism ∘ π_induced n x f =
+  (change_of_basepoint n (path_of_homotopy x H)).hom ∘ π_induced n x f =
   π_induced n x f' :=
 funext $ hcer_induced_homotopic _
 

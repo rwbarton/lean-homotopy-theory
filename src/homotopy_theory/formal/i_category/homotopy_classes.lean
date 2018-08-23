@@ -1,10 +1,10 @@
-import categories.congruence
+import category_theory.congruence
 import .homotopy_lemmas
 
 universes u v
 
-open categories
-open categories.category
+open category_theory
+open category_theory.category
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
 namespace homotopy_theory.cofibrations
@@ -23,7 +23,7 @@ congruence.mk' (λ a b, homotopic_is_equivalence)
   (λ a b c f g g', homotopic.congr_right f)
 
 @[reducible] def homotopy_classes (a b : C) : Type v :=
-@Hom (category_mod_congruence C homotopy_congruence) _ a b
+@hom (category_mod_congruence C homotopy_congruence) _ a b
 
 variables {a b : C} {j : a ⟶ b} (hj : is_cof j) {x : C} (u : a ⟶ x)
 include hj
@@ -46,7 +46,7 @@ variables {y : C} (g : x ⟶ y) {j hj u}
 -- TODO: naming
 def hcer_induced : homotopy_classes_extending_rel j hj u → homotopy_classes_extending_rel j hj (g ∘ u) :=
 λ f, quotient.lift_on f
-  (λ f, (⟦⟨g ∘ f.val, by rw [←associativity, f.property]⟩⟧ : homotopy_classes_extending_rel j hj (g ∘ u)))
+  (λ f, (⟦⟨g ∘ f.val, by rw [←assoc, f.property]⟩⟧ : homotopy_classes_extending_rel j hj (g ∘ u)))
   (assume f f' H, quotient.sound (H.congr_left g))
 end
 

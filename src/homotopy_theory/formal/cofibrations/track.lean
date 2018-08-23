@@ -1,13 +1,13 @@
-import categories.assoc_pushouts
-import categories.eq
-import categories.groupoid
-import categories.transport
+import category_theory.assoc_pushouts
+import category_theory.eq
+import category_theory.groupoid
+import category_theory.transport
 import .homotopy
 
 universes u v
 
-open categories
-open categories.category
+open category_theory
+open category_theory.category
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
 namespace homotopy_theory.cofibrations
@@ -50,7 +50,7 @@ def homotopy_extension.trans {t₀ t₁ t₂ : homotopy hj f₀ f₁}
   (m₀ : homotopy_extension t₀ t₁) (m₁ : homotopy_extension t₁ t₂) :
   homotopy_extension t₀ t₂ :=
 ⟨m₀.m.trans m₁.m,
- by dsimp [cylinder_embedding.trans]; rw [associativity, m₁.e, m₀.e]⟩
+ by dsimp [cylinder_embedding.trans]; rw [assoc, m₁.e, m₀.e]⟩
 
 def homotopy_extension.pushout {t t₀ t₁ : homotopy hj f₀ f₁}
   (m₀ : homotopy_extension t t₀) (m₁ : homotopy_extension t t₁) :
@@ -132,8 +132,8 @@ quot.sound $
   let c₀ := chosen_cylinder hj,
       ⟨⟨c', m₀, m₁⟩⟩ := exists_common_embedding c₀ c in
   ⟨⟨c', homotopy_on.refl f⟩,
-   ⟨m₀, show f ∘ c'.p ∘ m₀.k = f ∘ c₀.p, by rw [←associativity, m₀.hpk]⟩,
-   ⟨m₁, show f ∘ c'.p ∘ m₁.k = f ∘ c.p, by rw [←associativity, m₁.hpk]⟩, ⟨⟩⟩
+   ⟨m₀, show f ∘ c'.p ∘ m₀.k = f ∘ c₀.p, by rw [←assoc, m₀.hpk]⟩,
+   ⟨m₁, show f ∘ c'.p ∘ m₁.k = f ∘ c.p, by rw [←assoc, m₁.hpk]⟩, ⟨⟩⟩
 
 local attribute [elab_with_expected_type] quotient.lift_on quotient.lift_on₂
 
@@ -151,13 +151,13 @@ def track.trans {f₀ f₁ f₂ : b ⟶ x} : track hj f₀ f₁ → track hj f�
      ⟨m₀₀.m.glue m₁₀.m,
       begin
         apply (pushout_by_cof t₀.c.i₁ t₁.c.i₀ t₀.c.acof_i₁.1).is_pushout.uniqueness;
-        dsimp [homotopy_on.trans, cylinder_embedding.glue]; rw ←associativity;
+        dsimp [homotopy_on.trans, cylinder_embedding.glue]; rw ←assoc;
         simp [m₀₀.e, m₁₀.e],
       end⟩,
      ⟨m₀₁.m.glue m₁₁.m,
       begin
         apply (pushout_by_cof t₀'.c.i₁ t₁'.c.i₀ t₀'.c.acof_i₁.1).is_pushout.uniqueness;
-        dsimp [homotopy_on.trans, cylinder_embedding.glue]; rw ←associativity;
+        dsimp [homotopy_on.trans, cylinder_embedding.glue]; rw ←assoc;
         simp [m₀₁.e, m₁₁.e],
       end⟩, ⟨⟩⟩)
 
@@ -173,22 +173,22 @@ quotient.induction_on t $ λ ⟨c₁, h⟩, quotient.sound $
       c₀ := c.glue c₁,
       p' : c₀.ob ⟶ c₁.ob :=
         (pushout_by_cof c.i₁ c₁.i₀ c.acof_i₁.1).is_pushout.induced
-          (c₁.i₀ ∘ c.p) (𝟙 c₁.ob) (by rw [←associativity, c.pi₁]; simp),
+          (c₁.i₀ ∘ c.p) (𝟙 c₁.ob) (by rw [←assoc, c.pi₁]; simp),
       po := pushout_by_cof c₀.ii c₁.ii c₀.hii,
       pp := po.is_pushout.induced p' (𝟙 c₁.ob) $ begin
         apply (pushout_by_cof j j hj).is_pushout.uniqueness,
-        { rw [←associativity, ←associativity], change _ ∘ c₀.i₀ = _ ∘ c₁.i₀, simp,
-          rw [←associativity, c.pi₀], simp },
-        { rw [←associativity, ←associativity], change _ ∘ c₀.i₁ = _ ∘ c₁.i₁, simp }
+        { rw [←assoc, ←assoc], change _ ∘ c₀.i₀ = _ ∘ c₁.i₀, simp,
+          rw [←assoc, c.pi₀], simp },
+        { rw [←assoc, ←assoc], change _ ∘ c₀.i₁ = _ ∘ c₁.i₁, simp }
       end,
       ⟨c'_ob, l, q', hl, hq', q'l⟩ := factorization pp,
       cem :=
         common_embedding_of_factorization c₀ c₁ po c'_ob l (c₁.p ∘ q')
           hl (weq_comp hq' c₁.hp) $ begin
-            rw [←associativity, q'l],
-            apply po.is_pushout.uniqueness; rw ←associativity; simp,
+            rw [←assoc, q'l],
+            apply po.is_pushout.uniqueness; rw ←assoc; simp,
             apply (pushout_by_cof c.i₁ c₁.i₀ c.acof_i₁.1).is_pushout.uniqueness;
-              rw ←associativity; simp; change _ = Is_pushout.induced _ _ _ _ ∘ _,
+              rw ←assoc; simp; change _ = Is_pushout.induced _ _ _ _ ∘ _,
             { simp [c₁.pi₀] }, { simp },
           end,
       h' : homotopy_on cem.c' f₀ f₁ :=
@@ -212,7 +212,7 @@ quotient.induction_on t $ λ ⟨c₁, h⟩, quotient.sound $
     ... = (homotopy_on.trans (homotopy_on.refl f₀) h).H  : begin
       unfold homotopy_on.trans homotopy_on.refl,
       apply (pushout_by_cof c.i₁ c₁.i₀ c.acof_i₁.1).is_pushout.uniqueness;
-        rw ←associativity; simp [h.Hi₀]
+        rw ←assoc; simp [h.Hi₀]
     end⟩,
    ⟨cem.m₁, calc
       h.H ∘ q' ∘ (l ∘ po.map₁)
@@ -231,24 +231,24 @@ quotient.induction_on t $ λ ⟨c, h⟩, quotient.sound $
       c₀ := c.reverse.glue c,
       p' : c₀.ob ⟶ c.ob :=
         (pushout_by_cof c.reverse.i₁ c.i₀ c.reverse.acof_i₁.1).is_pushout.induced
-          (𝟙 c.ob) (𝟙 c.ob) (by simp; erw right_identity_lemma), -- Yuck
+          (𝟙 c.ob) (𝟙 c.ob) (by simp; erw comp_id_lemma), -- Yuck
       po := pushout_by_cof c₀.ii c₁.ii c₀.hii,
       pp := po.is_pushout.induced p' (c.i₁ ∘ c₁.p) $ begin
         apply (pushout_by_cof j j hj).is_pushout.uniqueness;
-          rw [←associativity, ←associativity],
+          rw [←assoc, ←assoc],
         { change _ ∘ c₀.i₀ = _ ∘ c₁.i₀, simp,
-          erw [←associativity, c₁.pi₀, right_identity_lemma], simp },
-        { change _ ∘ c₀.i₁ = _ ∘ c₁.i₁, simp, rw [←associativity, c₁.pi₁], simp }
+          erw [←assoc, c₁.pi₀, comp_id_lemma], simp },
+        { change _ ∘ c₀.i₁ = _ ∘ c₁.i₁, simp, rw [←assoc, c₁.pi₁], simp }
       end,
       ⟨c'_ob, l, q', hl, hq', q'l⟩ := factorization pp,
       cem :=
         common_embedding_of_factorization c₀ c₁ po c'_ob l (c.p ∘ q')
           hl (weq_comp hq' c.hp) $ begin
-            rw [←associativity, q'l],
-            apply po.is_pushout.uniqueness; rw ←associativity; simp,
+            rw [←assoc, q'l],
+            apply po.is_pushout.uniqueness; rw ←assoc; simp,
             apply (pushout_by_cof c.reverse.i₁ c.i₀ c.reverse.acof_i₁.1).is_pushout.uniqueness;
-              rw ←associativity; simp; change _ = Is_pushout.induced _ _ _ _ ∘ _,
-            { erw [left_identity_lemma, Is_pushout.induced_commutes₀], refl },
+              rw ←assoc; simp; change _ = Is_pushout.induced _ _ _ _ ∘ _,
+            { erw [id_comp_lemma, Is_pushout.induced_commutes₀], refl },
             { simp },
             { simp [c.pi₁] }    -- What is this even for?
           end,
@@ -273,7 +273,7 @@ quotient.induction_on t $ λ ⟨c, h⟩, quotient.sound $
     ... = (homotopy_on.trans h.symm h).H  : begin
       unfold homotopy_on.trans homotopy_on.symm,
       apply (pushout_by_cof c.reverse.i₁ c.i₀ c.reverse.acof_i₁.1).is_pushout.uniqueness;
-        rw ←associativity; simp; erw left_identity_lemma
+        rw ←assoc; simp; erw id_comp_lemma
     end⟩,
    ⟨cem.m₁, calc
       h.H ∘ q' ∘ (l ∘ po.map₁)
@@ -290,10 +290,10 @@ lemma track.inverse_inverse {f₀ f₁ : b ⟶ x} {t : track hj f₀ f₁} :
 -- heterogeneous equality between the homotopies, it's easier to just
 -- use `homotopy_equiv_of_iso`.
 quotient.induction_on t $ λ t, quotient.sound $ homotopy_equiv_of_iso $
-  ⟨isomorphism.Isomorphism.refl _,
+  ⟨iso.refl _,
    by apply (pushout_by_cof j j hj).is_pushout.uniqueness;
       dsimp [relative_cylinder.reverse, Is_pushout.swap];
-      rw [←associativity, ←associativity, ←associativity]; simp,
+      rw [←assoc, ←assoc, ←assoc]; simp,
    by dsimp [relative_cylinder.reverse]; simp,
    by simp [homotopy_on.symm]⟩
 
@@ -311,7 +311,7 @@ quotient.induction_on₃ t₀ t₁ t₂ $ λ t₀ t₁ t₂, quotient.sound $ ho
      (pushout_by_cof t₁.c.i₁ t₂.c.i₀ t₁.c.acof_i₁.1).is_pushout
      (by convert (pushout_by_cof t₀.c.i₁ (t₁.c.glue t₂.c).i₀ _).is_pushout using 1; simp),
    begin
-     apply (pushout_by_cof j j hj).is_pushout.uniqueness; rw ←associativity,
+     apply (pushout_by_cof j j hj).is_pushout.uniqueness; rw ←assoc,
      { change _ ∘ relative_cylinder.i₀ _ = relative_cylinder.i₀ _, simp },
      { change _ ∘ relative_cylinder.i₁ _ = relative_cylinder.i₁ _, simp }
    end,
@@ -342,16 +342,16 @@ def track_groupoid_rel := b ⟶ x
 end
 
 noncomputable instance : groupoid (track_groupoid_rel hj x) :=
-{ Hom := λ f₀ f₁, track hj f₀ f₁,
-  identity := λ f, track.refl f,
-  compose := λ f₀ f₁ f₂ t₀ t₁, t₀.trans t₁,
-  inverse := λ f₀ f₁ t, t.symm,
+{ hom := λ f₀ f₁, track hj f₀ f₁,
+  id := λ f, track.refl f,
+  comp := λ f₀ f₁ f₂ t₀ t₁, t₀.trans t₁,
+  inv := λ f₀ f₁ t, t.symm,
 
-  left_identity := λ f₀ f₁, track.left_identity,
-  right_identity := λ f₀ f₁, track.right_identity,
-  associativity := λ f₀ f₁ f₂ f₃, track.assoc,
-  left_inverse := λ f₀ f₁, track.left_inverse,
-  right_inverse := λ f₀ f₁, track.right_inverse }
+  id_comp := λ f₀ f₁, track.left_identity,
+  comp_id := λ f₀ f₁, track.right_identity,
+  assoc := λ f₀ f₁ f₂ f₃, track.assoc,
+  inv_comp := λ f₀ f₁, track.left_inverse,
+  comp_inv := λ f₀ f₁, track.right_inverse }
 
 section functoriality
 
@@ -363,23 +363,23 @@ quotient.lift_on t
   (λ t, ⟦⟨t.c, t.h.congr_left hj g⟩⟧)
   (λ t t' ⟨t'', m₀, m₁, ⟨⟩⟩, quotient.sound
      ⟨⟨t''.c, t''.h.congr_left hj g⟩,
-      ⟨m₀.m, show (g ∘ _) ∘ _ = _, by rw [←associativity, m₀.e]; refl⟩,
-      ⟨m₁.m, show (g ∘ _) ∘ _ = _, by rw [←associativity, m₁.e]; refl⟩,
+      ⟨m₀.m, show (g ∘ _) ∘ _ = _, by rw [←assoc, m₀.e]; refl⟩,
+      ⟨m₁.m, show (g ∘ _) ∘ _ = _, by rw [←assoc, m₁.e]; refl⟩,
       ⟨⟩⟩)
 
 noncomputable def track_groupoid_rel_functor {y} (g : x ⟶ y) :
   track_groupoid_rel hj x ↝ track_groupoid_rel hj y :=
-{ onObjects := λ f, g ∘ f,
-  onMorphisms := λ f₀ f₁ t, t.congr_left g,
-  identities := λ f,
+{ obj := λ f, g ∘ f,
+  map := λ f₀ f₁ t, t.congr_left g,
+  map_id := λ f,
     show (track.refl f).congr_left g = track.refl (g ∘ f),
     begin
       apply congr_arg quotient.mk,
       unfold homotopy_on.refl homotopy_on.congr_left,
       congr' 2,
-      rw ←associativity, refl
+      rw ←assoc, refl
     end,
-  functoriality := λ f₀ f₁ f₂ t₀ t₁,
+  map_comp := λ f₀ f₁ f₂ t₀ t₁,
     show (t₀.trans t₁).congr_left g = (t₀.congr_left g).trans (t₁.congr_left g),
     begin
       induction t₀ using quot.ind,
@@ -444,10 +444,10 @@ assume ⟨c', ⟨⟨H, Hi₀, Hi₁⟩⟩⟩, quotient.sound $
          ... = _                            : c.pii⟩ in
   ⟨⟨c'',
    ⟨H,
-    show H ∘ (c'.i₀ ∘ c.ii ∘ _) = _, by simp [Hi₀]; rw ←associativity; exact h₀.Hi₀,
-    show H ∘ (c'.i₀ ∘ c.ii ∘ _) = _, by simp [Hi₀]; rw ←associativity; exact h₀.Hi₁⟩⟩,
-   ⟨⟨c'.i₀, c'.acof_i₀.1, rfl, by rw ←associativity; simp [c'.pi₀]⟩, Hi₀⟩,
-   ⟨⟨c'.i₁, c'.acof_i₁.1, c'.ij.symm, by rw ←associativity; simp [c'.pi₁]⟩, Hi₁⟩, ⟨⟩⟩
+    show H ∘ (c'.i₀ ∘ c.ii ∘ _) = _, by simp [Hi₀]; rw ←assoc; exact h₀.Hi₀,
+    show H ∘ (c'.i₀ ∘ c.ii ∘ _) = _, by simp [Hi₀]; rw ←assoc; exact h₀.Hi₁⟩⟩,
+   ⟨⟨c'.i₀, c'.acof_i₀.1, rfl, by rw ←assoc; simp [c'.pi₀]⟩, Hi₀⟩,
+   ⟨⟨c'.i₁, c'.acof_i₁.1, c'.ij.symm, by rw ←assoc; simp [c'.pi₁]⟩, Hi₁⟩, ⟨⟩⟩
 
 local attribute [elab_with_expected_type] quotient.lift
 def track_of_homotopy_class : homotopy_up_to_homotopy c g₀ g₁ → track hj g₀ g₁ :=
@@ -463,13 +463,13 @@ quotient.induction_on t $ λ ⟨c', ⟨H, Hi₀, Hi₁⟩⟩,
   let ⟨⟨c'', m₀, m₁⟩⟩ := exists_common_embedding c c',
       ⟨H', hH'⟩ := fibrant_iff_rlp.mp hx m₁.acof_k H in
   ⟨⟦⟨H' ∘ m₀.k,
-     by rw [←associativity, m₀.hki₀, ←m₁.hki₀, associativity, hH', Hi₀],
-     by rw [←associativity, m₀.hki₁, ←m₁.hki₁, associativity, hH', Hi₁]⟩⟧,
+     by rw [←assoc, m₀.hki₀, ←m₁.hki₀, assoc, hH', Hi₀],
+     by rw [←assoc, m₀.hki₁, ←m₁.hki₁, assoc, hH', Hi₁]⟩⟧,
    quotient.sound
      ⟨⟨c'',
       ⟨H',
-       by rw [←m₁.hki₀, associativity, hH', Hi₀],
-       by rw [←m₁.hki₁, associativity, hH', Hi₁]⟩⟩,
+       by rw [←m₁.hki₀, assoc, hH', Hi₀],
+       by rw [←m₁.hki₁, assoc, hH', Hi₁]⟩⟩,
       ⟨m₀, rfl⟩, ⟨m₁, hH'⟩, ⟨⟩⟩⟩
 
 set_option eqn_compiler.zeta true
@@ -483,7 +483,7 @@ quotient.induction_on₂ h₀ h₁ $ λ h₀ h₁ e, quotient.sound $
           ((pushout_by_cof c.ii c.ii c.hii).is_pushout.induced
             m₀.m.k m₁.m.k (by rw [m₀.m.hkii, m₁.m.hkii])) c'.hii,
       p' := po.is_pushout.induced (c.p ∘ c'.p) t'.c.p $ begin
-         rw [←associativity, c'.pii],
+         rw [←assoc, c'.pii],
          rw [pushout_induced_comp, pushout_induced_comp], congr' 1,
          { simp [m₀.m.hpk] }, { simp [m₁.m.hpk] }
       end,
@@ -493,12 +493,12 @@ quotient.induction_on₂ h₀ h₁ $ λ h₀ h₁ e, quotient.sound $
      weq_of_comp_weq_right hq (by convert t'.c.hp; simp [ql])⟩,
   let ⟨H', hH'⟩ := fibrant_iff_rlp.mp hx this t'.h.H in
   begin
-    rw associativity at hH',
+    rw assoc at hH',
     refine ⟨c', ⟨⟨H' ∘ l ∘ po.map₀, _, _⟩⟩⟩;
-    { change _ ∘ _ ∘ _ ∘ (_ ∘ _) = _, rw associativity,
-      conv { to_lhs, congr, skip, rw ←associativity },
+    { change _ ∘ _ ∘ _ ∘ (_ ∘ _) = _, rw assoc,
+      conv { to_lhs, congr, skip, rw ←assoc },
       rw po.is_pushout.commutes,
-      simp [hH'], rw ←associativity, simp [m₀.e, m₁.e] }
+      simp [hH'], rw ←assoc, simp [m₀.e, m₁.e] }
   end
 
 variables (c)
@@ -537,7 +537,7 @@ quotient.lift_on h
 
 noncomputable def homotopy_class_functor :
   homotopy_class_groupoid hj c hx ↝ homotopy_class_groupoid hj c hy :=
-show @functor.Functor
+show @category_theory.functor
   _ (homotopy_class_groupoid.category c hx)
   _ (homotopy_class_groupoid.category c hy), from
 transported_functor
@@ -545,19 +545,17 @@ transported_functor
   (λ g₀ g₁, (homotopy_class_equiv_track c hy).symm)
   (track_groupoid_rel_functor k)
 
-lemma homotopy_class_functor.onObjects {g : homotopy_class_groupoid hj c hx} :
-  homotopy_class_functor hx hy k +> g = k ∘ g :=
+lemma homotopy_class_functor.obj {g : homotopy_class_groupoid hj c hx} :
+  (homotopy_class_functor hx hy k).obj g = k ∘ g :=
 rfl
 
-lemma homotopy_class_functor.onMorphisms {g₀ g₁ : homotopy_class_groupoid hj c hx}
+lemma homotopy_class_functor.hom {g₀ g₁ : homotopy_class_groupoid hj c hx}
   {h : g₀ ⟶ g₁} : homotopy_class_functor hx hy k &> h = h.congr_left k :=
 quotient.induction_on h $ λ h,
 begin
   dsimp [homotopy_class_functor, transported_functor],
   rw equiv.apply_eq_iff_eq_inverse_apply,
   rw [equiv.symm_symm, equiv.symm_symm],
-  dsimp [homotopy_class_equiv_track],
-  rw [equiv.of_bijective_to_fun, equiv.of_bijective_to_fun],
   refl
 end
 
@@ -575,28 +573,28 @@ end
 
 -- Next we show that homotopy_class_functor is functorial in "k".
 lemma homotopy_class_functor.map_id :
-  homotopy_class_functor hx hx (𝟙 x) = functor.IdentityFunctor (homotopy_class_groupoid hj c hx) :=
+  homotopy_class_functor hx hx (𝟙 x) = functor.id (homotopy_class_groupoid hj c hx) :=
 begin
-  fapply functor.Functor.hext,
-  { intro g, rw homotopy_class_functor.onObjects, simp },
-  { intros g₀ g₁ h, rw homotopy_class_functor.onMorphisms,
+  fapply functor.hext,
+  { intro g, rw [functor.coe_def, homotopy_class_functor.obj], simp },
+  { intros g₀ g₁ h, rw homotopy_class_functor.hom,
     induction h using quot.ind,
     apply heq_of_homotopies_eq; { simp [homotopy_on.congr_left] } }
 end
 
 lemma homotopy_class_functor.map_comp {z : C} (hz : fibrant z) (k' : y ⟶ z) :
   (homotopy_class_functor hx hz (k' ∘ k) : homotopy_class_groupoid hj c hx ↝ _) =
-  functor.FunctorComposition (homotopy_class_functor hx hy k) (homotopy_class_functor hy hz k') :=
+  (homotopy_class_functor hx hy k).comp (homotopy_class_functor hy hz k') :=
 begin
-  fapply functor.Functor.hext,
-  { intro g, rw homotopy_class_functor.onObjects,
-    rw [←associativity], refl },
+  fapply functor.hext,
+  { intro g, rw [functor.coe_def, homotopy_class_functor.obj],
+    rw [←assoc], refl },
   { intros g₀ g₁ h,
-    rw [functor.FunctorComposition.onMorphisms],
-    repeat { rw homotopy_class_functor.onMorphisms },
+    rw [functor.comp_map],
+    repeat { rw homotopy_class_functor.hom },
     induction h using quot.ind,
     apply heq_of_homotopies_eq hz;
-    { simp [homotopy_class_functor.onObjects, homotopy_on.congr_left] } }
+    { simp [homotopy_class_functor.obj, homotopy_on.congr_left] } }
 end
 
 end functoriality
