@@ -20,8 +20,8 @@ is_iso (π₀ &> f) ∧ ∀ n x, is_iso (π_induced n x f)
 
 lemma is_weak_equivalence_iso {X Y : Top} (i : homeomorphism X Y) :
   is_weak_equivalence i.hom :=
-⟨⟨π₀.on_isos i, rfl⟩,
- assume n x, ⟨(π n).on_isos (Top_ptd.mk_iso' i x), rfl⟩⟩
+⟨⟨π₀.on_iso i, rfl⟩,
+ assume n x, ⟨(π n).on_iso (Top_ptd.mk_iso' i x), rfl⟩⟩
 
 lemma is_weak_equivalence_comp {X Y Z : Top} {f : X ⟶ Y} {g : Y ⟶ Z}
   (hf : is_weak_equivalence f) (hg : is_weak_equivalence g) :
@@ -51,7 +51,7 @@ def Top_weak_equivalences : category_with_weak_equivalences Top :=
          begin
            rw [this, ←hi, hx'], dsimp [x'_class],
            change (i.hom ∘ i.inv) _ = _,
-           rw i.inv_hom_id_lemma, refl
+           erw i.inv_hom_id, refl
          end,
        have ⟦Top.const (f x')⟧ = ⟦Top.const y⟧, from this,
        let ⟨(γ : path (f x') y)⟩ := quotient.exact this in

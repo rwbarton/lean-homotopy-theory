@@ -10,7 +10,7 @@ noncomputable theory
 
 open set
 
-open category_theory
+open category_theory (hiding embedding)
 
 namespace homotopy_theory.topological_spaces
 open Top
@@ -84,7 +84,7 @@ def prod_doubleton {X : Top} : homeomorphism (∂I.obj X) (Top.prod X I01_endpoi
 calc
   ∂I.obj X
     ≅ ∂I.obj (Top.prod X Top.point)
-    : (∂I).on_isos (prod_singleton (by refl))
+    : (∂I).on_iso (prod_singleton (by refl))
 ... ≅ Top.prod X Top.point ⊔ Top.prod X Top.point
     : by refl
 ... ≅ Top.prod X (* ⊔ *)

@@ -38,8 +38,8 @@ begin
   refine {
     hom := po₁.induced (po₀.induced h₀' (h₁' ∘ g₂) _) (h₁' ∘ g₃) _,
     inv := po₃.induced (h₀ ∘ g₀) (po₂.induced (h₀ ∘ g₁) h₁ _) _,
-    hom_inv_id := _,
-    inv_hom_id := _,
+    hom_inv_id' := _,
+    inv_hom_id' := _,
   },
   { rw po₃.commutes, simp },
   -- TODO: Is_pushout.commutes_assoc

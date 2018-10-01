@@ -89,11 +89,11 @@ end
 
 lemma pt_closed_iff : is_closed ({ptX} : set X/A) ↔ is_closed ({ptY} : set Y/B) :=
 have _ := h.is_closed_iff ({ptY} : set Y/B),
-by convert this.symm; simp
+by convert this.symm; rw [hpt']
 
 lemma pt_open_iff : is_open ({ptX} : set X/A) ↔ is_open ({ptY} : set Y/B) :=
 have _ := h.is_open_iff ({ptY} : set Y/B),
-by convert this.symm; simp
+by convert this.symm; rw [hpt']
 
 theorem range_i_closed_iff_range_j_closed : is_closed (range i) ↔ is_closed (range j) := calc
   is_closed (range i)

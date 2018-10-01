@@ -62,9 +62,6 @@ instance : has_cylinder_with_involution Top :=
   end,
   pv := rfl }
 
--- TODO: Remove this when `obviously` no longer traces?
-local attribute [obviously] obviously_
-
 instance : cylinder_has_interchange.{1 0} Top :=
 { T := { app := λ X, Top.mk_hom (λ q, ((q.1.1, q.2), q.1.2)) (by continuity) },
   Ti := by intros ε X; ext p; refl,

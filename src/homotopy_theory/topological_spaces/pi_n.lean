@@ -27,7 +27,7 @@ local notation `[` A `, ` X `]` := homotopy_classes A X
 -- corepresented on the homotopy category by *.
 
 def π₀ : Top ↝ Set :=
-{ obj := λ X, [*, X], map := λ X Y f x, ⟦f⟧ ∘ x }
+{ obj := λ X, [*, X], map' := λ X Y f x, ⟦f⟧ ∘ x }
 
 -- We define πₙ(X, x) as the set of homotopy classes of maps D[n] → X
 -- which send S[n-1] to x, rel S[n-1].
@@ -53,10 +53,10 @@ by funext a; induction a using quot.ind; change ⟦_⟧ = ⟦_⟧; simp; refl
 
 def π (n : ℕ) : Top_ptd ↝ Set :=
 { obj := λ Xx, π_ n Xx.space Xx.pt,
-  map := λ Xx Yy f,
+  map' := λ Xx Yy f,
     by convert π_induced n Xx.pt f.val; rw f.property,
-  map_id := assume Xx, π_induced_id n Xx.pt,
-  map_comp := assume Xx Yy Zz f g, begin
+  map_id' := assume Xx, π_induced_id n Xx.pt,
+  map_comp' := assume Xx Yy Zz f g, begin
     -- This is tricky because the action of π on a morphism f involves
     -- recursion on the equality `f.property` : f x = y. We need to
     -- arrange for z and then y to be "free", i.e., not mentioned
@@ -87,8 +87,8 @@ H.congr_right (Top.const x)
 def iso_of_equiv {X Y : Set} (e : X ≃ Y) : X ≅ Y :=
 { hom := e.to_fun,
   inv := e.inv_fun,
-  hom_inv_id := funext e.left_inv,
-  inv_hom_id := funext e.right_inv }
+  hom_inv_id' := funext e.left_inv,
+  inv_hom_id' := funext e.right_inv }
 
 def change_of_basepoint (n : ℕ) {X : Top} {x x' : X} (γ : path x x') : π_ n X x ≅ π_ n X x' :=
 iso_of_equiv $ drag_equiv (γ.congr_right S[n-1].point_induced)

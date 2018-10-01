@@ -21,9 +21,9 @@ def transported_category : category.{u v'} C :=
 { hom := hom',
   id := λ a, e a a (id a),
   comp := λ a b c f g, e a c (comp ((e a b).symm f) ((e b c).symm g)),
-  id_comp := by intros; simp,
-  comp_id := by intros; simp,
-  assoc := by intros; simp }
+  id_comp' := by intros; simp,
+  comp_id' := by intros; simp,
+  assoc' := by intros; simp }
 
 end category
 
@@ -51,9 +51,9 @@ variables (F : C ↝ D)
 def transported_functor :
   @functor C (transported_category catC eC) D (transported_category catD eD) :=
 { obj := F.obj,
-  map := λ a b f, eD (F a) (F b) (F &> (eC a b).symm f),
-  map_id := by intros; dsimp [transported_category]; simp,
-  map_comp := by intros; dsimp [transported_category]; simp }
+  map' := λ a b f, eD (F a) (F b) (F &> (eC a b).symm f),
+  map_id' := by intros; dsimp [transported_category]; simp; refl,
+  map_comp' := by intros; dsimp [transported_category]; simp; refl }
 
 end functor
 

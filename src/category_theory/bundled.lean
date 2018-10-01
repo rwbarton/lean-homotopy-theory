@@ -30,8 +30,8 @@ instance Cat.category : category Cat :=
 { hom := Cat.functor,
   id := λ C, functor.id C,
   comp := λ _ _ _ F G, F.comp G,
-  id_comp := λ _ _ F, by cases F; refl,
-  comp_id := λ _ _ F, by cases F; refl }
+  id_comp' := λ _ _ F, by cases F; refl,
+  comp_id' := λ _ _ F, by cases F; refl }
 
 end «Cat»
 
@@ -55,8 +55,8 @@ instance Gpd.category : category Gpd :=
 { hom := Gpd.functor,
   id := λ C, functor.id C,
   comp := λ _ _ _ F G, F.comp G,
-  id_comp := λ _ _ F, by cases F; refl,
-  comp_id := λ _ _ F, by cases F; refl }
+  id_comp' := λ _ _ F, by cases F; refl,
+  comp_id' := λ _ _ F, by cases F; refl }
 
 def Gpd.mk_ob (α : Type u) [gpd : groupoid α] : Gpd := ⟨α, gpd⟩
 def Gpd.mk_hom {C D : Gpd} (f : C ↝ D) : C ⟶ D := f

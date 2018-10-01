@@ -1,5 +1,6 @@
 import analysis.topology.topological_structures
-import tidy.tidy
+import tactic.tidy
+import for_mathlib.tidy
 
 attribute [back]
   continuous_id
@@ -45,12 +46,12 @@ open tactic
 meta def continuity_tactics : list (tactic string) :=
 [
   backwards_reasoning,
-  automatic_induction,
+  auto_cases,
   tactic.interactive.apply_assumption    >> pure "apply_assumption",
-  run_tidy_tactics
+  tidy.run_tactics
 ]
 
-meta def continuity (cfg : tidy_cfg := {}) : tactic unit :=
+meta def continuity (cfg : tidy.cfg := {}) : tactic unit :=
 let cfg' := { tactics := continuity_tactics, ..cfg } in
 tidy cfg'
 

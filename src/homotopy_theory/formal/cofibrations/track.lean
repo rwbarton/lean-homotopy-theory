@@ -231,13 +231,13 @@ quotient.induction_on t $ λ ⟨c, h⟩, quotient.sound $
       c₀ := c.reverse.glue c,
       p' : c₀.ob ⟶ c.ob :=
         (pushout_by_cof c.reverse.i₁ c.i₀ c.reverse.acof_i₁.1).is_pushout.induced
-          (𝟙 c.ob) (𝟙 c.ob) (by simp; erw comp_id_lemma), -- Yuck
+          (𝟙 c.ob) (𝟙 c.ob) (by simp; erw comp_id), -- Yuck
       po := pushout_by_cof c₀.ii c₁.ii c₀.hii,
       pp := po.is_pushout.induced p' (c.i₁ ∘ c₁.p) $ begin
         apply (pushout_by_cof j j hj).is_pushout.uniqueness;
           rw [←assoc, ←assoc],
         { change _ ∘ c₀.i₀ = _ ∘ c₁.i₀, simp,
-          erw [←assoc, c₁.pi₀, comp_id_lemma], simp },
+          erw [←assoc, c₁.pi₀, comp_id], simp },
         { change _ ∘ c₀.i₁ = _ ∘ c₁.i₁, simp, rw [←assoc, c₁.pi₁], simp }
       end,
       ⟨c'_ob, l, q', hl, hq', q'l⟩ := factorization pp,
@@ -248,7 +248,7 @@ quotient.induction_on t $ λ ⟨c, h⟩, quotient.sound $
             apply po.is_pushout.uniqueness; rw ←assoc; simp,
             apply (pushout_by_cof c.reverse.i₁ c.i₀ c.reverse.acof_i₁.1).is_pushout.uniqueness;
               rw ←assoc; simp; change _ = Is_pushout.induced _ _ _ _ ∘ _,
-            { erw [id_comp_lemma, Is_pushout.induced_commutes₀], refl },
+            { erw [id_comp, Is_pushout.induced_commutes₀], refl },
             { simp },
             { simp [c.pi₁] }    -- What is this even for?
           end,
@@ -273,7 +273,7 @@ quotient.induction_on t $ λ ⟨c, h⟩, quotient.sound $
     ... = (homotopy_on.trans h.symm h).H  : begin
       unfold homotopy_on.trans homotopy_on.symm,
       apply (pushout_by_cof c.reverse.i₁ c.i₀ c.reverse.acof_i₁.1).is_pushout.uniqueness;
-        rw ←assoc; simp; erw id_comp_lemma
+        rw ←assoc; simp; erw id_comp
     end⟩,
    ⟨cem.m₁, calc
       h.H ∘ q' ∘ (l ∘ po.map₁)
@@ -347,9 +347,9 @@ noncomputable instance : groupoid (track_groupoid_rel hj x) :=
   comp := λ f₀ f₁ f₂ t₀ t₁, t₀.trans t₁,
   inv := λ f₀ f₁ t, t.symm,
 
-  id_comp := λ f₀ f₁, track.left_identity,
-  comp_id := λ f₀ f₁, track.right_identity,
-  assoc := λ f₀ f₁ f₂ f₃, track.assoc,
+  id_comp' := λ f₀ f₁, track.left_identity,
+  comp_id' := λ f₀ f₁, track.right_identity,
+  assoc' := λ f₀ f₁ f₂ f₃, track.assoc,
   inv_comp := λ f₀ f₁, track.left_inverse,
   comp_inv := λ f₀ f₁, track.right_inverse }
 
@@ -370,8 +370,8 @@ quotient.lift_on t
 noncomputable def track_groupoid_rel_functor {y} (g : x ⟶ y) :
   track_groupoid_rel hj x ↝ track_groupoid_rel hj y :=
 { obj := λ f, g ∘ f,
-  map := λ f₀ f₁ t, t.congr_left g,
-  map_id := λ f,
+  map' := λ f₀ f₁ t, t.congr_left g,
+  map_id' := λ f,
     show (track.refl f).congr_left g = track.refl (g ∘ f),
     begin
       apply congr_arg quotient.mk,
@@ -379,7 +379,7 @@ noncomputable def track_groupoid_rel_functor {y} (g : x ⟶ y) :
       congr' 2,
       rw ←assoc, refl
     end,
-  map_comp := λ f₀ f₁ f₂ t₀ t₁,
+  map_comp' := λ f₀ f₁ f₂ t₀ t₁,
     show (t₀.trans t₁).congr_left g = (t₀.congr_left g).trans (t₁.congr_left g),
     begin
       induction t₀ using quot.ind,
@@ -546,7 +546,7 @@ transported_functor
   (track_groupoid_rel_functor k)
 
 lemma homotopy_class_functor.obj {g : homotopy_class_groupoid hj c hx} :
-  (homotopy_class_functor hx hy k).obj g = k ∘ g :=
+  (homotopy_class_functor hx hy k : (homotopy_class_groupoid hj c _ ↝ _)) g = k ∘ g :=
 rfl
 
 lemma homotopy_class_functor.hom {g₀ g₁ : homotopy_class_groupoid hj c hx}
@@ -576,7 +576,7 @@ lemma homotopy_class_functor.map_id :
   homotopy_class_functor hx hx (𝟙 x) = functor.id (homotopy_class_groupoid hj c hx) :=
 begin
   fapply functor.hext,
-  { intro g, rw [functor.coe_def, homotopy_class_functor.obj], simp },
+  { intro g, rw [homotopy_class_functor.obj], simp },
   { intros g₀ g₁ h, rw homotopy_class_functor.hom,
     induction h using quot.ind,
     apply heq_of_homotopies_eq; { simp [homotopy_on.congr_left] } }
@@ -587,7 +587,7 @@ lemma homotopy_class_functor.map_comp {z : C} (hz : fibrant z) (k' : y ⟶ z) :
   (homotopy_class_functor hx hy k).comp (homotopy_class_functor hy hz k') :=
 begin
   fapply functor.hext,
-  { intro g, rw [functor.coe_def, homotopy_class_functor.obj],
+  { intro g, rw [homotopy_class_functor.obj],
     rw [←assoc], refl },
   { intros g₀ g₁ h,
     rw [functor.comp_map],

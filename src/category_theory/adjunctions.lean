@@ -1,5 +1,6 @@
 import category_theory.base
 import category_theory.functor_category
+import data.equiv.basic
 
 namespace category_theory
 open category

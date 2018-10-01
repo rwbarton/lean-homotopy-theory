@@ -33,7 +33,7 @@ class has_cylinder (C : Type u) [category C] :=
 (I : C ↝ C)
 (i : endpoint → (functor.id C ⟶ I))
 (p : I ⟶ functor.id C)
-(pi : ∀ ε, p ∘ i ε = 𝟙 _)
+(pi : ∀ ε, p ∘ i ε = nat_trans.id _)
 
 section
 parameters {C : Type u} [cat : category C] [has_cylinder C]
@@ -48,7 +48,7 @@ has_cylinder.i C
 @[reducible] def p : I ⟶ functor.id C :=
 has_cylinder.p C
 
-@[simp] lemma pi_components (ε) {A : C} : p @> A ∘ i ε @> A = 𝟙 A :=
+@[simp] lemma pi_components (ε) {A : C} : p A ∘ i ε A = 𝟙 A :=
 show (p ∘ i ε) A = 𝟙 A,
 by rw has_cylinder.pi; refl
 
@@ -72,9 +72,9 @@ include cat
 -- is defined by `∂I A = A ⊔ A`. (`∂I` does not depend on `I`.)
 def boundary_I : C ↝ C :=
 { obj := λ A, A ⊔ A,
-  map := λ A B f, coprod_of_maps f f,
-  map_id := λ A, by apply coprod.uniqueness; simp,
-  map_comp := λ A B C f g, by apply coprod.uniqueness; rw ←assoc; simp }
+  map' := λ A B f, coprod_of_maps f f,
+  map_id' := λ A, by apply coprod.uniqueness; simp,
+  map_comp' := λ A B C f g, by apply coprod.uniqueness; rw ←assoc; simp }
 
 notation `∂I` := boundary_I
 
@@ -83,18 +83,21 @@ variables [has_cylinder C]
 def ii : ∂I ⟶ I :=
 show ∂I ⟶ (I : C ↝ C), from
 { app := λ (A : C), coprod.induced (i 0 @> A) (i 1 @> A),
-  naturality := λ A B f,
+  naturality' := λ A B f,
   begin
     dsimp [boundary_I],
     apply coprod.uniqueness;
       { rw [←assoc, ←assoc], simpa using (i _).naturality f }
   end }
 
-@[simp] lemma iii₀_assoc {A B : C} (f : I.obj A ⟶ B) : f ∘ ii @> A ∘ i₀ = f ∘ i 0 @> A :=
-by rw ←assoc; simp [ii]
+local notation `iiC` := @ii C _ _ _
+local notation `iC` := @i C _ _
 
-@[simp] lemma iii₁_assoc {A B : C} (f : I.obj A ⟶ B) : f ∘ ii @> A ∘ i₁ = f ∘ i 1 @> A :=
-by rw ←assoc; simp [ii]
+@[simp] lemma iii₀_assoc {A B : C} (f : I.obj A ⟶ B) : f ∘ iiC A ∘ i₀ = f ∘ iC 0 A :=
+by rw ←assoc; dsimp [ii]; simp
+
+@[simp] lemma iii₁_assoc {A B : C} (f : I.obj A ⟶ B) : f ∘ iiC A ∘ i₁ = f ∘ iC 1 A :=
+by rw ←assoc; dsimp [ii]; simp
 
 end boundary
 
@@ -126,11 +129,11 @@ include cat
 @[reducible] def v : I ⟶ I :=
 has_cylinder_with_involution.v C
 
-@[simp] lemma vi_components {A : C} (ε) : v @> A ∘ i ε @> A = i ε.v @> A :=
+@[simp] lemma vi_components {A : C} (ε) : v A ∘ (i ε : functor.id C ⟶ I) A = (i ε.v : functor.id C ⟶ I) A :=
 show (v ∘ i ε) @> A = (i ε.v) @> A,
 by rw has_cylinder_with_involution.vi; refl
 
-@[simp] lemma vv_components {A : C} : v @> A ∘ v @> A = 𝟙 (I.obj A) :=
+@[simp] lemma vv_components {A : C} : v A ∘ v A = 𝟙 (I.obj A) :=
 show (v ∘ v) @> A = _,
 by rw has_cylinder_with_involution.vv; refl
 

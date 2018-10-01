@@ -138,8 +138,8 @@ include h
 def union_is_X : homeomorphism (Top.mk_ob A) X :=
 { hom := incl _,
   inv := Top.mk_hom (λ x, ⟨x, by rw h; exact trivial⟩) (by continuity),
-  hom_inv_id := by ext p; cases p; refl,
-  inv_hom_id := by ext p; refl }
+  hom_inv_id' := by ext p; cases p; refl,
+  inv_hom_id' := by ext p; refl }
 
 noncomputable def Is_pushout_inter_of_cover : Is_pushout i₀ i₁ k₀ k₁ :=
 Is_pushout_of_isomorphic'

@@ -29,9 +29,6 @@ def ptd_map (X Y : Top_ptd) : Type u :=
 instance {X Y : Top_ptd} : has_coe_to_fun (ptd_map X Y) :=
 { F := λ _, X → Y, coe := λ f, f.val.val }
 
--- TODO: Remove this when `obviously` no longer traces?
-local attribute [obviously] obviously_
-
 instance : category Top_ptd :=
 { hom := ptd_map,
   id := λ X, ⟨𝟙 X, rfl⟩,
@@ -50,8 +47,8 @@ protected def mk_iso {X Y : Top_ptd} (i : Top.homeomorphism X.space Y.space)
   inv := ⟨i.inv, begin
       rw ←hi, change i.equiv.symm (i.equiv X.pt) = X.pt, simp
     end⟩,
-  hom_inv_id := subtype.eq i.hom_inv_id,
-  inv_hom_id := subtype.eq i.inv_hom_id }
+  hom_inv_id' := subtype.eq i.hom_inv_id,
+  inv_hom_id' := subtype.eq i.inv_hom_id }
 
 protected def mk_iso' {X Y : Top} (i : Top.homeomorphism X Y) (x : X) :
   Top_ptd.mk_ob X x ≅ Top_ptd.mk_ob Y (i x) :=

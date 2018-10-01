@@ -32,12 +32,12 @@ induced_functor_gpd _ _
 
 def Pi₁ : Top ↝ Gpd :=
 { obj := λ X, Gpd.mk_ob (Pi₁_ X),
-  map := λ X Y f, Gpd.mk_hom (Pi₁_induced f),
-  map_id := λ X, begin
+  map' := λ X Y f, Gpd.mk_hom (Pi₁_induced f),
+  map_id' := λ X, begin
     dsimp [Pi₁_induced], simp only [homotopy_class_functor.map_id],
     apply induced_functor_id
   end,
-  map_comp := λ X Y Z f g, begin
+  map_comp' := λ X Y Z f g, begin
     dsimp [Gpd.mk_hom, Pi₁_induced, induced_functor_gpd, Gpd.category],
     have : ∀ W : Top, fibrant W := all_objects_fibrant,
     simp only [homotopy_class_functor.map_comp

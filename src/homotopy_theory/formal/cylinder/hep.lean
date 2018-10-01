@@ -4,6 +4,7 @@ import category_theory.iso_lemmas
 import category_theory.preserves_colimits
 import category_theory.replete
 import .definitions
+import category_theory.functor
 
 open category_theory
 open category_theory.category
@@ -29,7 +30,7 @@ lemma hep_of_isomorphism (ε) {A X : C} (h : iso A X) : hep ε (h : A ⟶ X) :=
 assume Y f H e,
   ⟨H ∘ I &> h.inv,
    by erw [←assoc, ←(i ε).naturality, assoc, ←e, iso.inv_hom_id_assoc_lemma],
-   by erw [←functor.on_isos_hom, iso.hom_inv_id_assoc_lemma]⟩
+   by erw [←functor.on_iso_hom, iso.hom_inv_id_assoc_lemma]⟩
 
 lemma hep_id (ε) {X : C} : hep ε (𝟙 X) :=
 hep_of_isomorphism ε (iso.refl X)
@@ -49,7 +50,7 @@ lemma hep_pushout (ε) {A B A' B' : C} {f : A ⟶ B} {g : A ⟶ A'} {f' : A' ⟶
   (hf : hep ε f) : hep ε f' :=
 assume Y h H e,
   have (h ∘ g') ∘ f = (H ∘ (I &> g)) ∘ i ε @> A, begin
-    rw [←assoc, ←assoc, po.commutes, ←(i ε).naturality],
+    erw [←assoc, ←assoc, po.commutes, ←(i ε).naturality],
     simp [e]
   end,
   let ⟨J, Je₁, Je₂⟩ := hf Y (h ∘ g') (H ∘ (I &> g)) this in
@@ -111,14 +112,14 @@ assume Y f H e,
   let ⟨H₁, h₁, h₂⟩ := h Y f (H ∘ v @> A)
     (by convert e using 1; rw [←assoc]; simp) in
   ⟨H₁ ∘ v @> X,
-   by rw ←assoc; simpa,
+   by rw ←assoc; simp; rw endpoint.vv; simpa using H₁,
    calc
      H₁ ∘ v @> X ∘ I &> j
        = H₁ ∘ (v @> X ∘ I &> j) : by simp
-   ... = H₁ ∘ (I &> j ∘ v @> A) : by rw v.naturality
+   ... = H₁ ∘ (I &> j ∘ v @> A) : by erw v.naturality; refl
    ... = (H₁ ∘ I &> j) ∘ v @> A : by simp
    ... = (H ∘ v @> A) ∘ v @> A  : by rw h₂
-   ... = H                      : by rw ←assoc; simp⟩
+   ... = H                      : by rw ←assoc; simp; dsimp; simp⟩
 
 lemma two_sided_hep_iff_hep {ε} {A X : C} {j : A ⟶ X} : two_sided_hep j ↔ hep ε j :=
 have ∀ ε', ε' = ε ∨ ε' = ε.v, by intro ε'; cases ε; cases ε'; simp; refl,

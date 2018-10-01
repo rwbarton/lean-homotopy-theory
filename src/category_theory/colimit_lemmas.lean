@@ -109,23 +109,23 @@ def isomorphic_coprod_of_Is_coproduct {a₀ a₁ b : C} {f₀ : a₀ ⟶ b} {f�
   (h : Is_coproduct f₀ f₁) : iso (a₀ ⊔ a₁) b :=
 { hom := coprod.induced f₀ f₁,
   inv := h.induced i₀ i₁,
-  hom_inv_id := by apply coprod.uniqueness; { rw ←assoc, simp },
-  inv_hom_id := by apply h.uniqueness; { rw ←assoc, simp } }
+  hom_inv_id' := by apply coprod.uniqueness; { rw ←assoc, simp },
+  inv_hom_id' := by apply h.uniqueness; { rw ←assoc, simp } }
 
 def coprod_of_isomorphisms {a₀ a₁ b₀ b₁ : C} (j₀ : iso a₀ b₀) (j₁ : iso a₁ b₁) :
   iso (a₀ ⊔ a₁) (b₀ ⊔ b₁) :=
 { hom := coprod_of_maps j₀.hom j₁.hom,
   inv := coprod_of_maps j₀.inv j₁.inv,
-  hom_inv_id := by apply coprod.uniqueness; rw ←assoc; simp,
-  inv_hom_id := by apply coprod.uniqueness; rw ←assoc; simp }
+  hom_inv_id' := by apply coprod.uniqueness; rw ←assoc; simp,
+  inv_hom_id' := by apply coprod.uniqueness; rw ←assoc; simp }
 
 variables [has_initial_object.{u v} C]
 
 def coprod_initial_right (a : C) : a ≅ a ⊔ ∅ :=
 { hom := i₀,
   inv := coprod.induced (𝟙 a) (! a),
-  hom_inv_id := by simp,
-  inv_hom_id :=
+  hom_inv_id' := by simp,
+  inv_hom_id' :=
     by apply coprod.uniqueness; try { apply initial.uniqueness };
        rw ←assoc; simp }
 
@@ -136,8 +136,8 @@ rfl
 def coprod_initial_left (a : C) : a ≅ ∅ ⊔ a :=
 { hom := i₁,
   inv := coprod.induced (! a) (𝟙 a),
-  hom_inv_id := by simp,
-  inv_hom_id :=
+  hom_inv_id' := by simp,
+  inv_hom_id' :=
     by apply coprod.uniqueness; try { apply initial.uniqueness };
        rw ←assoc; simp }
 
@@ -216,8 +216,8 @@ parameters {a' : C} (init' : Is_initial_object.{u v} a')
 def initial_object.unique : iso a a' :=
 { hom := init.induced,
   inv := init'.induced,
-  hom_inv_id := init.uniqueness _ _,
-  inv_hom_id := init'.uniqueness _ _ }
+  hom_inv_id' := init.uniqueness _ _,
+  inv_hom_id' := init'.uniqueness _ _ }
 
 end uniqueness_of_initial_objects
 
@@ -235,8 +235,8 @@ parameters {g'₀ : b₀ ⟶ c'} {g'₁ : b₁ ⟶ c'} (po' : Is_pushout f₀ f�
 def pushout.unique : iso c c' :=
 { hom := h,
   inv := h',
-  hom_inv_id := by apply po.uniqueness; {rw ←category.assoc, simp},
-  inv_hom_id := by apply po'.uniqueness; {rw ←category.assoc, simp} }
+  hom_inv_id' := by apply po.uniqueness; {rw ←category.assoc, simp},
+  inv_hom_id' := by apply po'.uniqueness; {rw ←category.assoc, simp} }
 
 @[simp] lemma pushout.unique_commutes₀ : ↑pushout.unique ∘ g₀ = g'₀ :=
 by apply po.induced_commutes₀
@@ -472,8 +472,8 @@ def Is_pushout.swap : c ⟶ c := po.induced g₁ g₀ po.commutes.symm
 def Is_pushout.swap_iso : c ≅ c :=
 { hom := po.swap,
   inv := po.swap,
-  hom_inv_id := by apply po.uniqueness; unfold Is_pushout.swap; rw ←assoc; simp,
-  inv_hom_id := by apply po.uniqueness; unfold Is_pushout.swap; rw ←assoc; simp }
+  hom_inv_id' := by apply po.uniqueness; unfold Is_pushout.swap; rw ←assoc; simp,
+  inv_hom_id' := by apply po.uniqueness; unfold Is_pushout.swap; rw ←assoc; simp }
 
 @[simp] def Is_pushout.induced_swap {x} {h₀ h₁ : b ⟶ x} {p p'} :
   po.induced h₀ h₁ p ∘ po.swap = po.induced h₁ h₀ p' :=

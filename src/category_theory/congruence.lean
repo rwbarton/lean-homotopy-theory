@@ -31,13 +31,17 @@ omit r
 instance Hom.setoid (a b : C) : setoid (a ⟶ b) :=
 { r := @r a b, iseqv := congruence.is_equiv r }
 
-instance : category (category_mod_congruence C r) :=
+instance category_mod_congruence.category : category (category_mod_congruence C r) :=
 { hom := λ a b, quotient (Hom.setoid C r a b),
   id := λ a, ⟦𝟙 a⟧,
   comp := λ a b c f₀ g₀, quotient.lift_on₂ f₀ g₀ (λ f g, ⟦g ∘ f⟧)
-    (λ f g f' g' rff' rgg', quotient.sound (congruence.congr C rff' rgg' : r _ _)) }
+    (λ f g f' g' rff' rgg', quotient.sound (congruence.congr C rff' rgg' : r _ _)),
+  id_comp' := begin rintros a b ⟨f⟩, change quot.mk _ _ = _, simp end,
+  comp_id' := begin rintros a b ⟨f⟩, change quot.mk _ _ = _, simp end,
+  assoc' := begin rintros a b c d ⟨f⟩ ⟨g⟩ ⟨h⟩, change quot.mk _ _ = quot.mk _ _, simp end
+ }
 
 def quotient_functor : C ↝ category_mod_congruence C r :=
-{ obj := λ a, a, map := λ a b f, ⟦f⟧ }
+{ obj := λ a, a, map' := λ a b f, ⟦f⟧ }
 
 end category_theory

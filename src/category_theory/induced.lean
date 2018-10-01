@@ -27,11 +27,11 @@ def induced_functor [catC : category.{u v} C] [catD : category.{w x} D] (F : C �
   (F' : C' → D') (e : ∀ a, F (k a) = l (F' a)) :
   @functor C' (induced_category k catC) D' (induced_category l catD) :=
 { obj := F',
-  map := λ X Y f,
+  map' := λ X Y f,
     show l (F' X) ⟶ l (F' Y), from
     id_of_eq (e Y) ∘ (F &> f) ∘ id_of_eq (e X).symm,
-  map_id := λ X, by dsimp [induced_category]; rw F.map_id; simp,
-  map_comp := λ X Y Z f g, by dsimp [induced_category]; rw F.map_comp; simp }
+  map_id' := λ X, by dsimp [induced_category]; rw F.map_id; simp,
+  map_comp' := λ X Y Z f g, by dsimp [induced_category]; rw F.map_comp; simp }
 
 def induced_functor_gpd [gpdC : groupoid.{u v} C] [gpdD : groupoid.{w x} D] (F : C ↝ D)
   (F' : C' → D') (e : ∀ a, F (k a) = l (F' a)) :

@@ -174,20 +174,20 @@ protected def pair.k : homeomorphism (Top.prod A' B') (Top.mk_ob {p : XY | p.1 �
     Top.mk_hom
       (λ p, (⟨p.val.1, p.property.left⟩, ⟨p.val.2, p.property.right⟩))
       (by continuity),
-  hom_inv_id := by ext p; rcases p with ⟨⟨a, ha⟩, ⟨b, hb⟩⟩; refl,
-  inv_hom_id := by ext p; rcases p with ⟨⟨a, b⟩, ⟨ha, hb⟩⟩; refl }
+  hom_inv_id' := by ext p; rcases p with ⟨⟨a, ha⟩, ⟨b, hb⟩⟩; refl,
+  inv_hom_id' := by ext p; rcases p with ⟨⟨a, b⟩, ⟨ha, hb⟩⟩; refl }
 
 protected def pair.l1 : homeomorphism (Top.prod A' Y) (Top.mk_ob {p : XY | p.1 ∈ A}) :=
 { hom := Top.mk_hom (λ p, ⟨(p.1.val, p.2), p.1.property⟩) (by continuity),
   inv := Top.mk_hom (λ p, (⟨p.val.1, p.property⟩, p.val.2)) (by continuity),
-  hom_inv_id := by ext p; rcases p with ⟨⟨a, ha⟩, y⟩; refl,
-  inv_hom_id := by ext p; rcases p with ⟨⟨a, y⟩, ha⟩; refl }
+  hom_inv_id' := by ext p; rcases p with ⟨⟨a, ha⟩, y⟩; refl,
+  inv_hom_id' := by ext p; rcases p with ⟨⟨a, y⟩, ha⟩; refl }
 
 protected def pair.l2 : homeomorphism (Top.prod X B') (Top.mk_ob {p : XY | p.2 ∈ B}) :=
 { hom := Top.mk_hom (λ p, ⟨(p.1, p.2.val), p.2.property⟩) (by continuity),
   inv := Top.mk_hom (λ p, (p.val.1, ⟨p.val.2, p.property⟩)) (by continuity),
-  hom_inv_id := by ext p; rcases p with ⟨x, ⟨b, hb⟩⟩; refl,
-  inv_hom_id := by ext p; rcases p with ⟨⟨x, b⟩, hb⟩; refl }
+  hom_inv_id' := by ext p; rcases p with ⟨x, ⟨b, hb⟩⟩; refl,
+  inv_hom_id' := by ext p; rcases p with ⟨⟨x, b⟩, hb⟩; refl }
 
 protected def pair.po :
   Is_pushout (pair.i₀ P Q) (pair.i₁ P Q) (pair.j₀ P Q) (pair.j₁ P Q) :=
@@ -368,12 +368,12 @@ pair.homeomorphism.mk
            calc (1 / 2) * (t.val + 1) ≤ (1 / 2) * (1 + 1)  : mul_le_mul_of_nonneg_left (add_le_add_right (abs_le.mp t.property).right _) (by norm_num)
                                   ... = 1                  : by norm_num⟩)
         (by continuity),
-    hom_inv_id := begin
+    hom_inv_id' := begin
       ext t,
       change (1 / 2) * ((2 * t.val - 1) + 1) = t.val,
       ring
     end,
-    inv_hom_id := begin
+    inv_hom_id' := begin
       ext t,
       change 2 * ((1 / 2) * (t.val + 1)) - 1 = t.val,
       ring

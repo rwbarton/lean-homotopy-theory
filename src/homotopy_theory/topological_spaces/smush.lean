@@ -131,8 +131,8 @@ begin
   apply prod.ext; apply subtype.eq; dsimp; rw αvH p,
   { rw [H, v], dsimp,
     transitivity ((1 + (p.snd).val)⁻¹ * (1 + (p.snd).val)) • ((α p).val * ((α p).val)⁻¹) • (p.fst).val,
-    { rw [←mul_smul', ←mul_smul'], congr' 1, ring },
-    { rw [mul_inv_cancel, inv_mul_cancel, one_smul', one_smul'],
+    { rw [←admissible.mul_smul', ←admissible.mul_smul'], congr' 1, ring },
+    { rw [mul_inv_cancel, inv_mul_cancel, admissible.one_smul', admissible.one_smul'],
       exact ne_of_gt (lt_of_lt_of_le (by norm_num) (le_add_of_nonneg_right p.2.property.left)),
       exact (α p).property } },
   { ring }

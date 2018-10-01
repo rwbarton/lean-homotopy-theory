@@ -38,11 +38,11 @@ assume ⟨⟨r, h, ⟨H, Hrel⟩⟩⟩, begin
   -- The homotopy defined in this way starts at j' ∘ r' : x' → x':
   { apply po.uniqueness; rw i_nat_assoc; conv { to_rhs, rw ←assoc }; simp;
       rw ←assoc,
-    { rw [H.Hi₀, assoc, po.commutes] },
+    { erw [H.Hi₀, assoc, po.commutes] },
     { rw [pi_components], simp } },
   -- ... and ends at 𝟙 x':
   { apply po.uniqueness; rw i_nat_assoc; simp; rw [←assoc],
-    { rw H.Hi₁; simp }, { rw [pi_components], simp } },
+    { erw H.Hi₁; simp }, { rw [pi_components], simp } },
   -- ... and is rel j:
   { unfold homotopy.is_rel,
     simp, congr, rw [←assoc], dsimp, simp }

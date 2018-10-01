@@ -83,8 +83,8 @@ open filter
 variables {α : Type u} [topological_space α]
 
 lemma induced_nhds {s : set α} {x : α} (h : x ∈ s) :
-  nhds (⟨x,h⟩ : subtype s) = vmap subtype.val (nhds x) :=
-filter.ext.mpr $ assume r, by rw [mem_vmap_sets, nhds_sets, nhds_sets]; exact
+  nhds (⟨x,h⟩ : subtype s) = comap subtype.val (nhds x) :=
+filter.ext $ assume r, by rw [mem_comap_sets, nhds_sets, nhds_sets]; exact
   iff.intro
     (λ⟨t, tr, ⟨t', t'o, tt'⟩, xt⟩,
       ⟨t', ⟨t', subset.refl t', t'o, by subst tt'; exact xt⟩, tt' ▸ tr⟩)
@@ -99,12 +99,12 @@ begin
   intros f hf fs',
   let f' : filter α := map subtype.val f,
   have : f' ≤ principal s, begin
-    rw [map_le_iff_le_vmap, vmap_principal], convert fs',
+    rw [map_le_iff_le_comap, comap_principal], convert fs',
     apply ext, intro x, simpa using x.property,
   end,
   rcases s_cpt f' (ultrafilter_map hf) this with ⟨a, ha, h2⟩,
   refine ⟨⟨a, ha⟩, trivial, _⟩,
-  rwa [induced_nhds, ←map_le_iff_le_vmap]
+  rwa [induced_nhds, ←map_le_iff_le_comap]
 end
 
 end compact

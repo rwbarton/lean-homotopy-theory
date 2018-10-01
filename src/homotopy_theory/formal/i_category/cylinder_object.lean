@@ -58,7 +58,7 @@ let ⟨J, hJ₁, hJ₂⟩ :=
   end⟩⟩
 
 lemma heq_p {a : C} : homotopy_equivalence.{u v} (p @> a) :=
-homotopy_equivalence_iff.mpr ⟨i 0 @> a, i₀p, by rw pi_components; refl⟩
+homotopy_equivalence_iff.mpr ⟨i 0 @> a, i₀p, by simp; refl⟩
 
 lemma pii {a : C} : p.{u v} @> a ∘ ii @> a = coprod.induced (𝟙 a) (𝟙 a) :=
 by apply coprod.uniqueness; simp

@@ -36,8 +36,8 @@ def homotopy.congr_left {x y y' : C} (g : y ⟶ y') {f₀ f₁ : x ⟶ y} (H : h
 def homotopy.congr_right {x' x y : C} (g : x' ⟶ x) {f₀ f₁ : x ⟶ y} (H : homotopy f₀ f₁) :
   homotopy (f₀ ∘ g) (f₁ ∘ g) :=
 { H := H.H ∘ I &> g,
-  Hi₀ := by rw [←assoc, ←(i _).naturality]; simp [H.Hi₀],
-  Hi₁ := by rw [←assoc, ←(i _).naturality]; simp [H.Hi₁] }
+  Hi₀ := by erw [←assoc, ←(i _).naturality]; simp; erw H.Hi₀,
+  Hi₁ := by erw [←assoc, ←(i _).naturality]; simp; erw H.Hi₁ }
 
 -- Annoying equality stuff.
 -- If we rewrite the starting point of the homotopy by an equality, it doesn't change H.
@@ -63,12 +63,12 @@ calc
 ... = f₀ ∘ j ∘ p @> a ∘ i 1 @> a     : by rw assoc
 ... = H.H ∘ I &> j ∘ i 1 @> a        : by unfold homotopy.is_rel at h; simp [h]
 ... = H.H ∘ (I &> j ∘ i 1 @> a)      : by simp
-... = H.H ∘ (i 1 @> x ∘ j)           : by rw ←(i 1).naturality; refl
-... = f₁ ∘ j                         : by simp [H.Hi₁]
+... = H.H ∘ (i 1 @> x ∘ j)           : by erw ←(i 1).naturality; refl
+... = f₁ ∘ j                         : by simp; erw H.Hi₁
 
 lemma homotopy.refl_is_rel {f : x ⟶ y} : (homotopy.refl f).is_rel j :=
 show f ∘ p @> x ∘ I &> j = f ∘ j ∘ p @> a,
-by rw [←assoc, ←assoc, p.naturality]; refl
+by erw [←assoc, ←assoc, p.naturality]; refl
 
 lemma homotopy.congr_left_is_rel {f₀ f₁ : x ⟶ y} {H : homotopy f₀ f₁}
   {z} (g : y ⟶ z) (h : H.is_rel j) : (H.congr_left g).is_rel j :=

@@ -81,8 +81,8 @@ def XxA_XA {B : Top} (A : set B) :
   homeomorphism (Top.prod X (Top.mk_ob A)) (Top.mk_ob {p : Top.prod X B | p.2 ∈ A}) :=
 { hom := Top.mk_hom (λ p, ⟨(p.1, p.2.val), p.2.property⟩) (by continuity),
   inv := Top.mk_hom (λ p, (p.val.1, ⟨p.val.2, p.property⟩)) (by continuity),
-  hom_inv_id := by ext p; rcases p with ⟨x, ⟨b, hb⟩⟩; refl,
-  inv_hom_id := by ext p; rcases p with ⟨⟨x, b⟩, hb⟩; refl }
+  hom_inv_id' := by ext p; rcases p with ⟨x, ⟨b, hb⟩⟩; refl,
+  inv_hom_id' := by ext p; rcases p with ⟨⟨x, b⟩, hb⟩; refl }
 
 def XxY_XY' : homeomorphism (Top.prod X Y) (Top.mk_ob XY) :=
 Y_Y'.prod_congr_right.trans (XxA_XA Y')

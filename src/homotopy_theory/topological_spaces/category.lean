@@ -83,7 +83,7 @@ Top.mk_hom (λ x, (x, y)) (by continuity)
 
 protected def product_by (Y : Top) : Top ↝ Top :=
 { obj := λ X, Top.prod X Y,
-  map := λ X X' f, Top.prod_maps f (𝟙 Y) }
+  map' := λ X X' f, Top.prod_maps f (𝟙 Y) }
 
 notation `-×`:35 Y:34 := Top.product_by Y
 

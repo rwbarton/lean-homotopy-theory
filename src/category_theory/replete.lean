@@ -1,5 +1,5 @@
 import category_theory.base
-import category_theory.isomorphism
+import category_theory.iso_lemmas
 
 open category_theory
 open category_theory.category
@@ -35,11 +35,11 @@ variables {D : Π ⦃a b : C⦄, (a ⟶ b) → Prop} [replete_wide_subcategory.{
 
 lemma mem_of_mem_comp_left {a b c : C} {f : a ⟶ b} (i : iso b c)
   (h : D (i.hom ∘ f)) : D f :=
-by convert mem_comp h (mem_iso i.symm); obviously_
+by convert mem_comp h (mem_iso i.symm); simp
 
 lemma mem_of_mem_comp_right {a b c : C} {f : b ⟶ c} (i : iso a b)
   (h : D (f ∘ i.hom)) : D f :=
-by convert mem_comp (mem_iso i.symm) h; obviously_
+by convert mem_comp (mem_iso i.symm) h; simp
 
 lemma mem_iff_mem_of_isomorphic {a b a' b' : C} {f : a ⟶ b} {f' : a' ⟶ b'}
   (i : iso a a') (j : iso b b')

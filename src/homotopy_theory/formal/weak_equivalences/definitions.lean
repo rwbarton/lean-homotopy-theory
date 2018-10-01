@@ -93,7 +93,7 @@ assume ⟨i, hi⟩ ⟨j, hj⟩,
   have g' = g'', from calc
     g' = g' ∘ (g ∘ g'')  : by rw gg''; simp
    ... = (g' ∘ g) ∘ g''  : by simp
-   ... = g''             : by rw g'g; simp,
+   ... = g''             : by rw g'g; simp; refl,
   ⟨⟨g, g', g'g, by rw this; exact gg''⟩, rfl⟩
 
 instance is_iso.replete_wide_subcategory : replete_wide_subcategory.{u v} C is_iso :=
@@ -122,7 +122,7 @@ def preimage_weq (weqD : has_weak_equivalences D) : has_weak_equivalences C :=
 instance preimage_weq.replete_wide_subcategory [weqD : category_with_weak_equivalences D] :
   replete_wide_subcategory.{u v} C (preimage_weq F weqD.to_has_weak_equivalences).is_weq :=
 replete_wide_subcategory.mk'
-    (λ a b i, weq_iso (F.on_isos i))
+    (λ a b i, weq_iso (F.on_iso i))
     (λ a b c f g hf hg, show is_weq (F &> (g ∘ f)),
       by rw F.map_comp; exact weq_comp hf hg)
 

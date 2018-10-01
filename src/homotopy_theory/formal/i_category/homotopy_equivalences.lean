@@ -32,9 +32,9 @@ begin
   { intro h, cases h with i hi,
     cases quotient.exists_rep i.inv with g hg,
     existsi g, split; rw homotopic_iff_equal_in_ho,
-    { have := i.hom_inv_id,
+    { have := i.hom_inv_id',
       rw [hi, ←hg] at this, exact this },
-    { have := i.inv_hom_id,
+    { have := i.inv_hom_id',
       rw [hi, ←hg] at this, exact this } },
   { intro h, rcases h with ⟨g, h₁, h₂⟩,
     refine ⟨iso.mk ⟦f⟧ ⟦g⟧ _ _, rfl⟩;

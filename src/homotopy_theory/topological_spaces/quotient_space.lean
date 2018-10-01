@@ -358,8 +358,8 @@ def quotient_space.homeomorphism_complement :
   Top.homeomorphism (quotient_space.image_complement i) (quotient_space.minus_base_point i) :=
 { hom := quotient_space.map_complement i,
   inv := quotient_space.map_complement_inverse i h,
-  hom_inv_id := Top.hom_eq (q'_equiv i).left_inv,
-  inv_hom_id := Top.hom_eq (q'_equiv i).right_inv }
+  hom_inv_id' := Top.hom_eq (q'_equiv i).left_inv,
+  inv_hom_id' := Top.hom_eq (q'_equiv i).right_inv }
 
 end inverse
 

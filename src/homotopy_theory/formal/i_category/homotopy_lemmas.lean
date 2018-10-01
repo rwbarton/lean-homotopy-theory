@@ -104,10 +104,10 @@ begin
     apply coprod.uniqueness;
     { simp, erw i_nat_assoc, simp,
       rw t, unfold j' ii, simp, rw ←assoc, simp,
-      rw H₀.Hi₀ <|> rw H₀.Hi₁,
-      rw H.Hiε <|> rw H'.Hiε } },
+      erw H₀.Hi₀ <|> erw H₀.Hi₁,
+      erw H.Hiε <|> erw H'.Hiε } },
   { rw [i_nat_assoc, t], unfold j' GIp, simp,
-    rw [←i_nat_assoc, ←h, ←i_nat_assoc, H.Hiε],
+    erw [←i_nat_assoc, ←h, ←i_nat_assoc, H.Hiε],
     exact h₀ }
 end
 omit h₀
@@ -131,7 +131,7 @@ have
   i.{u v} ε.v @> I.obj b ∘ i 1 @> b = I &> j' ∘ I &> Po.map₀ ∘ i ε.v @> _ ∘ i₁, begin
   split;
   { rw ←I.map_comp, unfold j', simp, erw i_nat_assoc,
-    rw ←I.map_comp, unfold ii, simp,
+    rw ←I.map_comp, dsimp [ii], simp,
     apply (i _).naturality }
 end,
 begin
@@ -147,13 +147,13 @@ def Eiε : homotopy f₁ f₁' :=
 { H := E ∘ i ε.v @> I.obj b, Hi₀ := Eiεvi_.1, Hi₁ := Eiεvi_.2 }
 
 lemma Eiε_is_rel : Eiε.is_rel j :=
-have i ε.v @> I.obj b ∘ I &> j = I &> j' ∘ I &> Po.map₁ ∘ _, begin
+have i ε.v @> (I : C ↝ C) b ∘ I &> j = I &> j' ∘ I &> Po.map₁ ∘ i ε.v @> (I : C ↝ C) a, begin
   rw ←I.map_comp, unfold j', simp,
   rw ←(i ε.v).naturality, refl
 end,
 begin
   dsimp [homotopy.is_rel, Eiε] { iota := tt },
-  rw [←assoc, this], simp [hE.2, HH'', GIp],
+  rw [←assoc, this], simp [-nat_trans.app_eq_coe, hE.2, HH'', GIp],
   rw [←h, ←i_nat_assoc, ←i_nat_assoc, H.Hiεv]
 end
 
