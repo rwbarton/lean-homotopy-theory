@@ -92,7 +92,7 @@ noncomputable def homeomorphism_to_image_of_embedding {A X : Top} {j : A ⟶ X}
 let j' := Top.factor_through_incl j (range j) (subset.refl _),
     e := (equiv.set.range j h.1).replace_to_fun j' (by funext p; simp; refl) in
 homeomorphism.of_equiv e j'.property
-  (continuous_of_embedding_of_continuous_comp h $ begin
+  (h.continuous_iff.mpr $ begin
     convert continuous_subtype_val using 1, funext p,
     exact congr_arg subtype.val (e.right_inv p)
   end)
