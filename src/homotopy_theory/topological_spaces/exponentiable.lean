@@ -1,3 +1,4 @@
+import analysis.topology.continuous_map
 import category_theory.adjunctions
 import for_mathlib
 
@@ -5,6 +6,7 @@ import .category
 
 universe u
 
+open continuous_map
 open category_theory
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
@@ -83,7 +85,7 @@ instance (A : Top) [exponentiable A] : has_right_adjoint (-× A) :=
 -- Locally compact spaces are exponentiable by equipping A ⟶ X with
 -- the compact-open topology.
 instance (A : Top) [locally_compact_space A] : exponentiable A :=
-{ exponential := λ _, compact_open,
+{ exponential := λ _, continuous_map.compact_open,
   functorial := assume X X' g, continuous_induced g.property,
   continuous_ev := assume X, continuous_ev,
   continuous_coev := assume X, continuous_coev }
