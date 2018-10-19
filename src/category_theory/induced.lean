@@ -17,8 +17,8 @@ def induced_category (cat : category.{u v} C) : category.{u' v} C' :=
 
 def induced_groupoid (gpd : groupoid.{u v} C) : groupoid.{u' v} C' :=
 { inv := λ X Y f, groupoid.inv f,
-  inv_comp := by dsimp [induced_category]; simp,
-  comp_inv := by dsimp [induced_category]; simp,
+  inv_comp' := by dsimp [induced_category]; simp,
+  comp_inv' := by dsimp [induced_category]; simp,
   .. induced_category k gpd.to_category }
 
 variables {D : Type w} {D' : Type w'} (l : D' → D)

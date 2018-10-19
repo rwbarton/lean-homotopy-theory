@@ -39,7 +39,7 @@ variables {n : Δ}
 
 /-- The i-th face map from [n] to [n+1] -/
 def δ (i : [n+1]) : n ⟶ ((n + 1) : ℕ) :=
-⟨λ a, if h : i.val ≤ a.val then a.succ else a.raise,
+⟨λ a, if h : i.val ≤ a.val then a.succ else a.cast_succ,
   begin
     intros a b H,
     dsimp,
@@ -76,26 +76,25 @@ def σ (i : [n]) : @category.hom Δ _ ((n + 1) : ℕ) n :=
     { exact nat.pred_le_pred H }
   end⟩
 
-lemma simplicial_identity₁ {i j : [n+1]} (H : i ≤ j) : δ i ≫ δ j.succ = δ j ≫ δ i.raise :=
+lemma simplicial_identity₁ {i j : [n+1]} (H : i ≤ j) : δ i ≫ δ j.succ = δ j ≫ δ i.cast_succ :=
 begin
   rw simplex_category.hom_eq2,
   dsimp [category.comp, function.comp, δ],
   funext a,
   by_cases hja : (j.val ≤ a.val),
   { have hja' : ((fin.succ j).val ≤ (fin.succ a).val) := by simp; exact nat.succ_le_succ hja,
-    have hia : ((fin.raise i).val ≤ (fin.succ a).val) := by simp; exact nat.le_trans H (nat.le_trans hja (nat.le_succ a.val)),
-    rw [dif_pos hja, dif_pos (nat.le_trans H hja), dif_pos hja', dif_pos hia] },
+    have hia : ((fin.cast_succ i).val ≤ (fin.succ a).val) := by simp; exact nat.le_trans H (nat.le_trans hja (nat.le_succ a.val)),
+    erw [dif_pos hja, dif_pos (nat.le_trans H hja), dif_pos hja', dif_pos hia] },
   { rw [dif_neg hja],
     by_cases hia : (i.val ≤ a.val),
-    { have hia' : ((fin.raise i).val ≤ (fin.raise a).val) := hia,
+    { have hia' : ((fin.cast_succ i).val ≤ (fin.cast_succ a).val) := hia,
       have hja' : ¬(j.succ.val ≤ a.succ.val) := by simp at *; exact nat.succ_le_succ hja,
-      rw [dif_pos hia, dif_pos hia', dif_neg hja'],
-      simp [fin.raise],
+      erw [dif_pos hia, dif_pos hia', dif_neg hja'],
       apply fin.eq_of_veq,
       simp },
-    { have hja' : ¬(j.succ.val ≤ a.raise.val) := by simp at *; exact nat.le_trans hja (nat.le_succ j.val),
-      have hia' : ¬((fin.raise i).val ≤ (fin.raise a).val) := by unfold fin.raise; exact hia,
-      rw [dif_neg hia, dif_neg hja', dif_neg hia'] } }
+    { have hja' : ¬(j.succ.val ≤ a.cast_succ.val) := by simp at *; exact nat.le_trans hja (nat.le_succ j.val),
+      have hia' : ¬((fin.cast_succ i).val ≤ (fin.cast_succ a).val) := by unfold fin.cast_succ; exact hia,
+      erw [dif_neg hia, dif_neg hja', dif_neg hia'] } }
 end
 
 -- lemma simplicial_identity₂ {i : [n+1]} {j : [n]} (H : i ≤ j.raise) : δ i.raise ≫ σ j.succ = σ j ≫ δ i := sorry

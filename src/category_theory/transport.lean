@@ -33,8 +33,8 @@ variables {hom' : Π a b : C, Type v'} (e : Π a b : C, hom a b ≃ hom' a b)
 
 def transported_groupoid : groupoid.{u v'} C :=
 { inv := λ a b f, e b a (groupoid.inv ((e a b).symm f)),
-  inv_comp := by intros; dsimp [transported_category]; simp,
-  comp_inv := by intros; dsimp [transported_category]; simp,
+  inv_comp' := by intros; dsimp [transported_category]; simp,
+  comp_inv' := by intros; dsimp [transported_category]; simp,
   .. transported_category gpd.to_category e }
 
 end groupoid

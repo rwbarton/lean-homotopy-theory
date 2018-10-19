@@ -350,8 +350,8 @@ noncomputable instance : groupoid (track_groupoid_rel hj x) :=
   id_comp' := λ f₀ f₁, track.left_identity,
   comp_id' := λ f₀ f₁, track.right_identity,
   assoc' := λ f₀ f₁ f₂ f₃, track.assoc,
-  inv_comp := λ f₀ f₁, track.left_inverse,
-  comp_inv := λ f₀ f₁, track.right_inverse }
+  inv_comp' := λ f₀ f₁, track.left_inverse,
+  comp_inv' := λ f₀ f₁, track.right_inverse }
 
 section functoriality
 
@@ -554,7 +554,7 @@ lemma homotopy_class_functor.hom {g₀ g₁ : homotopy_class_groupoid hj c hx}
 quotient.induction_on h $ λ h,
 begin
   dsimp [homotopy_class_functor, transported_functor],
-  rw equiv.apply_eq_iff_eq_inverse_apply,
+  rw ←equiv.eq_symm_apply,
   rw [equiv.symm_symm, equiv.symm_symm],
   refl
 end
