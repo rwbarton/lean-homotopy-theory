@@ -33,8 +33,7 @@ instance : has_one I01 := ⟨⟨1, by norm_num, by norm_num⟩⟩
 instance : t2_space I01 :=
 by dsimp [I01, Top.mk_ob]; apply_instance
 
-instance : locally_compact_space I01 :=
-locally_compact_of_compact (compact_iff_compact_univ.mp compact_Icc)
+instance : compact_space I01 := ⟨compact_iff_compact_univ.mp compact_Icc⟩
 
 -- The endpoint of [0,1] corresponding to an abstract endpoint.
 def I01_of_endpoint : endpoint → I01
@@ -54,7 +53,12 @@ instance : has_cylinder_with_involution Top :=
   pi := assume ε, rfl,
 
   v := Top.product_by_trans I01.v,
-  vi := assume ε, by cases ε; refl,
+  vi := assume ε, begin
+    ext X p, { refl },
+    cases ε; apply subtype.eq,
+    { change (1 : ℝ) - 0 = 1, norm_num },
+    { change (1 : ℝ) - 1 = 0, norm_num }
+  end,
   vv := begin
     ext X p, { refl },
     { rcases p with ⟨x, t, h⟩,

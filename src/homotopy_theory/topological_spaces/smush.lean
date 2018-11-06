@@ -221,8 +221,8 @@ set.ext $ λ p, by convert (construction.Ht0 p).symm; simp; refl
 end continuity
 
 instance : admissible' ℝ :=
-{ mul_smul' := module.mul_smul,
-  one_smul' := module.one_smul,
+{ mul_smul' := _root_.mul_smul,
+  one_smul' := _root_.one_smul,
   norm := abs,
   norm_nonneg := abs_nonneg,
   norm_mul := abs_mul,

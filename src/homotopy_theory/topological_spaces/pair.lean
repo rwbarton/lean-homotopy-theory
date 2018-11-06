@@ -352,21 +352,11 @@ def I_01_is_D1_S0 : I_01 ≅ₚ unit_disk_sphere ℝ :=
 pair.homeomorphism.mk
   { hom :=
       Top.mk_hom
-        (λ t,
-          ⟨2 * t.val - 1,
-           abs_le.mpr
-             ⟨calc -1 = 2 * 0 - 1      : by norm_num
-                  ... ≤ 2 * t.val - 1  : sub_le_sub_right (mul_le_mul_of_nonneg_left t.property.left (by norm_num)) _,
-              calc 2 * t.val - 1 ≤ 2 * 1 - 1  : sub_le_sub_right (mul_le_mul_of_nonneg_left t.property.right (by norm_num)) _
-                             ... = 1          : by norm_num⟩⟩)
+        (λ t, ⟨2 * t.val - 1, by cases t.property; erw abs_le; split; linarith⟩)
         (by continuity),
     inv :=
       Top.mk_hom
-        (λ t,
-          ⟨(1 / 2) * (t.val + 1),
-           mul_nonneg (by norm_num) (le_add_of_neg_add_le_right (abs_le.mp t.property).left),
-           calc (1 / 2) * (t.val + 1) ≤ (1 / 2) * (1 + 1)  : mul_le_mul_of_nonneg_left (add_le_add_right (abs_le.mp t.property).right _) (by norm_num)
-                                  ... = 1                  : by norm_num⟩)
+        (λ t, by refine ⟨(1 / 2) * (t.val + 1), _, _⟩; cases abs_le.mp t.property; linarith)
         (by continuity),
     hom_inv_id' := begin
       ext t,
