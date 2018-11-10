@@ -35,7 +35,7 @@ include cat
 lemma weq_id (a : C) : is_weq (𝟙 a) := mem_id a
 lemma weq_comp {a b c : C} {f : a ⟶ b} {g : b ⟶ c} :
   is_weq f → is_weq g → is_weq (g ∘ f) := mem_comp
-lemma weq_iso {a b : C} (i : a ≅ b) : is_weq (i : a ⟶ b) := mem_iso i
+lemma weq_iso {a b : C} (i : a ≅ b) : is_weq i.hom := mem_iso i
 end
 
 -- The two-out-of-six property.

@@ -147,13 +147,13 @@ def Eiε : homotopy f₁ f₁' :=
 { H := E ∘ i ε.v @> I.obj b, Hi₀ := Eiεvi_.1, Hi₁ := Eiεvi_.2 }
 
 lemma Eiε_is_rel : Eiε.is_rel j :=
-have i ε.v @> (I : C ↝ C) b ∘ I &> j = I &> j' ∘ I &> Po.map₁ ∘ i ε.v @> (I : C ↝ C) a, begin
+have i ε.v @> I.obj b ∘ I &> j = I &> j' ∘ I &> Po.map₁ ∘ i ε.v @> I.obj a, begin
   rw ←I.map_comp, unfold j', simp,
   rw ←(i ε.v).naturality, refl
 end,
 begin
   dsimp [homotopy.is_rel, Eiε] { iota := tt },
-  rw [←assoc, this], simp [-nat_trans.app_eq_coe, hE.2, HH'', GIp],
+  rw [←assoc, this], simp [hE.2, HH'', GIp],
   rw [←h, ←i_nat_assoc, ←i_nat_assoc, H.Hiεv]
 end
 

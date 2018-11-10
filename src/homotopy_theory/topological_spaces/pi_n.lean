@@ -27,7 +27,7 @@ local notation `[` A `, ` X `]` := homotopy_classes A X
 -- corepresented on the homotopy category by *.
 
 def π₀ : Top ↝ Set :=
-{ obj := λ X, [*, X], map' := λ X Y f x, ⟦f⟧ ∘ x }
+{ obj := λ X, [*, X], map := λ X Y f x, ⟦f⟧ ∘ x }
 
 -- We define πₙ(X, x) as the set of homotopy classes of maps D[n] → X
 -- which send S[n-1] to x, rel S[n-1].
@@ -53,7 +53,7 @@ by funext a; induction a using quot.ind; change ⟦_⟧ = ⟦_⟧; simp; refl
 
 def π (n : ℕ) : Top_ptd ↝ Set :=
 { obj := λ Xx, π_ n Xx.space Xx.pt,
-  map' := λ Xx Yy f,
+  map := λ Xx Yy f,
     by convert π_induced n Xx.pt f.val; rw f.property,
   map_id' := assume Xx, π_induced_id n Xx.pt,
   map_comp' := assume Xx Yy Zz f g, begin

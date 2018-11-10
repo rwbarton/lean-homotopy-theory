@@ -65,7 +65,7 @@ Top.mk_hom (induced A g) (exponentiable.functorial A X X' g)
 
 def exponential_functor (A : Top) [exponentiable A] : Top ↝ Top :=
 { obj := exponential A,
-  map' := exponential_induced A,
+  map := exponential_induced A,
   map_id' := by intro X; ext g x; refl,
   map_comp' := by intros X X' X'' f g; refl }
 

@@ -129,8 +129,7 @@ def coprod_initial_right (a : C) : a ≅ a ⊔ ∅ :=
     by apply coprod.uniqueness; try { apply initial.uniqueness };
        rw ←assoc; simp }
 
-@[simp] lemma coprod_initial_right_hom {a : C} :
-  (↑(coprod_initial_right a) : a ⟶ a ⊔ ∅) = i₀ :=
+@[simp] lemma coprod_initial_right_hom {a : C} : (coprod_initial_right a).hom = i₀ :=
 rfl
 
 def coprod_initial_left (a : C) : a ≅ ∅ ⊔ a :=
@@ -141,8 +140,7 @@ def coprod_initial_left (a : C) : a ≅ ∅ ⊔ a :=
     by apply coprod.uniqueness; try { apply initial.uniqueness };
        rw ←assoc; simp }
 
-@[simp] lemma coprod_initial_left_hom {a : C} :
-  (↑(coprod_initial_left a) : a ⟶ ∅ ⊔ a) = i₁ :=
+@[simp] lemma coprod_initial_left_hom {a : C} : (coprod_initial_left a).hom = i₁ :=
 rfl
 
 end coproduct
@@ -238,10 +236,10 @@ def pushout.unique : iso c c' :=
   hom_inv_id' := by apply po.uniqueness; {rw ←category.assoc, simp},
   inv_hom_id' := by apply po'.uniqueness; {rw ←category.assoc, simp} }
 
-@[simp] lemma pushout.unique_commutes₀ : ↑pushout.unique ∘ g₀ = g'₀ :=
+@[simp] lemma pushout.unique_commutes₀ : pushout.unique.hom ∘ g₀ = g'₀ :=
 by apply po.induced_commutes₀
 
-@[simp] lemma pushout.unique_commutes₁ : ↑pushout.unique ∘ g₁ = g'₁ :=
+@[simp] lemma pushout.unique_commutes₁ : pushout.unique.hom ∘ g₁ = g'₁ :=
 by apply po.induced_commutes₁
 
 end uniqueness_of_pushouts
@@ -272,7 +270,7 @@ include cat
 
 -- TODO: Move this somewhere?
 def precomposition_bij {a' a x : C} (i : iso a' a) :
-  Bij_on (λ (k : a ⟶ x), (k ∘ ↑i : a' ⟶ x)) univ univ :=
+  Bij_on (λ (k : a ⟶ x), (k ∘ i.hom : a' ⟶ x)) univ univ :=
 Bij_on.of_equiv $ show (a ⟶ x) ≃ (a' ⟶ x), from
 { to_fun := λ k, k ∘ i.hom,
   inv_fun := λ k', k' ∘ i.inv,
@@ -283,15 +281,15 @@ parameters {a b₀ b₁ c : C} {f₀ : a ⟶ b₀} {f₁ : a ⟶ b₁}
 parameters {g₀ : b₀ ⟶ c} {g₁ : b₁ ⟶ c} (po : Is_pushout f₀ f₁ g₀ g₁)
 parameters {a' b'₀ b'₁ : C} (f'₀ : a' ⟶ b'₀) (f'₁ : a' ⟶ b'₁)
 parameters (i : iso a' a) (j₀ : iso b'₀ b₀) (j₁ : iso b'₁ b₁)
-parameters (e₀ : f₀ ∘ ↑i = j₀ ∘ f'₀) (e₁ : f₁ ∘ ↑i = j₁ ∘ f'₁)
+parameters (e₀ : f₀ ∘ i.hom = j₀.hom ∘ f'₀) (e₁ : f₁ ∘ i.hom = j₁.hom ∘ f'₁)
 
 include e₀ e₁
-def Is_pushout_of_isomorphic : Is_pushout f'₀ f'₁ (g₀ ∘ ↑j₀) (g₁ ∘ ↑j₁) :=
+def Is_pushout_of_isomorphic : Is_pushout f'₀ f'₁ (g₀ ∘ j₀.hom) (g₁ ∘ j₁.hom) :=
 Is_pushout.mk $ λ x,
   have _ := calc
   univ ~~ {p : (b₀ ⟶ x) × (b₁ ⟶ x) | p.1 ∘ f₀ = p.2 ∘ f₁}
        : po.universal x
-  ...  ~~ {p : (b₀ ⟶ x) × (b₁ ⟶ x) | (p.1 ∘ ↑j₀) ∘ f'₀ = (p.2 ∘ ↑j₁) ∘ f'₁}
+  ...  ~~ {p : (b₀ ⟶ x) × (b₁ ⟶ x) | (p.1 ∘ j₀.hom) ∘ f'₀ = (p.2 ∘ j₁.hom) ∘ f'₁}
        : begin
            convert Bij_on.refl _, funext p, apply propext,
            rw [←assoc, ←assoc, ←e₀, ←e₁], simp
@@ -305,7 +303,7 @@ omit e₀ e₁
 
 parameters {c' : C} (k : iso c c')
 
-def Is_pushout_of_isomorphic' : Is_pushout f₀ f₁ ((k : c ⟶ c') ∘ g₀) ((k : c ⟶ c') ∘ g₁) :=
+def Is_pushout_of_isomorphic' : Is_pushout f₀ f₁ (k.hom ∘ g₀) (k.hom ∘ g₁) :=
 Is_pushout.mk $ λ x,
   have _ := calc
   univ ~~ univ
@@ -425,10 +423,6 @@ Is_pushout.mk $ λ x,
   end
 
 end coprod_of_pushouts
-
-@[simp] lemma iso.refl_hom {C : Type u} [category C] {a : C} :
-  (↑(iso.refl a) : a ⟶ a) = 𝟙 a :=
-rfl
 
 section pushout_i
 

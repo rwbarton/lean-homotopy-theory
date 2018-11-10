@@ -42,6 +42,6 @@ instance category_mod_congruence.category : category (category_mod_congruence C 
  }
 
 def quotient_functor : C ↝ category_mod_congruence C r :=
-{ obj := λ a, a, map' := λ a b f, ⟦f⟧ }
+{ obj := λ a, a, map := λ a b f, ⟦f⟧ }
 
 end category_theory

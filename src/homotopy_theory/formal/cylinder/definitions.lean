@@ -48,9 +48,9 @@ has_cylinder.i C
 @[reducible] def p : I ⟶ functor.id C :=
 has_cylinder.p C
 
-@[simp] lemma pi_components (ε) {A : C} : p A ∘ i ε A = 𝟙 A :=
-show (p ∘ i ε) A = 𝟙 A,
-by rw has_cylinder.pi; refl
+@[simp] lemma pi_components (ε) {A : C} : p.app A ∘ (i ε).app A = 𝟙 A :=
+show (p ∘ (i ε)).app A = 𝟙 A,
+by erw has_cylinder.pi; refl
 
 lemma i_nat_assoc (ε) {y z w : C} (g : I.obj z ⟶ w) (h : y ⟶ z) :
   g ∘ i ε @> z ∘ h = g ∘ I &> h ∘ i ε @> y :=
@@ -72,7 +72,7 @@ include cat
 -- is defined by `∂I A = A ⊔ A`. (`∂I` does not depend on `I`.)
 def boundary_I : C ↝ C :=
 { obj := λ A, A ⊔ A,
-  map' := λ A B f, coprod_of_maps f f,
+  map := λ A B f, coprod_of_maps f f,
   map_id' := λ A, by apply coprod.uniqueness; simp,
   map_comp' := λ A B C f g, by apply coprod.uniqueness; rw ←assoc; simp }
 
@@ -90,13 +90,10 @@ show ∂I ⟶ (I : C ↝ C), from
       { rw [←assoc, ←assoc], simpa using (i _).naturality f }
   end }
 
-local notation `iiC` := @ii C _ _ _
-local notation `iC` := @i C _ _
-
-@[simp] lemma iii₀_assoc {A B : C} (f : I.obj A ⟶ B) : f ∘ iiC A ∘ i₀ = f ∘ iC 0 A :=
+@[simp] lemma iii₀_assoc {A B : C} (f : I.obj A ⟶ B) : f ∘ ii.app A ∘ i₀ = f ∘ (i 0).app A :=
 by rw ←assoc; dsimp [ii]; simp
 
-@[simp] lemma iii₁_assoc {A B : C} (f : I.obj A ⟶ B) : f ∘ iiC A ∘ i₁ = f ∘ iC 1 A :=
+@[simp] lemma iii₁_assoc {A B : C} (f : I.obj A ⟶ B) : f ∘ ii.app A ∘ i₁ = f ∘ (i 1).app A :=
 by rw ←assoc; dsimp [ii]; simp
 
 end boundary
@@ -129,11 +126,11 @@ include cat
 @[reducible] def v : I ⟶ I :=
 has_cylinder_with_involution.v C
 
-@[simp] lemma vi_components {A : C} (ε) : v A ∘ (i ε : functor.id C ⟶ I) A = (i ε.v : functor.id C ⟶ I) A :=
+@[simp] lemma vi_components {A : C} (ε) : v @> A ∘ i ε @> A = i ε.v @> A :=
 show (v ∘ i ε) @> A = (i ε.v) @> A,
 by rw has_cylinder_with_involution.vi; refl
 
-@[simp] lemma vv_components {A : C} : v A ∘ v A = 𝟙 (I.obj A) :=
+@[simp] lemma vv_components {A : C} : v @> A ∘ v @> A = 𝟙 (I.obj A) :=
 show (v ∘ v) @> A = _,
 by rw has_cylinder_with_involution.vv; refl
 

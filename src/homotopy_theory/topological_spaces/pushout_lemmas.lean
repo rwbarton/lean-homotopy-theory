@@ -79,9 +79,9 @@ def a : * ⟶ X/A := Top.mk_hom (λ _, ptX) (by continuity)
 def poX : Is_pushout i (Top.point_induced A) qX a := quotient_space.is_pushout i
 
 def h : homeomorphism X/A Y/B := pushout.unique poX po'
-lemma hab : ↑h ∘ a = b := by simp [h]
-lemma hpt : h ptX = ptY := Top.hom_congr hab punit.star
-@[simp] lemma hpt' : h ⁻¹' {ptY} = {ptX} :=
+lemma hab : h.hom ∘ a = b := by simp [h]
+lemma hpt : h.hom ptX = ptY := Top.hom_congr hab punit.star
+@[simp] lemma hpt' : h.hom ⁻¹' {ptY} = {ptX} :=
 let h' := h.equiv in
 begin
   ext p, simp [hpt.symm], change h' p = h' ptX ↔ p = ptX, simp
@@ -121,10 +121,10 @@ local notation `Y/B₋` := YmodBminus
 
 def h' : homeomorphism X/A₋ Y/B₋ :=
 h.restrict $ calc
-    _ = - {ptX}         : rfl
-  ... = - (h ⁻¹' {ptY}) : by rw hpt'
-  ... = h ⁻¹' (- {ptY}) : set.preimage_compl
-  ... = _               : rfl
+    _ = - {ptX}             : rfl
+  ... = - (h.hom ⁻¹' {ptY}) : by rw hpt'
+  ... = h.hom ⁻¹' (- {ptY}) : set.preimage_compl
+  ... = _                   : rfl
 
 local notation a ` ≅ ` b := homeomorphism a b
 

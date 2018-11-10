@@ -55,7 +55,7 @@ by cases e; simp
 
 -- Proving equality between functors.
 lemma functor.ext {F G : C ↝ D}
-  (h_ob : ∀ a, F a = G a)
+  (h_ob : ∀ a, F.obj a = G.obj a)
   (h_mor : ∀ {a b : C} (f : a ⟶ b),
     id_of_eq (h_ob b) ∘ F &> f = G &> f ∘ id_of_eq (h_ob a)) : F = G :=
 begin
@@ -67,7 +67,7 @@ begin
 end
 
 lemma functor.hext {F G : C ↝ D}
-  (h_ob : ∀ a, F a = G a)
+  (h_ob : ∀ a, F.obj a = G.obj a)
   (h_mor : ∀ {a b : C} (f : a ⟶ b), F &> f == G &> f) : F = G :=
 begin
   cases F, cases G,

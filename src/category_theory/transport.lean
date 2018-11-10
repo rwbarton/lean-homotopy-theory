@@ -51,7 +51,7 @@ variables (F : C ↝ D)
 def transported_functor :
   @functor C (transported_category catC eC) D (transported_category catD eD) :=
 { obj := F.obj,
-  map' := λ a b f, eD (F a) (F b) (F &> (eC a b).symm f),
+  map := λ a b f, eD (F.obj a) (F.obj b) (F &> (eC a b).symm f),
   map_id' := by intros; dsimp [transported_category]; simp; refl,
   map_comp' := by intros; dsimp [transported_category]; simp; refl }
 

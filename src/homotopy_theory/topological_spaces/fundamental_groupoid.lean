@@ -32,7 +32,7 @@ induced_functor_gpd _ _
 
 def Pi₁ : Top ↝ Gpd :=
 { obj := λ X, Gpd.mk_ob (Pi₁_ X),
-  map' := λ X Y f, Gpd.mk_hom (Pi₁_induced f),
+  map := λ X Y f, Gpd.mk_hom (Pi₁_induced f),
   map_id' := λ X, begin
     dsimp [Pi₁_induced], simp only [homotopy_class_functor.map_id],
     apply induced_functor_id

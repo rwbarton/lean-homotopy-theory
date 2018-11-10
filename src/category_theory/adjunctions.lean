@@ -23,8 +23,8 @@ local attribute [elab_simple] functor.map
 -- TODO: Think about binding powers of these operators?
 -- Actually, seems more or less okay
 structure adjunction (F : C ↝ D) (G : D ↝ C) extends adjunction_data F G :=
-(left_triangle : ∀ (c : C), counit (F c) ∘ F &> unit c = 𝟙 _)
-(right_triangle : ∀ (d : D), G &> counit d ∘ unit (G d) = 𝟙 _)
+(left_triangle : ∀ (c : C), counit.app (F.obj c) ∘ F &> unit.app c = 𝟙 _)
+(right_triangle : ∀ (d : D), G &> counit.app d ∘ unit.app (G.obj d) = 𝟙 _)
 
 attribute [simp] adjunction.left_triangle adjunction.right_triangle
 
@@ -34,9 +34,9 @@ class has_right_adjoint (F : C ↝ D) :=
 
 variables {F : C ↝ D} {G : D ↝ C}
 def adjunction.hom_equivalence (adj : adjunction F G) (c d) :
-  (F c ⟶ d) ≃ (c ⟶ G d) :=
-{ to_fun := λ f, G &> f ∘ adj.unit c,
-  inv_fun := λ g, adj.counit d ∘ F &> g,
+  (F.obj c ⟶ d) ≃ (c ⟶ G.obj d) :=
+{ to_fun := λ f, G &> f ∘ adj.unit.app c,
+  inv_fun := λ g, adj.counit.app d ∘ F &> g,
   left_inv := λ f, begin
     change _ ∘ F &> (_ ∘ _) = _,
     rw [F.map_comp, assoc], change _ ∘ (F ∘ᶠ G) &> f ∘ _ = _,
@@ -51,10 +51,10 @@ def adjunction.hom_equivalence (adj : adjunction F G) (c d) :
   end }
 
 lemma adjunction.hom_equivalence_symm_naturality (adj : adjunction F G) {c' c d}
-  (f : c' ⟶ c) (g : c ⟶ G d) :
+  (f : c' ⟶ c) (g : c ⟶ G.obj d) :
   (adj.hom_equivalence c' d).symm (g ∘ f) =
   (adj.hom_equivalence c d).symm g ∘ F &> f :=
-show adj.counit d ∘ F &> (g ∘ f) = adj.counit d ∘ F &> g ∘ F &> f,
+show adj.counit.app d ∘ F &> (g ∘ f) = adj.counit.app d ∘ F &> g ∘ F &> f,
 by simp
 
 end category_theory

@@ -42,8 +42,8 @@ protected def mk_hom {X Y : Top_ptd} (f : X.space ⟶ Y.space)
 subtype.mk f hf
 
 protected def mk_iso {X Y : Top_ptd} (i : Top.homeomorphism X.space Y.space)
-  (hi : i X.pt = Y.pt) : X ≅ Y :=
-{ hom := ⟨i, hi⟩,
+  (hi : i.hom X.pt = Y.pt) : X ≅ Y :=
+{ hom := ⟨i.hom, hi⟩,
   inv := ⟨i.inv, begin
       rw ←hi, change i.equiv.symm (i.equiv X.pt) = X.pt, simp
     end⟩,
@@ -51,7 +51,7 @@ protected def mk_iso {X Y : Top_ptd} (i : Top.homeomorphism X.space Y.space)
   inv_hom_id' := subtype.eq i.inv_hom_id }
 
 protected def mk_iso' {X Y : Top} (i : Top.homeomorphism X Y) (x : X) :
-  Top_ptd.mk_ob X x ≅ Top_ptd.mk_ob Y (i x) :=
+  Top_ptd.mk_ob X x ≅ Top_ptd.mk_ob Y (i.hom x) :=
 Top_ptd.mk_iso i rfl
 
 end «Top_ptd»

@@ -60,7 +60,7 @@ instance precofibration_category.replete
       (cof_id a) }
 
 include cat
-lemma cof_iso {a b : C} (i : a ≅ b) : is_cof (i : a ⟶ b) := mem_iso i
+lemma cof_iso {a b : C} (i : a ≅ b) : is_cof i.hom := mem_iso i
 
 -- The coproduct of cofibrations is a cofibration.
 -- TODO: Should we try to express this using Is_coproduct?

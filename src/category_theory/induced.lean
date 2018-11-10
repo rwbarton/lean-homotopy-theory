@@ -24,17 +24,17 @@ def induced_groupoid (gpd : groupoid.{u v} C) : groupoid.{u' v} C' :=
 variables {D : Type w} {D' : Type w'} (l : D' → D)
 
 def induced_functor [catC : category.{u v} C] [catD : category.{w x} D] (F : C ↝ D)
-  (F' : C' → D') (e : ∀ a, F (k a) = l (F' a)) :
+  (F' : C' → D') (e : ∀ a, F.obj (k a) = l (F' a)) :
   @functor C' (induced_category k catC) D' (induced_category l catD) :=
 { obj := F',
-  map' := λ X Y f,
+  map := λ X Y f,
     show l (F' X) ⟶ l (F' Y), from
     id_of_eq (e Y) ∘ (F &> f) ∘ id_of_eq (e X).symm,
   map_id' := λ X, by dsimp [induced_category]; rw F.map_id; simp,
   map_comp' := λ X Y Z f g, by dsimp [induced_category]; rw F.map_comp; simp }
 
 def induced_functor_gpd [gpdC : groupoid.{u v} C] [gpdD : groupoid.{w x} D] (F : C ↝ D)
-  (F' : C' → D') (e : ∀ a, F (k a) = l (F' a)) :
+  (F' : C' → D') (e : ∀ a, F.obj (k a) = l (F' a)) :
   @functor C' (induced_groupoid k gpdC).to_category D' (induced_groupoid l gpdD).to_category :=
 induced_functor k l F F' e
 
@@ -50,10 +50,10 @@ end
 variables {E : Type y} {E' : Type y'} (m : E' → E)
 lemma induced_functor_comp [catC : category.{u v} C]
   [catD : category.{w x} D] [catE : category.{y z} E]
-  {F : C ↝ D} {F' : C' → D'} (eF : ∀ a, F (k a) = l (F' a))
-  {G : D ↝ E} {G' : D' → E'} (eG : ∀ a, G (l a) = m (G' a)) :
+  {F : C ↝ D} {F' : C' → D'} (eF : ∀ a, F.obj (k a) = l (F' a))
+  {G : D ↝ E} {G' : D' → E'} (eG : ∀ a, G.obj (l a) = m (G' a)) :
   induced_functor k m (F.comp G) (function.comp G' F')
-    (by intro a; change G (F (k a)) = _; rw [eF, eG]) =
+    (by intro a; change G.obj (F.obj (k a)) = _; rw [eF, eG]) =
   @functor.comp
     C' (induced_category k catC)
     D' (induced_category l catD)

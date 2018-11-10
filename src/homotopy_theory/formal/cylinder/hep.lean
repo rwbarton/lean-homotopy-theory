@@ -26,7 +26,7 @@ def hep (ε) {A X : C} (j : A ⟶ X) : Prop :=
 ∀ Y (f : X ⟶ Y) (H : I.obj A ⟶ Y), f ∘ j = H ∘ i ε @> A →
   ∃ H' : I.obj X ⟶ Y, H' ∘ i ε @> X = f ∧ H' ∘ I &> j = H
 
-lemma hep_of_isomorphism (ε) {A X : C} (h : iso A X) : hep ε (h : A ⟶ X) :=
+lemma hep_of_isomorphism (ε) {A X : C} (h : iso A X) : hep ε h.hom :=
 assume Y f H e,
   ⟨H ∘ I &> h.inv,
    by erw [←assoc, ←(i ε).naturality, assoc, ←e, iso.inv_hom_id_assoc_lemma],
@@ -112,7 +112,7 @@ assume Y f H e,
   let ⟨H₁, h₁, h₂⟩ := h Y f (H ∘ v @> A)
     (by convert e using 1; rw [←assoc]; simp) in
   ⟨H₁ ∘ v @> X,
-   by rw ←assoc; simp; rw endpoint.vv; simpa using H₁,
+   by rw ←assoc; simpa using H₁,
    calc
      H₁ ∘ v @> X ∘ I &> j
        = H₁ ∘ (v @> X ∘ I &> j) : by simp

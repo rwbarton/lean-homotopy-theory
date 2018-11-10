@@ -37,19 +37,19 @@ variables {X Y Z : Top} (h : homeomorphism X Y)
 
 -- TODO: Could also express this via forgetful functor, iso = ≃ for Set
 def homeomorphism.equiv : X ≃ Y :=
-{ to_fun := h,
+{ to_fun := h.hom,
   inv_fun := h.inv,
   left_inv := λ x, Top.hom_congr h.hom_inv_id x,
   right_inv := λ y, Top.hom_congr h.inv_hom_id y }
 
 -- TODO: We could also use this to prove is_open_iff
-lemma homeomorphism.embedding : embedding h :=
+lemma homeomorphism.embedding : embedding h.hom :=
 embedding_of_embedding_comp h.inv
   (by convert embedding_id; change function.comp h.equiv.symm h.equiv = id; simp)
 
-lemma homeomorphism.is_open_iff (s : set Y) : is_open s ↔ is_open (h ⁻¹' s) :=
+lemma homeomorphism.is_open_iff (s : set Y) : is_open s ↔ is_open (h.hom ⁻¹' s) :=
 iff.intro (h.hom.property s) $
-  have is_open (h ⁻¹' s) → is_open (h.equiv.symm ⁻¹' (h.equiv ⁻¹' s)), from
+  have is_open (h.hom ⁻¹' s) → is_open (h.equiv.symm ⁻¹' (h.equiv ⁻¹' s)), from
     h.inv.property _,
   begin
     intro H,
@@ -58,23 +58,23 @@ iff.intro (h.hom.property s) $
     simp [set.preimage_id]
   end
 
-lemma homeomorphism.is_closed_iff (s : set Y) : is_closed s ↔ is_closed (h ⁻¹' s) :=
+lemma homeomorphism.is_closed_iff (s : set Y) : is_closed s ↔ is_closed (h.hom ⁻¹' s) :=
 by rw [is_closed, is_closed, h.is_open_iff, set.preimage_compl]
 
 -- TODO: maybe this actually belongs in `subspace`?
-def homeomorphism.restrict {s : set X} {t : set Y} (hst : s = h ⁻¹' t) :
+def homeomorphism.restrict {s : set X} {t : set Y} (hst : s = h.hom ⁻¹' t) :
   homeomorphism (Top.mk_ob s) (Top.mk_ob t) :=
-{ hom := Top.mk_hom (λ p, ⟨h p.val, by simpa [hst] using p.property⟩)
+{ hom := Top.mk_hom (λ p, ⟨h.hom p.val, by simpa [hst] using p.property⟩)
     (by have := h.hom.property; continuity),
-  inv := Top.mk_hom (λ p, ⟨h.symm p.val, begin
+  inv := Top.mk_hom (λ p, ⟨h.inv p.val, begin
       subst s, show h.equiv (h.equiv.symm p.val) ∈ t, simpa using p.property
     end⟩)
     (by have := h.inv.property; continuity),
   hom_inv_id' := by ext p; exact h.equiv.left_inv p.val,
   inv_hom_id' := by ext p; exact h.equiv.right_inv p.val }
 
-lemma homeomorphism.restriction_commutes {s : set X} {t : set Y} (hst : s = h ⁻¹' t) :
-  incl t ∘ ↑(h.restrict hst) = h ∘ incl s :=
+lemma homeomorphism.restriction_commutes {s : set X} {t : set Y} (hst : s = h.hom ⁻¹' t) :
+  incl t ∘ (h.restrict hst).hom = h.hom ∘ incl s :=
 by ext; refl
 
 -- Better than h ▸ refl because this lets the val field compute.
@@ -100,8 +100,8 @@ homeomorphism.of_equiv e j'.property
 -- TODO: Would also be action on isomorphisms of the functor X × -
 def homeomorphism.prod_congr_right (h : homeomorphism Y Z) :
   homeomorphism (Top.prod X Y) (Top.prod X Z) :=
-{ hom := Top.prod_maps (𝟙 X) h,
-  inv := Top.prod_maps (𝟙 X) h.symm,
+{ hom := Top.prod_maps (𝟙 X) h.hom,
+  inv := Top.prod_maps (𝟙 X) h.inv,
   hom_inv_id' := begin
     ext pq, { refl },
     { cases pq with p q,

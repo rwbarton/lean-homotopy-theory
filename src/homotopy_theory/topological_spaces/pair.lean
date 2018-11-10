@@ -43,7 +43,7 @@ local notation `B'` := Q.subspace
 
 section homeomorphism
 
-def Top.homeomorphism.of_pairs (h : homeomorphism X Y) : Prop := A = h ⁻¹' B
+def Top.homeomorphism.of_pairs (h : homeomorphism X Y) : Prop := A = h.hom ⁻¹' B
 structure pair.homeomorphism :=
 (h : homeomorphism X Y)
 (is_of_pairs : h.of_pairs P Q)
@@ -57,10 +57,10 @@ lemma pair.homeomorphism.is_of_pairs' (h : P ≅ₚ Q) : A = h.h.equiv ⁻¹' B 
 h.is_of_pairs
 
 lemma pair.homeomorphism.is_of_pairs.mk' (h : homeomorphism X Y)
-  (ha : ∀ a ∈ A, h a ∈ B) (hb : ∀ b ∈ B, h.symm b ∈ A) : h.of_pairs P Q :=
+  (ha : ∀ a ∈ A, h.hom a ∈ B) (hb : ∀ b ∈ B, h.inv b ∈ A) : h.of_pairs P Q :=
 begin
   ext p, split, { exact ha p },
-  { intro hp, apply function.comp _ (hb (h p)) hp,
+  { intro hp, apply function.comp _ (hb (h.hom p)) hp,
     change h.equiv.symm (h.equiv p) ∈ _ → p ∈ _,
     simp }
 end

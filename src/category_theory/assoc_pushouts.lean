@@ -52,10 +52,10 @@ begin
     { apply po₂.uniqueness; rw ←assoc; simp } }
 end
 
-@[simp] lemma Is_pushout_assoc_i₀ : ↑Is_pushout_assoc ∘ h₀ ∘ g₀ = h₀' :=
+@[simp] lemma Is_pushout_assoc_i₀ : Is_pushout_assoc.hom ∘ h₀ ∘ g₀ = h₀' :=
 by change Is_pushout.induced _ _ _ _ ∘ _ ∘ _ = _; simp
 
-@[simp] lemma Is_pushout_assoc_i₁ : ↑Is_pushout_assoc ∘ h₁ = h₁' ∘ g₃ :=
+@[simp] lemma Is_pushout_assoc_i₁ : Is_pushout_assoc.hom ∘ h₁ = h₁' ∘ g₃ :=
 by change Is_pushout.induced _ _ _ _ ∘ _ = _ ∘ _; simp
 
 parameters {x : C} {k : d ⟶ x} {k' : d' ⟶ x}
@@ -64,7 +64,7 @@ lemma Is_pushout_assoc_uniqueness
   (hk₀ : k ∘ h₀ ∘ g₀ = k' ∘ h₀')
   (hk₁ : k ∘ h₀ ∘ g₁ = k' ∘ h₁' ∘ g₂)
   (hk₂ : k ∘ h₁ = k' ∘ h₁' ∘ g₃) :
-  k = k' ∘ ↑Is_pushout_assoc :=
+  k = k' ∘ Is_pushout_assoc.hom :=
 begin
   change k = k' ∘ Is_pushout.induced _ _ _ _,
   apply po₁.uniqueness; rw ←assoc,

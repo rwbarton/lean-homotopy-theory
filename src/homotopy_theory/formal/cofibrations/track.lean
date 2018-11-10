@@ -101,13 +101,13 @@ assume ⟨t, m₀, m₁, ⟨⟩⟩ ⟨t', m₁', m₂', ⟨⟩⟩,
 
 structure homotopy_iso (t t' : homotopy hj f₀ f₁) :=
 (k : t.c.ob ≅ t'.c.ob)
-(hkii : ↑k ∘ t.c.ii = t'.c.ii)
-(hpk : t'.c.p ∘ ↑k = t.c.p)
-(e : t'.h.H ∘ ↑k = t.h.H)
+(hkii : k.hom ∘ t.c.ii = t'.c.ii)
+(hpk : t'.c.p ∘ k.hom = t.c.p)
+(e : t'.h.H ∘ k.hom = t.h.H)
 
 lemma homotopy_equiv_of_iso {t t' : homotopy hj f₀ f₁} (i : homotopy_iso t t') :
   homotopy_equiv t t' :=
-⟨t', ⟨⟨i.k, cof_iso _, i.hkii, i.hpk⟩, i.e⟩, homotopy_extension.refl t', ⟨⟩⟩
+⟨t', ⟨⟨i.k.hom, cof_iso _, i.hkii, i.hpk⟩, i.e⟩, homotopy_extension.refl t', ⟨⟩⟩
 
 instance homotopy_equiv.setoid : setoid (homotopy hj f₀ f₁) :=
 { r := homotopy_equiv,
@@ -370,7 +370,7 @@ quotient.lift_on t
 noncomputable def track_groupoid_rel_functor {y} (g : x ⟶ y) :
   track_groupoid_rel hj x ↝ track_groupoid_rel hj y :=
 { obj := λ f, g ∘ f,
-  map' := λ f₀ f₁ t, t.congr_left g,
+  map := λ f₀ f₁ t, t.congr_left g,
   map_id' := λ f,
     show (track.refl f).congr_left g = track.refl (g ∘ f),
     begin
@@ -546,7 +546,7 @@ transported_functor
   (track_groupoid_rel_functor k)
 
 lemma homotopy_class_functor.obj {g : homotopy_class_groupoid hj c hx} :
-  (homotopy_class_functor hx hy k : (homotopy_class_groupoid hj c _ ↝ _)) g = k ∘ g :=
+  (homotopy_class_functor hx hy k).obj g = k ∘ g :=
 rfl
 
 lemma homotopy_class_functor.hom {g₀ g₁ : homotopy_class_groupoid hj c hx}
