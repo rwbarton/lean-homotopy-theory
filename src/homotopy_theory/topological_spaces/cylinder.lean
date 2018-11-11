@@ -30,12 +30,9 @@ def I01 : Top := Top.mk_ob { t : ℝ // 0 ≤ t ∧ t ≤ 1 }
 instance : has_zero I01 := ⟨⟨0, by norm_num, by norm_num⟩⟩
 instance : has_one I01 := ⟨⟨1, by norm_num, by norm_num⟩⟩
 
-section
--- FIXME: This is *really* slow. Why?
-set_option class.instance_max_depth 37
-instance : t2_space I01 :=
-by dsimp [I01, Top.mk_ob]; apply_instance
-end
+-- This is *really* slow. Why?
+-- instance : t2_space I01 := by dsimp [I01, Top.mk_ob]; apply_instance
+instance : t2_space I01 := by apply subtype.t2_space; apply_instance
 
 instance : compact_space I01 := ⟨compact_iff_compact_univ.mp compact_Icc⟩
 
