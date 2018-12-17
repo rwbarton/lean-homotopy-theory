@@ -267,7 +267,7 @@ suffices is_open (subtype.val '' (q' '' u)), from
   let j : X/A₋ → X/A := subtype.val in
   have is_open (j ⁻¹' (j '' (q' '' u))) :=
     continuous_subtype_val _ this,
-  by rwa preimage_image_eq _ injective_subtype_val at this,
+  by rwa preimage_image_eq _ subtype.val_injective at this,
 show is_open (q ⁻¹' (subtype.val '' (q' '' u))), from
 suffices is_open (subtype.val '' u), by simpa,
 embedding_open embedding_subtype_val (by simpa using ha) hu
@@ -278,7 +278,7 @@ suffices is_closed (subtype.val '' (q' '' u)), from
   let j : X/A₋ → X/A := subtype.val in
   have is_closed (j ⁻¹' (j '' (q' '' u))) :=
     continuous_iff_is_closed.mp continuous_subtype_val _ this,
-  by rwa preimage_image_eq _ injective_subtype_val at this,
+  by rwa preimage_image_eq _ subtype.val_injective at this,
 show is_closed (q ⁻¹' (subtype.val '' (q' '' u))), from
 suffices is_closed (subtype.val '' u), by simpa,
 have is_closed X-A := is_closed_compl_iff.mpr ha,

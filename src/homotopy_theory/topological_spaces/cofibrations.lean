@@ -147,7 +147,7 @@ end,
    change cofibration ind ∧ is_closed (range ind), rw this,
    refine ⟨prod_I_01_cofibered P ha (cofibration_iff_cofibered.mp hj).2, _⟩,
    convert @pair.prod.is_closed P I_01 ha I_01.is_closed using 1,
-   apply range_subtype_val
+   apply subtype_val_range
  end⟩
 
 end relative_cylinder
