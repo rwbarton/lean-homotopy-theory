@@ -21,11 +21,8 @@ def I01_endpoints : Top := Top.mk_ob ({0, 1} : set I01)
 instance I01_endpoints.has_zero : has_zero I01_endpoints := ⟨⟨0, by simp⟩⟩
 instance I01_endpoints.has_one : has_one I01_endpoints := ⟨⟨1, by simp⟩⟩
 
-instance Top.point.discrete_space : discrete_space Top.point :=
-{ to_topological_space := ⊥,
-  is_discrete_topology :=
-    discrete_iff_singletons_open.mpr
-      (λ ⟨⟩, by convert is_open_univ; ext p; cases p; simp) }
+instance Top.point.discrete_topology : discrete_topology Top.point :=
+⟨eq_top_of_singletons_open (λ ⟨⟩, by convert is_open_univ; ext p; cases p; simp)⟩
 
 def two_endpoints : homeomorphism (* ⊔ *) I01_endpoints :=
 let j : * ⊔ * ⟶ I01 :=
@@ -53,13 +50,10 @@ have function.injective j, begin
 end,
 have embedding j, begin
   refine ⟨this, _⟩,
-  have : (* ⊔ *).str = ⊤,
-    from @is_discrete_topology (* ⊕ *) _,
   change sum.topological_space = _,
-  transitivity ⊤,
-  exact sum.discrete_space.is_discrete_topology,
+  refine sum.discrete_topology.eq_top.trans _,
   symmetry,
-  apply discrete_iff_singletons_open.mpr, intro e,
+  apply eq_top_of_singletons_open, intro e,
   rcases e with ⟨⟨⟩⟩|⟨⟨⟩⟩,
   { refine ⟨{t : I01 | t.val < 1},
       is_open_lt continuous_subtype_val continuous_const, _⟩,

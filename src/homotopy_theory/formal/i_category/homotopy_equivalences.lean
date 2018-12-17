@@ -1,3 +1,4 @@
+import data.quot
 import .homotopy_classes
 
 universes u v
