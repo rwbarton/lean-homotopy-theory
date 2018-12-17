@@ -10,7 +10,7 @@ import .pushout_lemmas
 
 open set
 
-open category_theory (hiding embedding)
+open category_theory
 open category_theory.category
 local notation f ` ∘ `:80 g:80 := g ≫ f
 

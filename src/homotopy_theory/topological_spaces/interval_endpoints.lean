@@ -10,7 +10,7 @@ noncomputable theory
 
 open set
 
-open category_theory (hiding embedding)
+open category_theory
 
 namespace homotopy_theory.topological_spaces
 open Top
