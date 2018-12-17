@@ -2,6 +2,7 @@ import analysis.topology.topological_space
 import analysis.topology.continuity
 import category_theory.base
 import category_theory.functor_category
+import category_theory.examples.topological_spaces
 
 import .tactic
 
@@ -11,32 +12,16 @@ universe u
 
 namespace homotopy_theory.topological_spaces
 
-structure Top : Type (u+1) :=
-(carrier : Type u)
-(topology : topological_space carrier)
+export category_theory.examples (Top)
 
 namespace Top
 
 local notation `Top` := Top.{u}
 
-instance : has_coe_to_sort Top :=
-{ S := Type u, coe := λ X, X.carrier }
-
-instance (X : Top) : topological_space X.carrier := X.topology
-
-def continuous_map (X Y : Top) : Type u :=
-{ f : X.carrier → Y.carrier // continuous f }
-
-instance {X Y : Top} : has_coe_to_fun (continuous_map X Y) :=
-{ F := λ _, X → Y, coe := λ f, f.val }
-
-instance : category Top :=
-{ hom := continuous_map,
-  id := λ X, ⟨id, by continuity⟩,
-  comp := λ _ _ _ f g, ⟨g.val ∘ f.val, by continuity⟩ }
-
-protected def mk_ob (α : Type u) [t : topological_space α] : Top := ⟨α, t⟩
-protected def mk_hom {X Y : Top} (f : X → Y) (hf : continuous f . continuity') : X ⟶ Y := subtype.mk f hf
+protected def mk_ob (α : Type u) [t : topological_space α] : Top :=
+bundled.mk topological_space α
+protected def mk_hom {X Y : Top} (f : X → Y) (hf : continuous f . continuity') : X ⟶ Y :=
+subtype.mk f hf
 @[extensionality] protected def hom_eq {X Y : Top} {f g : X ⟶ Y} (h : ∀ x, f x = g x) : f = g :=
 subtype.eq (funext h)
 protected lemma hom_eq2 {X Y : Top} {f g : X ⟶ Y} : f = g ↔ f.val = g.val := by cases f; cases g; simp
@@ -63,7 +48,7 @@ section product
 -- TODO: Generalize all the following definitions using a `has_product` class
 
 protected def prod (X Y : Top) : Top :=
-Top.mk_ob (X.carrier × Y.carrier)
+Top.mk_ob (X.α × Y.α)
 
 protected def pr₁ {X Y : Top} : Top.prod X Y ⟶ X :=
 Top.mk_hom (λ p, p.1)

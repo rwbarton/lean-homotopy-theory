@@ -91,7 +91,7 @@ def iso_of_equiv {X Y : Set} (e : X ≃ Y) : X ≅ Y :=
   inv_hom_id' := funext e.right_inv }
 
 def change_of_basepoint (n : ℕ) {X : Top} {x x' : X} (γ : path x x') : π_ n X x ≅ π_ n X x' :=
-iso_of_equiv $ drag_equiv (γ.congr_right S[n-1].point_induced)
+iso_of_equiv $ drag_equiv (γ.congr_right (Top.point_induced S[n-1]))
 
 lemma change_of_basepoint_induced (n : ℕ) {X Y : Top} {x x' : X} (γ : path x x') (f : X ⟶ Y) :
   π_induced n x' f ∘ (change_of_basepoint n γ).hom =

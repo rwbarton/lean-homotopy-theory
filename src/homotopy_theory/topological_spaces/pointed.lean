@@ -21,7 +21,7 @@ instance : has_coe Top_ptd Top :=
 ⟨λ X, X.space⟩
 
 instance : has_coe_to_sort Top_ptd :=
-{ S := Type u, coe := λ X, X.space.carrier }
+{ S := Type u, coe := λ X, X.space.α }
 
 def ptd_map (X Y : Top_ptd) : Type u :=
 { f : X.space ⟶ Y.space // (f : X.space ⟶ Y.space) X.pt = Y.pt }

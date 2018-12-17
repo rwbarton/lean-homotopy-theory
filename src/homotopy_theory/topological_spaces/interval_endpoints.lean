@@ -53,7 +53,7 @@ have function.injective j, begin
 end,
 have embedding j, begin
   refine ⟨this, _⟩,
-  have : Top.topological_space (* ⊔ *) = ⊤,
+  have : (* ⊔ *).str = ⊤,
     from @is_discrete_topology (* ⊕ *) _,
   change sum.topological_space = _,
   transitivity ⊤,

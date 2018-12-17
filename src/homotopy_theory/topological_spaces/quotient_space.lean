@@ -57,7 +57,7 @@ local attribute [elab_with_expected_type] Xplus.rec_on
 local notation `X₊` := Xplus
 
 instance Xplus.topological_space : topological_space X₊ :=
-X.topology.coinduced k
+X.str.coinduced k
 
 def Aplus : set X₊ := insert pt (range (k ∘ i))
 local notation `A₊` := Aplus
@@ -252,7 +252,7 @@ begin
   apply subset.antisymm,
   { intros x h, rcases h with ⟨x', ⟨x'', h₁, h₂⟩, h₃⟩, refine ⟨x'', h₁, _⟩, subst x',
     have x''_x : Xplus_rel _ (k x''.val) (k x) := quotient.exact h₃, cases x''_x,
-    { cc },
+    { injections },
     { -- This case is impossible: x'' ∈ X-A but k x''.val ∈ A₊
       cases x''_x.left with h h, { simpa using h },
       { cases h with a h, have : i a = x''.val, by simpa using h,
