@@ -1,5 +1,5 @@
 import category_theory.base
-import category_theory.iso_lemmas
+import category_theory.isomorphism
 
 open category_theory
 open category_theory.category

@@ -1,5 +1,4 @@
 import category_theory.base
-import category_theory.iso_lemmas
 import category_theory.replete
 
 open category_theory

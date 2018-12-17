@@ -1,5 +1,4 @@
 import category_theory.isomorphism
-import category_theory.iso_lemmas
 
 import .colimits
 

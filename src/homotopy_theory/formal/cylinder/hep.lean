@@ -1,6 +1,5 @@
 import category_theory.colimits
 import category_theory.isomorphism
-import category_theory.iso_lemmas
 import category_theory.preserves_colimits
 import category_theory.replete
 import .definitions
@@ -29,8 +28,8 @@ def hep (ε) {A X : C} (j : A ⟶ X) : Prop :=
 lemma hep_of_isomorphism (ε) {A X : C} (h : iso A X) : hep ε h.hom :=
 assume Y f H e,
   ⟨H ∘ I &> h.inv,
-   by erw [←assoc, ←(i ε).naturality, assoc, ←e, iso.inv_hom_id_assoc_lemma],
-   by erw [←functor.on_iso_hom, iso.hom_inv_id_assoc_lemma]⟩
+   by erw [←assoc, ←(i ε).naturality, assoc, ←e, iso.inv_hom_id_assoc],
+   by erw [←functor.on_iso_hom, iso.hom_inv_id_assoc]⟩
 
 lemma hep_id (ε) {X : C} : hep ε (𝟙 X) :=
 hep_of_isomorphism ε (iso.refl X)
