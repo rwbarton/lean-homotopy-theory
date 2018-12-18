@@ -28,8 +28,6 @@ j, and in this case g induces a homeomorphism X - A → Y - B.
 
 -/
 
--- TODO: Facts 1 & 2
-
 open set
 
 open category_theory
@@ -40,6 +38,123 @@ universe u
 namespace homotopy_theory.topological_spaces
 open Top
 local notation `Top` := Top.{u}
+
+-- For facts 1 & 2, the strategy is to show that injections
+-- (respectively, embeddings) are precisely the maps with the left
+-- lifting property with respect to the indiscrete two-point space
+-- (respectively, also the Sierpinski space) and then use the fact
+-- that such a left lifting property is preserved by pushouts.
+
+section llp
+-- TODO: Generalize/merge this with left lifting property
+
+def llp_obj {A X : Top} (i : A ⟶ X) (Z : Top) : Prop :=
+∀ (h : A ⟶ Z), ∃ (l : X ⟶ Z), i ≫ l = h
+
+lemma llp_of_pushout {A B X Y : Top} {i : A ⟶ X} {f : A ⟶ B} {g : X ⟶ Y} {j : B ⟶ Y}
+  (po : Is_pushout i f g j) (Z : Top) (hf : llp_obj i Z) : llp_obj j Z :=
+begin
+  intro h,
+  rcases hf (f ≫ h) with ⟨l, hl⟩,
+  refine ⟨po.induced l h hl, _⟩,
+  simp
+end
+
+end llp
+
+namespace pushout_lemmas_private
+section
+parameters {A X : Top} {i : A ⟶ X}
+
+def Zinj : Top := @Top.mk_ob (ulift Prop) ⊥
+
+lemma injective_iff_llp : function.injective i ↔ llp_obj i Zinj :=
+begin
+  split; intro H,
+  { intro h,
+    -- Extend h : A → Prop by false to all of X.
+    use ⟨λ x, ulift.up (∃ a, (h a).down ∧ i a = x), continuous_bot⟩,
+    ext a,
+    split; intro H',
+    { rcases H' with ⟨a', ha', haa'⟩,
+      have : a' = a, from H haa',
+      rwa ←this },
+    { exact ⟨a, H', rfl⟩ } },
+  { intros a a' haa',
+    -- Use lifting property to extend (λ x, x = a') to X.
+    rcases H ⟨λ x, ulift.up (x = a'), continuous_bot⟩ with ⟨l, hl⟩,
+    have := Top.hom_congr hl a,
+    change l (i a) = _ at this,
+    rw haa' at this,
+    change (l ∘ i) a' = _ at this,
+    rw hl at this,
+    replace := congr_arg ulift.down this,
+    change (a' = a') = (a = a') at this,
+    rw ←iff_eq_eq at this,
+    simpa using this }
+end
+
+-- TODO: ulift for topological spaces
+def Zind : Top :=
+@Top.mk_ob (ulift Prop) (topological_space.induced ulift.down (by apply_instance))
+
+lemma continuous_up : @continuous _ _ _ Zind.str (ulift.up : Prop → Zind) :=
+continuous_induced_rng continuous_id
+
+lemma induced_iff_llp : (A.str = X.str.induced i) ↔ llp_obj i Zind :=
+begin
+  split; intro H,
+  { intro h,
+    -- Idea: h : A → Zind encodes an open set of A. By definition of
+    -- the induced topology, this open set is the preimage of an open
+    -- set of X, which defines a map X → Zind extending h.
+    let u : set A := {a | (h a).down},
+    have : is_open u :=
+      continuous_Prop.mp (continuous.comp h.property continuous_induced_dom),
+    rcases is_open_induced_iff.mp (by convert ←this) with ⟨w, wo, uw⟩,
+    refine ⟨⟨λ x, ulift.up (w x), continuous.comp (continuous_Prop.mpr wo) continuous_up⟩, _⟩,
+    ext a,
+    change _ ↔ u a,
+    rw uw,
+    exact iff.rfl },
+  { -- One inequality is automatic because i is continuous.
+    refine le_antisymm _ (continuous_iff_induced_le.mp i.property),
+    intros w wo,
+    -- Now we reverse the above argument. u defines a continuous map A → Zind,
+    -- which we extend to X using the lifting property to express u as the
+    -- preimage of an open set of X.
+    rcases H ⟨λ x, ulift.up (w x), continuous.comp (continuous_Prop.mpr wo) continuous_up⟩
+      with ⟨l, hl⟩,
+    apply is_open_induced_iff.mpr,
+    use {x | (l x).down},
+    refine ⟨continuous_Prop.mp (continuous.comp l.property continuous_induced_dom), _⟩,
+    funext a,
+    exact (congr_arg ulift.down (Top.hom_congr hl a)).symm }
+end
+
+end
+end pushout_lemmas_private
+
+section
+parameters {A B X Y : Top} {i : A ⟶ X} {f : A ⟶ B} {g : X ⟶ Y} {j : B ⟶ Y}
+parameter (po : Is_pushout i f g j)
+include po
+
+lemma injective_j_of_injective_i (h : function.injective i) : function.injective j :=
+begin
+  rw pushout_lemmas_private.injective_iff_llp at ⊢ h,
+  exact llp_of_pushout po _ h
+end
+
+lemma embedding_j_of_embedding_i (h : embedding i) : embedding j :=
+⟨injective_j_of_injective_i h.1,
+ begin
+   have := h.2,
+   erw pushout_lemmas_private.induced_iff_llp at ⊢ this,
+   exact llp_of_pushout po _ this
+ end⟩
+
+end
 
 namespace pushout_lemmas_private
 section
