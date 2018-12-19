@@ -1,8 +1,10 @@
 import .colimits
 import .homeomorphism
 import .quotient_space
+import .sierpinski
 import .subspace
 import category_theory.pasting_pushouts
+import for_mathlib.analysis_topology_continuity
 
 /-
 
@@ -15,6 +17,7 @@ pushout square
     X → Y
       g
 
+0. A subset of Y is closed (open) iff its preimages under g and j are.
 1. If i is injective, then so is j.
 2. If i is an embedding, then so is j.
 3. If the image of i is closed (open), then so is the image of j.
@@ -38,6 +41,27 @@ universe u
 namespace homotopy_theory.topological_spaces
 open Top
 local notation `Top` := Top.{u}
+
+section
+parameters {A B X Y : Top} {i : A ⟶ X} {f : A ⟶ B} {g : X ⟶ Y} {j : B ⟶ Y}
+parameter (po : Is_pushout i f g j)
+include po
+
+def is_open_in_pushout (s : set Y) : is_open s ↔ is_open (g ⁻¹' s) ∧ is_open (j ⁻¹' s) :=
+⟨λ hs, ⟨g.property s hs, j.property s hs⟩, λ ⟨gs, js⟩, begin
+   let xs := (opens_equiv X) ⟨g ⁻¹' s, gs⟩,
+   let bs := (opens_equiv B) ⟨j ⁻¹' s, js⟩,
+   let ys := po.induced xs bs
+     (by ext a; change (i ≫ g) a ∈ s ↔ (f ≫ j) a ∈ s; rw po.commutes),
+   convert ((opens_equiv Y).symm ys).property,
+   rw [←equiv.apply_eq_iff_eq (set_equiv Y), ←forget_open_map, equiv.apply_inverse_apply],
+   apply po.uniqueness; { rw [set_equiv_nat, ←category.assoc], simp, refl }
+ end⟩
+
+def is_closed_in_pushout (s : set Y) : is_closed s ↔ is_closed (g ⁻¹' s) ∧ is_closed (j ⁻¹' s) :=
+is_open_in_pushout (-s)
+
+end
 
 -- For facts 1 & 2, the strategy is to show that injections
 -- (respectively, embeddings) are precisely the maps with the left
@@ -66,9 +90,10 @@ namespace pushout_lemmas_private
 section
 parameters {A X : Top} {i : A ⟶ X}
 
-def Zinj : Top := @Top.mk_ob (ulift Prop) ⊥
+-- TODO: Might be able to simplify these next two results using lemmas
+-- from sierpinski.lean
 
-lemma injective_iff_llp : function.injective i ↔ llp_obj i Zinj :=
+lemma injective_iff_llp : function.injective i ↔ llp_obj i prop_indisc :=
 begin
   split; intro H,
   { intro h,
@@ -94,14 +119,7 @@ begin
     simpa using this }
 end
 
--- TODO: ulift for topological spaces
-def Zind : Top :=
-@Top.mk_ob (ulift Prop) (topological_space.induced ulift.down (by apply_instance))
-
-lemma continuous_up : @continuous _ _ _ Zind.str (ulift.up : Prop → Zind) :=
-continuous_induced_rng continuous_id
-
-lemma induced_iff_llp : (A.str = X.str.induced i) ↔ llp_obj i Zind :=
+lemma induced_iff_llp : (A.str = X.str.induced i) ↔ llp_obj i sierpinski :=
 begin
   split; intro H,
   { intro h,
@@ -109,8 +127,7 @@ begin
     -- the induced topology, this open set is the preimage of an open
     -- set of X, which defines a map X → Zind extending h.
     let u : set A := {a | (h a).down},
-    have : is_open u :=
-      continuous_Prop.mp (continuous.comp h.property continuous_induced_dom),
+    have : is_open u := continuous_Prop.mp (by continuity),
     rcases is_open_induced_iff.mp (by convert ←this) with ⟨w, wo, uw⟩,
     refine ⟨⟨λ x, ulift.up (w x), continuous.comp (continuous_Prop.mpr wo) continuous_up⟩, _⟩,
     ext a,
@@ -127,7 +144,7 @@ begin
       with ⟨l, hl⟩,
     apply is_open_induced_iff.mpr,
     use {x | (l x).down},
-    refine ⟨continuous_Prop.mp (continuous.comp l.property continuous_induced_dom), _⟩,
+    refine ⟨continuous_Prop.mp (by continuity), _⟩,
     funext a,
     exact (congr_arg ulift.down (Top.hom_congr hl a)).symm }
 end
@@ -271,10 +288,23 @@ end
 
 end pushout_lemmas_private
 
--- TODO: g' also?
 export pushout_lemmas_private
   (range_i_open_iff_range_j_open range_i_closed_iff_range_j_closed
    comp_embedding_of_embedding_of_disjoint)
 
+section
+parameters {A B X Y : Top} {i : A ⟶ X} {f : A ⟶ B} {g : X ⟶ Y} {j : B ⟶ Y}
+parameter (po : Is_pushout i f g j)
+parameter (hyp : is_closed (range i) ∨ is_open (range i))
+
+def complement_homeomorphism :
+  quotient_space.image_complement i ≅ quotient_space.image_complement j :=
+pushout_lemmas_private.g' po hyp
+
+lemma complement_homeomorphism_eq :
+  complement_homeomorphism.hom ≫ incl _ = incl _ ≫ g :=
+pushout_lemmas_private.g'_g po hyp
+
+end
 
 end homotopy_theory.topological_spaces
