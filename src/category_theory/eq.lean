@@ -33,39 +33,10 @@ namespace category_theory
 variables {C : Type u} [catC : category.{u v} C]
 include catC
 
-def id_of_eq {a b : C} (e : a = b) : a ⟶ b := e.rec_on (𝟙 a)
-
-@[simp] lemma id_of_eq.refl {a : C} (e : a = a) : id_of_eq e = 𝟙 a :=
-rfl
-
-@[simp] lemma id_of_eq.trans {a b c : C} (e : a = b) (e' : b = c) :
-  id_of_eq e' ∘ id_of_eq e = id_of_eq (e.trans e') :=
-by cases e; cases e'; simp
-
-@[simp] lemma id_of_eq.trans_assoc {a b c z : C} (e : a = b) (e' : b = c) (g : c ⟶ z) :
-  g ∘ id_of_eq e' ∘ id_of_eq e = g ∘ id_of_eq (e.trans e') :=
-by cases e; cases e'; simp
-
 variables {D : Type w} [catD : category.{w x} D]
 include catD
 
-@[simp] lemma id_of_eq.map {a b : C} (F : C ↝ D) (e : a = b) :
-  F &> id_of_eq e = id_of_eq (congr_arg F.obj e) :=
-by cases e; simp
-
 -- Proving equality between functors.
-lemma functor.ext {F G : C ↝ D}
-  (h_ob : ∀ a, F.obj a = G.obj a)
-  (h_mor : ∀ {a b : C} (f : a ⟶ b),
-    id_of_eq (h_ob b) ∘ F &> f = G &> f ∘ id_of_eq (h_ob a)) : F = G :=
-begin
-  cases F, cases G,
-  have : F_obj = G_obj := funext h_ob, subst this,
-  congr,
-  funext a b f,
-  have := h_mor f, simp at this, exact this
-end
-
 lemma functor.hext {F G : C ↝ D}
   (h_ob : ∀ a, F.obj a = G.obj a)
   (h_mor : ∀ {a b : C} (f : a ⟶ b), F &> f == G &> f) : F = G :=

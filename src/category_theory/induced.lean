@@ -1,5 +1,5 @@
-import category_theory.eq
-import category_theory.functor
+import category_theory.base
+import category_theory.eq_to_hom
 import category_theory.groupoid
 
 universes u u' v w w' x y y' z
@@ -29,7 +29,7 @@ def induced_functor [catC : category.{u v} C] [catD : category.{w x} D] (F : C �
 { obj := F',
   map := λ X Y f,
     show l (F' X) ⟶ l (F' Y), from
-    id_of_eq (e Y) ∘ (F &> f) ∘ id_of_eq (e X).symm,
+    eq_to_hom (e Y) ∘ (F &> f) ∘ eq_to_hom (e X).symm,
   map_id' := λ X, by dsimp [induced_category]; rw F.map_id; simp,
   map_comp' := λ X Y Z f g, by dsimp [induced_category]; rw F.map_comp; simp }
 

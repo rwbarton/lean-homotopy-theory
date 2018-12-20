@@ -18,8 +18,7 @@ namespace Top
 
 local notation `Top` := Top.{u}
 
-protected def mk_ob (α : Type u) [t : topological_space α] : Top :=
-bundled.mk topological_space α
+protected def mk_ob (α : Type u) [t : topological_space α] : Top := ⟨α, t⟩
 protected def mk_hom {X Y : Top} (f : X → Y) (hf : continuous f . continuity') : X ⟶ Y :=
 subtype.mk f hf
 @[extensionality] protected def hom_eq {X Y : Top} {f g : X ⟶ Y} (h : ∀ x, f x = g x) : f = g :=
