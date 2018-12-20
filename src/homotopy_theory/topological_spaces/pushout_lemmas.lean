@@ -86,25 +86,16 @@ end
 
 end llp
 
-namespace pushout_lemmas_private
 section
 parameters {A X : Top} {i : A ⟶ X}
-
--- TODO: Might be able to simplify these next two results using lemmas
--- from sierpinski.lean
 
 lemma injective_iff_llp : function.injective i ↔ llp_obj i prop_indisc :=
 begin
   split; intro H,
   { intro h,
-    -- Extend h : A → Prop by false to all of X.
-    use ⟨λ x, ulift.up (∃ a, (h a).down ∧ i a = x), continuous_bot⟩,
-    ext a,
-    split; intro H',
-    { rcases H' with ⟨a', ha', haa'⟩,
-      have : a' = a, from H haa',
-      rwa ←this },
-    { exact ⟨a, H', rfl⟩ } },
+    use set_equiv X (i '' (set_equiv A).symm h),
+    rw [set_equiv_nat, ←equiv.eq_symm_apply],
+    exact preimage_image_eq _ H },
   { intros a a' haa',
     -- Use lifting property to extend (λ x, x = a') to X.
     rcases H ⟨λ x, ulift.up (x = a'), continuous_bot⟩ with ⟨l, hl⟩,
@@ -126,31 +117,27 @@ begin
     -- Idea: h : A → Zind encodes an open set of A. By definition of
     -- the induced topology, this open set is the preimage of an open
     -- set of X, which defines a map X → Zind extending h.
-    let u : set A := {a | (h a).down},
-    have : is_open u := continuous_Prop.mp (by continuity),
-    rcases is_open_induced_iff.mp (by convert ←this) with ⟨w, wo, uw⟩,
-    refine ⟨⟨λ x, ulift.up (w x), continuous.comp (continuous_Prop.mpr wo) continuous_up⟩, _⟩,
-    ext a,
-    change _ ↔ u a,
-    rw uw,
-    exact iff.rfl },
+    let u : topological_space.opens A := (opens_equiv A).symm h,
+    rcases is_open_induced_iff.mp (by convert ←u.property) with ⟨w, wo, uw⟩,
+    use opens_equiv X ⟨w, wo⟩,
+    rw [opens_equiv_nat, ←equiv.eq_symm_apply],
+    apply subtype.eq,
+    exact uw.symm },
   { -- One inequality is automatic because i is continuous.
     refine le_antisymm _ (continuous_iff_induced_le.mp i.property),
     intros w wo,
-    -- Now we reverse the above argument. u defines a continuous map A → Zind,
-    -- which we extend to X using the lifting property to express u as the
+    -- Now we reverse the above argument. w defines a continuous map A → Zind,
+    -- which we extend to X using the lifting property to express w as the
     -- preimage of an open set of X.
-    rcases H ⟨λ x, ulift.up (w x), continuous.comp (continuous_Prop.mpr wo) continuous_up⟩
-      with ⟨l, hl⟩,
+    rcases H (opens_equiv A ⟨w, wo⟩) with ⟨l, hl⟩,
     apply is_open_induced_iff.mpr,
-    use {x | (l x).down},
-    refine ⟨continuous_Prop.mp (by continuity), _⟩,
+    use (opens_equiv X).symm l,
+    refine ⟨((opens_equiv X).symm l).property, _⟩,
     funext a,
     exact (congr_arg ulift.down (Top.hom_congr hl a)).symm }
 end
 
 end
-end pushout_lemmas_private
 
 section
 parameters {A B X Y : Top} {i : A ⟶ X} {f : A ⟶ B} {g : X ⟶ Y} {j : B ⟶ Y}
@@ -159,7 +146,7 @@ include po
 
 lemma injective_j_of_injective_i (h : function.injective i) : function.injective j :=
 begin
-  rw pushout_lemmas_private.injective_iff_llp at ⊢ h,
+  rw injective_iff_llp at ⊢ h,
   exact llp_of_pushout po _ h
 end
 
@@ -167,7 +154,7 @@ lemma embedding_j_of_embedding_i (h : embedding i) : embedding j :=
 ⟨injective_j_of_injective_i h.1,
  begin
    have := h.2,
-   erw pushout_lemmas_private.induced_iff_llp at ⊢ this,
+   erw induced_iff_llp at ⊢ this,
    exact llp_of_pushout po _ this
  end⟩
 
