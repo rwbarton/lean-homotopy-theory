@@ -17,6 +17,19 @@ lemma closed_t1_inclusion_of_closed_embedding_t1 {A X : Top} [t1_space X] (i : A
   (h₁ : embedding i) (h₂ : is_closed (set.range i)) : closed_t1_inclusion i :=
 ⟨h₁, h₂, λ x _, is_closed_singleton⟩
 
+lemma closed_t1_inclusion_id {X : Top} : closed_t1_inclusion (𝟙 X) :=
+⟨embedding_id, by convert is_closed_univ; exact range_id, λ x hx, false.elim (hx ⟨x, rfl⟩)⟩
+
+lemma closed_t1_inclusion_comp {X Y Z : Top} {f : X ⟶ Y} {g : Y ⟶ Z}
+  (hf : closed_t1_inclusion f) (hg : closed_t1_inclusion g) : closed_t1_inclusion (f ≫ g) :=
+⟨embedding_compose hf.1 hg.1,
+ by convert embedding_is_closed hg.1 hg.2.1 hf.2.1; apply range_comp,
+ λ z hz, if hz' : z ∈ range g
+   then let ⟨y, hy⟩ := hz' in
+     have y ∉ range f, from λ hy', hz (by erw range_comp; exact ⟨y, hy', hy⟩),
+     by convert embedding_is_closed hg.1 hg.2.1 (hf.2.2 y this); rw ←hy; simp
+   else hg.2.2 z hz'⟩
+
 section
 parameters {A B X Y : Top} {i : A ⟶ X} {f : A ⟶ B} {g : X ⟶ Y} {j : B ⟶ Y}
 parameter (po : Is_pushout i f g j)
