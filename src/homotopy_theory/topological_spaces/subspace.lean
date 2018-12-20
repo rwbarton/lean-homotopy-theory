@@ -1,4 +1,5 @@
 import .category
+import for_mathlib.data_set_basic
 
 open category_theory
 local notation f ` ∘ `:80 g:80 := g ≫ f
@@ -15,6 +16,15 @@ Top.mk_hom subtype.val
 
 def embedding_incl {X : Top} (A : set X) : embedding (incl A) :=
 embedding_subtype_val
+
+noncomputable def factor_through_embedding {W X Y : Top} {f : W ⟶ Y} {g : X ⟶ Y}
+  (hf : set.range f ⊆ set.range g) (hg : embedding g) : W ⟶ X :=
+Top.mk_hom (classical.some $ (factors_iff f g).mpr hf) $
+  by rw [hg.continuous_iff, ←classical.some_spec ((factors_iff f g).mpr hf)]; exact f.property
+
+@[simp] lemma factor_through_embedding_commutes {W X Y : Top} {f : W ⟶ Y} {g : X ⟶ Y}
+  {hf : set.range f ⊆ set.range g} {hg : embedding g} : factor_through_embedding hf hg ≫ g = f :=
+subtype.eq (classical.some_spec ((factors_iff f g).mpr hf)).symm
 
 def factor_through_incl {W X : Top} (f : W ⟶ X) (A : set X) (h : set.range f ⊆ A) :
   W ⟶ Top.mk_ob A :=
