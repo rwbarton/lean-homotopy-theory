@@ -145,6 +145,19 @@ rfl
 end coproduct
 
 
+section pushout_induced_eq
+parameters {C : Type u} [cat : category.{u v} C]
+include cat
+parameters {a b₀ b₁ c c' : C} {f₀ : a ⟶ b₀} {f₁ : a ⟶ b₁}
+parameters {g₀ : b₀ ⟶ c} {g₁ : b₁ ⟶ c} (po : Is_pushout f₀ f₁ g₀ g₁)
+
+lemma pushout_induced_eq_iff {x : C} {h₀ : b₀ ⟶ x} {h₁ : b₁ ⟶ x} {k : c ⟶ x} {e}
+  (H₀ : h₀ = g₀ ≫ k) (H₁ : h₁ = g₁ ≫ k) : po.induced h₀ h₁ e = k :=
+by apply po.uniqueness; simp [H₀, H₁]
+
+end pushout_induced_eq
+
+
 section pushout_induced_comp
 parameters {C : Type u} [cat : category.{u v} C]
 include cat
@@ -489,13 +502,19 @@ def pushout_of_maps : c ⟶ c' :=
 po.induced (g₀' ∘ hb₀) (g₁' ∘ hb₁)
   (by rw [←assoc, ←assoc, h₀, h₁]; simp [po'.commutes])
 
-def induced_pushout_of_maps {x : C} {k₀ : b₀' ⟶ x} {k₁ : b₁' ⟶ x} {e} :
+lemma induced_pushout_of_maps {x : C} {k₀ : b₀' ⟶ x} {k₁ : b₁' ⟶ x} {e} :
   po'.induced k₀ k₁ e ∘ pushout_of_maps = po.induced (k₀ ∘ hb₀) (k₁ ∘ hb₁)
     (by rw [←assoc, ←assoc, h₀, h₁]; simp [e]) :=
 begin
   unfold pushout_of_maps,
   apply po.uniqueness; { rw ←assoc, simp }
 end
+
+@[simp] lemma pushout_of_maps_commutes₀ : pushout_of_maps ∘ g₀ = g₀' ∘ hb₀ :=
+by simp [pushout_of_maps]
+
+@[simp] lemma pushout_of_maps_commutes₁ : pushout_of_maps ∘ g₁ = g₁' ∘ hb₁ :=
+by simp [pushout_of_maps]
 
 end pushout_of_maps
 

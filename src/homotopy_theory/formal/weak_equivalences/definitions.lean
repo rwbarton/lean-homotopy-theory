@@ -31,10 +31,21 @@ category_with_weak_equivalences.weq_replete_wide C
 section
 variables {C : Type u} [cat : category.{u v} C] [category_with_weak_equivalences C]
 include cat
+
 lemma weq_id (a : C) : is_weq (𝟙 a) := mem_id a
 lemma weq_comp {a b c : C} {f : a ⟶ b} {g : b ⟶ c} :
   is_weq f → is_weq g → is_weq (g ∘ f) := mem_comp
 lemma weq_iso {a b : C} (i : a ≅ b) : is_weq i.hom := mem_iso i
+
+lemma weq_iff_weq_inv {a b : C} {f : a ⟶ b} {g : b ⟶ a} (h : f ≫ g = 𝟙 _) :
+  is_weq f ↔ is_weq g :=
+begin
+  split; intro H;
+  { have : is_weq (g ∘ f) := by convert weq_id _,
+    apply category_with_weak_equivalences.weq_of_comp_weq_left H this <|>
+    apply category_with_weak_equivalences.weq_of_comp_weq_right H this }
+end
+
 end
 
 -- The two-out-of-six property.
