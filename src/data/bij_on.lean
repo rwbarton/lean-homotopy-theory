@@ -165,6 +165,15 @@ def Bij_on.congr_subtype {r r' : set α} (h : r = r') :
   Bij_on (λ (x : subtype r), (⟨x, _⟩ : subtype r')) univ univ :=
 Bij_on.of_equiv $ equiv.subtype_equiv_subtype h
 
+-- TODO: Use this to simplify other colimit lemmas?
+def Bij_on.congr_subset {α : Type*} {r r' : set α} (h : r = r') : Bij_on id r r' :=
+{ e :=
+  { to_fun := λ p, ⟨p.val, h ▸ p.property⟩,
+    inv_fun := λ p, ⟨p.val, h.symm ▸ p.property⟩,
+    left_inv := λ p, by cases p; refl,
+    right_inv := λ p, by cases p; refl },
+  he := λ p, by cases p; refl }
+
 end Bij_on
 
 

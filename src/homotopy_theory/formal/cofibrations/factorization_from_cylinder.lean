@@ -31,7 +31,7 @@ variables
   (pushout_is_acof : ∀ ⦃a b a' b' : C⦄ {f : a ⟶ b} {g : a ⟶ a'} {f' : a' ⟶ b'} {g' : b ⟶ b'},
     Is_pushout f g g' f' → is_acof f → is_acof f')
   (cylinder : ∀ (a : C), ∃ c (i : a ⊔ a ⟶ c) (p : c ⟶ a),
-    is_cof i ∧ is_weq p ∧ p ∘ i = coprod.induced (𝟙 a) (𝟙 a))
+    is_cof i ∧ is_weq p ∧ p ∘ i = coprod.fold a)
 
 variables {a x : C} (f : a ⟶ x)
 
@@ -57,9 +57,9 @@ let ⟨c, i, p, hi, hp, pi⟩ := cylinder a,
     j := po'.map₁ ∘ i₀,
     q := po''.induced (f ∘ p) (𝟙 x) $ calc
       f ∘ p ∘ (i ∘ i₁)
-        = f ∘ ((p ∘ i) ∘ i₁)                     : by simp
-    ... = f ∘ (coprod.induced (𝟙 a) (𝟙 a) ∘ i₁)  : by rw pi
-    ... = 𝟙 _ ∘ f                                : by simp in
+        = f ∘ ((p ∘ i) ∘ i₁)        : by simp
+    ... = f ∘ (coprod.fold a ∘ i₁)  : by rw pi
+    ... = 𝟙 _ ∘ f                   : by simp in
 have is_cof j, from
   cof_comp (cof_i₀ (all_objects_cofibrant.cofibrant x)) (pushout_is_cof po'.is_pushout hi),
 have is_weq (i ∘ i₁), from
@@ -72,10 +72,10 @@ have is_weq q, from
 have q ∘ j = f, from calc
   q ∘ j = q ∘ po'.map₁ ∘ (coprod_of_maps (𝟙 a) f ∘ i₀)  : by simp
   ...   = q ∘ (po'.map₁ ∘ coprod_of_maps (𝟙 a) f) ∘ i₀  : by simp only [assoc]
-  ...   = q ∘ (po'.map₀ ∘ i) ∘ i₀                : by rw po'.is_pushout.commutes
-  ...   = f ∘ ((p ∘ i) ∘ i₀)                     : by simp
-  ...   = f ∘ (coprod.induced (𝟙 a) (𝟙 a) ∘ i₀)  : by rw pi
-  ...   = f                                      : by simp,
+  ...   = q ∘ (po'.map₀ ∘ i) ∘ i₀   : by rw po'.is_pushout.commutes
+  ...   = f ∘ ((p ∘ i) ∘ i₀)        : by simp
+  ...   = f ∘ (coprod.fold a ∘ i₀)  : by rw pi
+  ...   = f                         : by simp,
 ⟨z, j, q, ‹is_cof j›, ‹is_weq q›, this⟩
 
 end mapping_cylinder

@@ -79,6 +79,15 @@ def coprod.induced_Is_equiv {a₀ a₁ b : C} :
   coprod.induced f₀ f₁ ∘ i₁ = f₁ :=
 (has_coproducts.coproduct.{u v} a₀ a₁).is_coproduct.induced_commutes₁ f₀ f₁
 
+def coprod.fold (a : C) : a ⊔ a ⟶ a :=
+coprod.induced (𝟙 a) (𝟙 a)
+
+@[simp] lemma coprod.fold_i₀ {a : C} : coprod.fold a ∘ i₀ = 𝟙 a :=
+coprod.induced_commutes₀ _ _
+
+@[simp] lemma coprod.fold_i₁ {a : C} : coprod.fold a ∘ i₁ = 𝟙 a :=
+coprod.induced_commutes₁ _ _
+
 -- This is a kind of "co-extensionality" lemma; does that count?
 @[extensionality] lemma coprod.uniqueness {a₀ a₁ b : C} {k k' : a₀ ⊔ a₁ ⟶ b}
   (e₀ : k ∘ i₀ = k' ∘ i₀) (e₁ : k ∘ i₁ = k' ∘ i₁) : k = k' :=
