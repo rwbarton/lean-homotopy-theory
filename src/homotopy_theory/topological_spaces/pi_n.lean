@@ -29,11 +29,20 @@ local notation `[` A `, ` X `]` := homotopy_classes A X
 def π₀ : Top ↝ Set :=
 { obj := λ X, [*, X], map := λ X Y f x, ⟦f⟧ ∘ x }
 
--- We define πₙ(X, x) as the set of homotopy classes of maps D[n] → X
--- which send S[n-1] to x, rel S[n-1].
+-- The "based n-sphere" is the quotient of D[n] by its boundary S[n-1].
+def based_sphere (n : ℕ) : Top :=
+quotient_space (sphere_disk_incl n)
+
+def based_sphere_basepoint (n : ℕ) : Top.point ⟶ based_sphere n :=
+Top.const (quotient_space.pt _)
+
+-- We define πₙ(X, x) as the set of homotopy classes of maps D[n]/S[n-1] → X
+-- which send the basepoint to x, rel the basepoint.
 
 def π_ (n : ℕ) (X : Top) (x : X) : Set :=
-homotopy_classes_extending_rel (sphere_disk_incl n) (sphere_disk_cofibration n) (Top.const x)
+homotopy_classes_extending_rel (based_sphere_basepoint n)
+  (precofibration_category.pushout_is_cof (quotient_space.is_pushout _) (sphere_disk_cofibration n))
+  (Top.const x)
 
 def π_induced (n : ℕ) {X Y : Top} (x : X) (f : X ⟶ Y) : π_ n X x ⟶ π_ n Y (f x) :=
 hcer_induced f
@@ -91,7 +100,7 @@ def iso_of_equiv {X Y : Set} (e : X ≃ Y) : X ≅ Y :=
   inv_hom_id' := funext e.right_inv }
 
 def change_of_basepoint (n : ℕ) {X : Top} {x x' : X} (γ : path x x') : π_ n X x ≅ π_ n X x' :=
-iso_of_equiv $ drag_equiv (γ.congr_right (Top.point_induced S[n-1]))
+iso_of_equiv $ drag_equiv γ
 
 lemma change_of_basepoint_induced (n : ℕ) {X Y : Top} {x x' : X} (γ : path x x') (f : X ⟶ Y) :
   π_induced n x' f ∘ (change_of_basepoint n γ).hom =
