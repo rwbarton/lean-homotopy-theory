@@ -352,6 +352,24 @@ Is_pushout.mk $ λ x, calc
        : Bij_on.restrict_equiv (equiv.prod_comm _ _)
            {p' | p'.1 ∘ f₁ = p'.2 ∘ f₀}
 
+parameters {c' : C} {g₀' : b₀ ⟶ c'} {g₁' : b₁ ⟶ c'}
+parameters (po' : Is_pushout f₁ f₀ g₁' g₀')
+def Is_pushout.iso_transpose : c ≅ c' :=
+pushout.unique po.transpose po'
+
+@[simp] lemma Is_pushout.iso_transpose_map₀ : g₀ ≫ (po.iso_transpose po').hom = g₀' :=
+by apply pushout.unique_commutes₁
+
+@[simp] lemma Is_pushout.iso_transpose_map₁ : g₁ ≫ (po.iso_transpose po').hom = g₁' :=
+by apply pushout.unique_commutes₀
+
+lemma Is_pushout.transpose_induced {x : C} {h₀ : b₀ ⟶ x} {h₁ : b₁ ⟶ x} {e : f₀ ≫ h₀ = f₁ ≫ h₁} :
+  (po.iso_transpose po').hom ≫ po'.induced h₁ h₀ e.symm = po.induced h₀ h₁ e :=
+begin
+  symmetry,
+  apply pushout_induced_eq_iff; rw ←assoc; simp
+end
+
 end pushout_tranpose
 
 section pushout_initial
@@ -499,31 +517,47 @@ end pushout_swap
 section pushout_of_maps
 parameters {C : Type u} [cat : category.{u v} C]
 include cat
-parameters {a b₀ b₁ c : C} {f₀ : a ⟶ b₀} {f₁ : a ⟶ b₁}
-parameters {g₀ : b₀ ⟶ c} {g₁ : b₁ ⟶ c} (po : Is_pushout f₀ f₁ g₀ g₁)
-parameters {a' b₀' b₁' c' : C} {f₀' : a' ⟶ b₀'} {f₁' : a' ⟶ b₁'}
-parameters {g₀' : b₀' ⟶ c'} {g₁' : b₁' ⟶ c'} (po' : Is_pushout f₀' f₁' g₀' g₁')
-parameters (ha : a ⟶ a') (hb₀ : b₀ ⟶ b₀') (hb₁ : b₁ ⟶ b₁')
-parameters (h₀ : hb₀ ∘ f₀ = f₀' ∘ ha) (h₁ : hb₁ ∘ f₁ = f₁' ∘ ha)
+variables {a b₀ b₁ c : C} {f₀ : a ⟶ b₀} {f₁ : a ⟶ b₁}
+variables {g₀ : b₀ ⟶ c} {g₁ : b₁ ⟶ c} (po : Is_pushout f₀ f₁ g₀ g₁)
+variables {a' b₀' b₁' c' : C} {f₀' : a' ⟶ b₀'} {f₁' : a' ⟶ b₁'}
+variables {g₀' : b₀' ⟶ c'} {g₁' : b₁' ⟶ c'} (po' : Is_pushout f₀' f₁' g₀' g₁')
+variables {a'' b₀'' b₁'' c'' : C} {f₀'' : a'' ⟶ b₀''} {f₁'' : a'' ⟶ b₁''}
+variables {g₀'' : b₀'' ⟶ c''} {g₁'' : b₁'' ⟶ c''} (po'' : Is_pushout f₀'' f₁'' g₀'' g₁'')
+variables (ha : a ⟶ a') (hb₀ : b₀ ⟶ b₀') (hb₁ : b₁ ⟶ b₁')
+variables (h₀ : hb₀ ∘ f₀ = f₀' ∘ ha) (h₁ : hb₁ ∘ f₁ = f₁' ∘ ha)
+variables (ka : a' ⟶ a'') (kb₀ : b₀' ⟶ b₀'') (kb₁ : b₁' ⟶ b₁'')
+variables (k₀ : kb₀ ∘ f₀' = f₀'' ∘ ka) (k₁ : kb₁ ∘ f₁' = f₁'' ∘ ka)
+
 include po po' h₀ h₁
 
 def pushout_of_maps : c ⟶ c' :=
 po.induced (g₀' ∘ hb₀) (g₁' ∘ hb₁)
   (by rw [←assoc, ←assoc, h₀, h₁]; simp [po'.commutes])
 
+omit po po' h₀ h₁
+
 lemma induced_pushout_of_maps {x : C} {k₀ : b₀' ⟶ x} {k₁ : b₁' ⟶ x} {e} :
-  po'.induced k₀ k₁ e ∘ pushout_of_maps = po.induced (k₀ ∘ hb₀) (k₁ ∘ hb₁)
+  po'.induced k₀ k₁ e ∘ pushout_of_maps po po' ha hb₀ hb₁ h₀ h₁ = po.induced (k₀ ∘ hb₀) (k₁ ∘ hb₁)
     (by rw [←assoc, ←assoc, h₀, h₁]; simp [e]) :=
 begin
   unfold pushout_of_maps,
   apply po.uniqueness; { rw ←assoc, simp }
 end
 
-@[simp] lemma pushout_of_maps_commutes₀ : pushout_of_maps ∘ g₀ = g₀' ∘ hb₀ :=
+@[simp] lemma pushout_of_maps_commutes₀ : pushout_of_maps po po' ha hb₀ hb₁ h₀ h₁ ∘ g₀ = g₀' ∘ hb₀ :=
 by simp [pushout_of_maps]
 
-@[simp] lemma pushout_of_maps_commutes₁ : pushout_of_maps ∘ g₁ = g₁' ∘ hb₁ :=
+@[simp] lemma pushout_of_maps_commutes₁ : pushout_of_maps po po' ha hb₀ hb₁ h₀ h₁ ∘ g₁ = g₁' ∘ hb₁ :=
 by simp [pushout_of_maps]
+
+lemma pushout_of_maps_id : pushout_of_maps po po (𝟙 a) (𝟙 b₀) (𝟙 b₁) (by simp) (by simp) = 𝟙 _ :=
+by apply pushout_induced_eq_iff; simp
+
+lemma pushout_of_maps_comp :
+  pushout_of_maps po po'' (ha ≫ ka) (hb₀ ≫ kb₀) (hb₁ ≫ kb₁)
+    (by rw [←assoc, h₀, assoc, k₀, ←assoc]) (by rw [←assoc, h₁, assoc, k₁, ←assoc]) =
+  pushout_of_maps po po' ha hb₀ hb₁ h₀ h₁ ≫ pushout_of_maps po' po'' ka kb₀ kb₁ k₀ k₁ :=
+by apply pushout_induced_eq_iff; rw ←assoc; simp
 
 end pushout_of_maps
 

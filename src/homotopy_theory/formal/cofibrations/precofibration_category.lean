@@ -97,7 +97,18 @@ by rw ←this;
 
 -- Suppose C has an initial object ∅. Then an object A of C is
 -- cofibrant if the unique map ∅ → A is a cofibration.
-def cofibrant [has_initial_object.{u v} C] (a : C) : Prop := is_cof (! a)
+variables [has_initial_object.{u v} C]
+
+def cofibrant (a : C) : Prop := is_cof (! a)
+
+-- TODO: Apply this in many places
+lemma cofibrant_of_cof {a b : C} {j : a ⟶ b} (ha : cofibrant a) (hj : is_cof j) :
+  cofibrant b :=
+begin
+  change is_cof _,
+  convert cof_comp ha hj,
+  apply initial.uniqueness
+end
 
 lemma cofibrant_coprod [has_initial_object.{u v} C] [has_coproducts.{u v} C]
   {a₀ a₁ : C} (h₀ : cofibrant a₀) (h₁ : cofibrant a₁) : cofibrant (a₀ ⊔ a₁) :=

@@ -37,6 +37,14 @@ begin
   apply weq_id
 end
 
+lemma brown_factorization.weq_f' {a b : C} {f : a ⟶ b} (c : brown_factorization f) (hf : is_weq f) :
+  is_weq c.f' :=
+begin
+  convert category_with_weak_equivalences.weq_of_comp_weq_right c.hr _,
+  rw c.hf'r,
+  exact hf
+end
+
 --- Any map between cofibrant objects admits a Brown factorization (R-B, Lemma 1.3.1).
 lemma exists_brown_factorization {a b : C} (ha : cofibrant a) (hb : cofibrant b) (f : a ⟶ b) :
   nonempty (brown_factorization f) :=
