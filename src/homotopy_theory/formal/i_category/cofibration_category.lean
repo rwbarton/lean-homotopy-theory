@@ -4,6 +4,7 @@ import category_theory.pushout_fold
 import homotopy_theory.formal.cofibrations.cofibration_category
 import homotopy_theory.formal.cofibrations.cylinder
 import homotopy_theory.formal.cofibrations.factorization_from_cylinder
+import homotopy_theory.formal.cofibrations.homotopy
 import homotopy_theory.formal.cofibrations.left_proper
 import .cylinder_object
 import .dold
@@ -15,7 +16,7 @@ open category_theory.category
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
 namespace homotopy_theory.cofibrations
-open homotopy_theory.cylinder
+open homotopy_theory.cylinder (renaming homotopic_rel → homotopic_rel_cylinder)
 open homotopy_theory.weak_equivalences
 open precofibration_category
 
@@ -153,7 +154,37 @@ let po := pushout_by_cof (I.map j) (p.app a) (I_preserves_cofibrations hj) in
    apply pushout_induced_eq_iff; rw ←assoc; simp
  end⟩
 
--- TODO: Also verify that the I-category notion of homotopy matches
--- the cofibration category one?
+section homotopy
+variables {a b x : C} {j : a ⟶ b} (hj : is_cof j) (f₀ f₁ : b ⟶ x)
+
+lemma homotopic_rel_iff_cylinder :
+  homotopic_rel hj f₀ f₁ ↔ homotopic_rel_cylinder j f₀ f₁ :=
+let po := pushout_by_cof (I.map j) (p.app a) (I_preserves_cofibrations hj) in
+begin
+  split; intro H,
+  { rcases homotopic_rel' (canonical_relative_cylinder hj) (all_objects_fibrant x) f₀ f₁ H
+      with ⟨H, Hi₀, Hi₁⟩,
+    dsimp [canonical_relative_cylinder, relative_cylinder.i₀, relative_cylinder.i₁] at Hi₀ Hi₁,
+    simp at Hi₀ Hi₁,
+    refine ⟨⟨po.map₀ ≫ H, _, _⟩, _⟩,
+    { rw [←Hi₀, ←assoc, ←assoc], refl },
+    { rw [←Hi₁, ←assoc, ←assoc], refl },
+    { dsimp [homotopy.is_rel],
+      rw [←Hi₀],
+      slice_rhs 2 3 { change (functor.id _).map j ≫ (i 0).app b, rw (i 0).naturality },
+      slice_lhs 1 2 { rw po.is_pushout.commutes },
+      slice_rhs 3 4 { change I.map j ≫ po.map₀, rw po.is_pushout.commutes },
+      slice_rhs 2 3 { rw pi_components },
+      simp } },
+  { rcases H with ⟨⟨H, Hi₀, Hi₁⟩, r⟩,
+    refine ⟨canonical_relative_cylinder hj, ⟨⟨_, _, _⟩⟩⟩,
+    refine po.is_pushout.induced H (j ≫ f₀) r,
+    { convert Hi₀ using 1,
+      dsimp [relative_cylinder.i₀, canonical_relative_cylinder], simp },
+    { convert Hi₁ using 1,
+      dsimp [relative_cylinder.i₁, canonical_relative_cylinder], simp } }
+end
+
+end homotopy
 
 end homotopy_theory.cofibrations
