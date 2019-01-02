@@ -21,10 +21,10 @@ variables {a₁ a₂ a₃ a₄ b₁ b₂ b₃ b₄ : C}
   {g₁₂ : b₁ ⟶ b₂} {g₁₃ : b₁ ⟶ b₃} {g₂₄ : b₂ ⟶ b₄} {g₃₄ : b₃ ⟶ b₄}
   (po_g : Is_pushout g₁₂ g₁₃ g₂₄ g₃₄)
   {u₁ : a₁ ⟶ b₁} {u₂ : a₂ ⟶ b₂} {u₃ : a₃ ⟶ b₃} -- u₄ will be the induced map of pushouts
-  (s₁₂ : f₁₂ ≫ u₂ = u₁ ≫ g₁₂) (s₁₃ : f₁₃ ≫ u₃ = u₁ ≫ g₁₃)
   (ha₁ : cofibrant a₁) (ha₃ : cofibrant a₃) (hb₁ : cofibrant b₁) (hb₃ : cofibrant b₃)
   (hf₁₂ : is_cof f₁₂) (hg₁₂ : is_cof g₁₂)
   (hwu₁ : is_weq u₁) (hwu₂ : is_weq u₂) (hwu₃ : is_weq u₃)
+  (s₁₂ : f₁₂ ≫ u₂ = u₁ ≫ g₁₂) (s₁₃ : f₁₃ ≫ u₃ = u₁ ≫ g₁₃)
 
 lemma gluing_weq_aux (hcu₁ : is_cof u₁) (hcu₃ : is_cof u₃)
   (hcu₂'' : is_cof ((pushout_by_cof f₁₂ u₁ hf₁₂).is_pushout.induced u₂ g₁₂ s₁₂)) :
@@ -71,11 +71,11 @@ have cof_h₁₂ : is_cof h₁₂ := begin
   convert cof_comp (pushout_is_cof po.is_pushout.transpose hf₁₂) (x hg₁₂) using 1,
   simp
 end,
-have wv : _ := gluing_weq_aux po_f (pushout_by_cof h₁₂ h₁₃ cof_h₁₂).is_pushout hv₂.symm hv₃.symm hf₁₂
-  (c₁.weq_f' hwu₁) (c₂.weq_f' hwu₂) (c₃.weq_f' hwu₃) c₁.hf' c₃.hf'
+have wv : _ := gluing_weq_aux po_f (pushout_by_cof h₁₂ h₁₃ cof_h₁₂).is_pushout hf₁₂
+  (c₁.weq_f' hwu₁) (c₂.weq_f' hwu₂) (c₃.weq_f' hwu₃) hv₂.symm hv₃.symm c₁.hf' c₃.hf'
   (by rw ←Is_pushout.transpose_induced; exact cof_comp (cof_iso _) (x hg₁₂)),
-have ww : _ := gluing_weq_aux po_g (pushout_by_cof h₁₂ h₁₃ cof_h₁₂).is_pushout hw₂.symm hw₃.symm hg₁₂
-  c₁.hs.2 c₂.hs.2 c₃.hs.2 c₁.hs.1 c₃.hs.1
+have ww : _ := gluing_weq_aux po_g (pushout_by_cof h₁₂ h₁₃ cof_h₁₂).is_pushout hg₁₂
+  c₁.hs.2 c₂.hs.2 c₃.hs.2 hw₂.symm hw₃.symm c₁.hs.1 c₃.hs.1
   (by rw ←Is_pushout.transpose_induced; exact cof_comp (cof_iso _) (y hf₁₂).1),
 let po_h := pushout_by_cof h₁₂ h₁₃ cof_h₁₂ in
 have wr : is_weq (pushout_of_maps po_h.is_pushout po_g c₁.r c₂.r c₃.r hr₂.symm hr₃.symm), begin
