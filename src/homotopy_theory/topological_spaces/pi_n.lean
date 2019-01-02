@@ -36,13 +36,16 @@ quotient_space (sphere_disk_incl n)
 def based_sphere_basepoint (n : ℕ) : Top.point ⟶ based_sphere n :=
 Top.const (quotient_space.pt _)
 
+lemma based_sphere_well_pointed (n : ℕ) : is_cof (based_sphere_basepoint n) :=
+precofibration_category.pushout_is_cof (quotient_space.is_pushout _)
+  (sphere_disk_cofibration n)
+
 -- We define πₙ(X, x) as the set of homotopy classes of maps D[n]/S[n-1] → X
 -- which send the basepoint to x, rel the basepoint.
 
 def π_ (n : ℕ) (X : Top) (x : X) : Set :=
 homotopy_classes_extending_rel (based_sphere_basepoint n)
-  (precofibration_category.pushout_is_cof (quotient_space.is_pushout _) (sphere_disk_cofibration n))
-  (Top.const x)
+  (based_sphere_well_pointed n) (Top.const x)
 
 def π_induced (n : ℕ) {X Y : Top} (x : X) (f : X ⟶ Y) : π_ n X x ⟶ π_ n Y (f x) :=
 hcer_induced f
