@@ -34,4 +34,11 @@ def I_of_coprod_is_coproduct {a₀ a₁ : C} :
 let ⟨f⟩ := I_preserves_coproducts in
 f (has_coproducts.coproduct.{u v} a₀ a₁).is_coproduct
 
+lemma I_preserves_cofibrations {a b : C} {j : a ⟶ b} (hj : is_cof j) : is_cof (I.map j) :=
+begin
+  convert cof_comp _ (relative_cylinder j hj),
+  exact (Is_pushout.induced_commutes₁ _ _ _ _).symm,
+  exact precofibration_category.pushout_is_cof (pushout.is_pushout _) (cof_coprod hj hj)
+end
+
 end homotopy_theory.cofibrations
