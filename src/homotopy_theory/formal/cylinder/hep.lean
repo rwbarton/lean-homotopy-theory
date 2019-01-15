@@ -111,7 +111,7 @@ assume Y f H e,
   let ⟨H₁, h₁, h₂⟩ := h Y f (H ∘ v @> A)
     (by convert e using 1; rw [←assoc]; simp) in
   ⟨H₁ ∘ v @> X,
-   by rw ←assoc; simpa using H₁,
+   by rw ←assoc; simpa using h₁,
    calc
      H₁ ∘ v @> X ∘ I &> j
        = H₁ ∘ (v @> X ∘ I &> j) : by simp
