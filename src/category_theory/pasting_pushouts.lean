@@ -6,13 +6,13 @@ open set
 open category_theory.category
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
-universes u v
+universes v u
 
 namespace category_theory
 
 section
 
-parameters {C : Type u} [cat : category.{u v} C]
+parameters {C : Type u} [cat : category.{v} C]
 include cat
 
 parameters {a a' a'' : C} {f : a ⟶ a'} {g : a' ⟶ a''}

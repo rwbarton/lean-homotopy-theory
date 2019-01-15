@@ -1,12 +1,12 @@
 import category_theory.base
 import category_theory.functor
 
-universes u v
+universes v u
 
 namespace category_theory
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
-variables {C : Type u} [cat : category.{u v} C]
+variables {C : Type u} [cat : category.{v} C]
 include cat
 
 class congruence (r : Π ⦃a b : C⦄, (a ⟶ b) → (a ⟶ b) → Prop) :=

@@ -4,7 +4,7 @@ import category_theory.colimit_lemmas
 import category_theory.replete
 import category_theory.pasting_pushouts
 
-universes u v
+universes v u
 
 open category_theory
 open category_theory.category
@@ -36,15 +36,15 @@ purposes? Useful?
 
 -/
 
-class precofibration_category (C : Type u) [category.{u v} C]
-  extends has_cofibrations C, wide_subcategory.{u v} C is_cof :=
+class precofibration_category (C : Type u) [category.{v} C]
+  extends has_cofibrations C, wide_subcategory.{v} C is_cof :=
 (pushout_by_cof : Π ⦃a b a' : C⦄ (f : a ⟶ b) (g : a ⟶ a'), is_cof f → pushout f g)
 (pushout_is_cof : ∀ ⦃a b a' b' : C⦄ {f : a ⟶ b} {g : a ⟶ a'} {f' : a' ⟶ b'} {g' : b ⟶ b'},
   Is_pushout f g g' f' → is_cof f → is_cof f')
 
 open precofibration_category
 
-variables {C : Type u} [cat : category.{u v} C] [precofibration_category C]
+variables {C : Type u} [cat : category.{v} C] [precofibration_category C]
 include cat
 lemma cof_id (a : C) : is_cof (𝟙 a) := mem_id a
 lemma cof_comp {a b c : C} {f : a ⟶ b} {g : b ⟶ c} :
@@ -52,8 +52,8 @@ lemma cof_comp {a b c : C} {f : a ⟶ b} {g : b ⟶ c} :
 omit cat
 
 instance precofibration_category.replete
-  (C : Type u) [category.{u v} C] [p : precofibration_category.{u v} C] :
-  replete_wide_subcategory.{u v} C is_cof :=
+  (C : Type u) [category.{v} C] [p : precofibration_category.{v} C] :
+  replete_wide_subcategory.{v} C is_cof :=
 { mem_iso := assume a b i,
     pushout_is_cof
       (by convert Is_pushout_of_isomorphic' (Is_pushout.refl (𝟙 a)) i; simp; refl)
@@ -65,7 +65,7 @@ lemma cof_iso {a b : C} (i : a ≅ b) : is_cof i.hom := mem_iso i
 -- The coproduct of cofibrations is a cofibration.
 -- TODO: Should we try to express this using Is_coproduct?
 -- TODO: Make `coproduct` a class and use it in notation
-lemma cof_coprod [has_initial_object.{u v} C] [has_coproducts.{u v} C]
+lemma cof_coprod [has_initial_object.{v} C] [has_coproducts.{v} C]
   {a₀ b₀ a₁ b₁ : C} {j₀ : a₀ ⟶ b₀} {j₁ : a₁ ⟶ b₁} (h₀ : is_cof j₀) (h₁ : is_cof j₁) :
   is_cof (coprod_of_maps j₀ j₁) :=
 begin
@@ -97,7 +97,7 @@ by rw ←this;
 
 -- Suppose C has an initial object ∅. Then an object A of C is
 -- cofibrant if the unique map ∅ → A is a cofibration.
-variables [has_initial_object.{u v} C]
+variables [has_initial_object.{v} C]
 
 def cofibrant (a : C) : Prop := is_cof (! a)
 
@@ -110,7 +110,7 @@ begin
   apply initial.uniqueness
 end
 
-lemma cofibrant_coprod [has_initial_object.{u v} C] [has_coproducts.{u v} C]
+lemma cofibrant_coprod [has_initial_object.{v} C] [has_coproducts.{v} C]
   {a₀ a₁ : C} (h₀ : cofibrant a₀) (h₁ : cofibrant a₁) : cofibrant (a₀ ⊔ a₁) :=
 begin
   change is_cof (! _),
@@ -118,18 +118,18 @@ begin
   apply initial.uniqueness
 end
 
-lemma cof_i₀ [has_initial_object.{u v} C] [has_coproducts.{u v} C]
+lemma cof_i₀ [has_initial_object.{v} C] [has_coproducts.{v} C]
   {a₀ a₁ : C} (h : cofibrant a₁) : is_cof (i₀ : a₀ ⟶ a₀ ⊔ a₁) :=
 by convert cof_comp (cof_iso (coprod_initial_right a₀)) (cof_coprod (cof_id a₀) h);
    simp
 
-lemma cof_i₁ [has_initial_object.{u v} C] [has_coproducts.{u v} C]
+lemma cof_i₁ [has_initial_object.{v} C] [has_coproducts.{v} C]
   {a₀ a₁ : C} (h : cofibrant a₀) : is_cof (i₁ : a₁ ⟶ a₀ ⊔ a₁) :=
 by convert cof_comp (cof_iso (coprod_initial_left a₁)) (cof_coprod h (cof_id a₁));
    simp
 
 variables (C)
-class all_objects_cofibrant [has_initial_object.{u v} C] :=
+class all_objects_cofibrant [has_initial_object.{v} C] :=
 (cofibrant : ∀ (a : C), cofibrant a)
 
 end homotopy_theory.cofibrations

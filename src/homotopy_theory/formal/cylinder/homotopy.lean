@@ -7,11 +7,11 @@ open category_theory.category
 local notation f ` ∘ `:80 g:80 := g ≫ f
 local notation t ` @> `:90 X:90 := t.app X
 
-universes u v
+universes v u
 
 namespace homotopy_theory.cylinder
 
-variables {C : Type u} [cat : category.{u v} C] [has_cylinder C]
+variables {C : Type u} [cat : category.{v} C] [has_cylinder C]
 include cat
 
 -- Homotopy with respect to a given cylinder functor.
@@ -85,7 +85,7 @@ begin
 end
 
 -- In practice, `a` is initial and `I` preserves initial objects.
-lemma homotopy.is_rel_initial (Iai : Is_initial_object.{u v} (I.obj a))
+lemma homotopy.is_rel_initial (Iai : Is_initial_object.{v} (I.obj a))
   (H : homotopy f₀ f₁) : H.is_rel j :=
 Iai.uniqueness _ _
 
@@ -167,7 +167,7 @@ assume ⟨H, h⟩, ⟨H.congr_right g, homotopy.congr_right_is_rel g h⟩
 lemma homotopic_rel.forget_rel {a x y : C} {j : a ⟶ x} {f₀ f₁ : x ⟶ y} : f₀ ≃ f₁ rel j → f₀ ≃ f₁ :=
 assume ⟨H, h⟩, ⟨H⟩
 
-lemma homotopic_rel_initial {a x y : C} (Iai : Is_initial_object.{u v} (I.obj a))
+lemma homotopic_rel_initial {a x y : C} (Iai : Is_initial_object.{v} (I.obj a))
   (j : a ⟶ x) (f₀ f₁ : x ⟶ y) : (f₀ ≃ f₁ rel j) = (f₀ ≃ f₁) :=
 propext $ iff.intro
   (assume ⟨H, _⟩, ⟨H⟩)

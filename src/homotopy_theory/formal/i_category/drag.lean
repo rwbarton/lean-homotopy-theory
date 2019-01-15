@@ -1,6 +1,6 @@
 import .homotopy_classes
 
-universes u v
+universes v u
 
 open category_theory
 open category_theory.category
@@ -10,8 +10,8 @@ namespace homotopy_theory.cofibrations
 open homotopy_theory.cylinder
 
 section C
-parameters {C : Type u} [cat : category.{u v} C]
-  [has_initial_object.{u v} C] [has_coproducts.{u v} C] [I_category.{u v} C]
+parameters {C : Type u} [cat : category.{v} C]
+  [has_initial_object.{v} C] [has_coproducts.{v} C] [I_category.{v} C]
 include cat
 
 parameters {a b : C} {j : a ⟶ b} (hj : is_cof j)

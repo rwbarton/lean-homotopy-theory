@@ -1,6 +1,6 @@
 import .cofibration_category
 
-universes u v
+universes v u
 
 open category_theory
 open category_theory.category
@@ -9,7 +9,7 @@ local notation f ` ∘ `:80 g:80 := g ≫ f
 namespace homotopy_theory.cofibrations
 open precofibration_category cofibration_category
 
-variables {C : Type u} [cat : category.{u v} C] [cofibration_category.{u v} C]
+variables {C : Type u} [cat : category.{v} C] [cofibration_category.{v} C]
 include cat
 
 /-

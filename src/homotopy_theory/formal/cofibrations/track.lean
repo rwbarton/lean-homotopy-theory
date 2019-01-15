@@ -4,7 +4,7 @@ import category_theory.groupoid
 import category_theory.transport
 import .homotopy
 
-universes u v
+universes v u
 
 open category_theory
 open category_theory.category
@@ -15,7 +15,7 @@ open homotopy_theory.weak_equivalences
 open homotopy_theory.weak_equivalences.category_with_weak_equivalences
 open precofibration_category cofibration_category
 
-variables {C : Type u} [cat : category.{u v} C] [cofibration_category.{u v} C]
+variables {C : Type u} [cat : category.{v} C] [cofibration_category.{v} C]
 include cat
 
 -- Tracks, or "homotopies up to homotopy". This notion is a bit tricky

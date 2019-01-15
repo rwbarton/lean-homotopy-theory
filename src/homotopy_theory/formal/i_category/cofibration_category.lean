@@ -9,7 +9,7 @@ import homotopy_theory.formal.cofibrations.left_proper
 import .cylinder_object
 import .dold
 
-universes u v
+universes v u
 
 open category_theory
 open category_theory.category
@@ -24,9 +24,8 @@ open precofibration_category
 -- cofibrations in which the weak equivalences are the homotopy
 -- equivalences.
 
-variables {C : Type u} [cat : category.{u v} C]
-  [has_initial_object.{u v} C] [has_coproducts.{u v} C]
-  [I_category.{u v} C]
+variables {C : Type u} [cat : category.{v} C]
+  [has_initial_object.{v} C] [has_coproducts.{v} C] [I_category.{v} C]
 include cat
 
 -- Every object is fibrant.
@@ -34,7 +33,7 @@ lemma all_objects_fibrant (x : C) : fibrant x :=
 assume y j ⟨jc, jw⟩,
 let ⟨⟨r, h, H⟩⟩ := (heq_iff_sdr_inclusion jc).mp jw in ⟨r, h⟩
 
-instance I_category.cofibration_category : cofibration_category.{u v} C :=
+instance I_category.cofibration_category : cofibration_category.{v} C :=
 cofibration_category.mk_from_cylinder
   (assume a b a' b' f g f' g' po ⟨fc, fw⟩,
     ⟨precofibration_category.pushout_is_cof po fc, pushout_is_acof po fc fw⟩)
@@ -44,20 +43,20 @@ cofibration_category.mk_from_cylinder
 -- The functor I produces cylinder objects in the general sense of
 -- cofibration categories.
 def canonical_cylinder (b : C) :
-  relative_cylinder (all_objects_cofibrant.cofibrant.{u v} b) :=
+  relative_cylinder (all_objects_cofibrant.cofibrant.{v} b) :=
 ⟨I.obj b,
  (pushout_by_cof (!b) (!b) _).is_pushout.induced (i 0 @> b) (i 1 @> b)
    (category_theory.initial.uniqueness _ _),
  p @> b,
  -- We proved ii : b ⊔ b → Ib is a cofibration; need to massage this
  -- into a map from the pushout over the initial object.
- let po := pushout_by_cof (!b) (!b) (all_objects_cofibrant.cofibrant.{u v} b),
+ let po := pushout_by_cof (!b) (!b) (all_objects_cofibrant.cofibrant.{v} b),
      -- The map we need to show is a cofibration
      ii' := po.is_pushout.induced (i 0 @> b) (i 1 @> b)
        (category_theory.initial.uniqueness _ _),
      c : Is_coproduct po.map₀ po.map₁ :=
        Is_coproduct_of_Is_pushout_of_Is_initial po.is_pushout
-         (has_initial_object.initial_object.{u v} C).is_initial_object,
+         (has_initial_object.initial_object.{v} C).is_initial_object,
      j : iso (b ⊔ b) po.ob := isomorphic_coprod_of_Is_coproduct c in
  have ii' ∘ j.hom = ii @> b, begin
    dsimp [j, isomorphic_coprod_of_Is_coproduct];
@@ -112,7 +111,7 @@ let po := pushout_by_cof (I.map j) (p.app a) (I_preserves_cofibrations hj) in
    end,
    have po₁₂ : Is_pushout (coprod_of_maps j j) (coprod.fold a) _ _ :=
      Is_pushout_fold po₀.is_pushout,
-   have po₂ : Is_pushout po₁.map₁ (p.{u v}.app a) l abb,
+   have po₂ : Is_pushout po₁.map₁ (p.app a) l abb,
    { refine Is_pushout_of_Is_pushout_of_Is_pushout' po₁.is_pushout _ _,
      { convert po₁₂,
        { apply pii },

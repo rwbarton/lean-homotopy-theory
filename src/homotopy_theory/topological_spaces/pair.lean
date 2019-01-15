@@ -217,17 +217,17 @@ end interval
 section cofibered
 
 open homotopy_theory.cylinder
-local notation `i` := i.{1 0}
+local notation `i` := i.{0}
 
 -- A pair is cofibered if the inclusion of the subspace is a
 -- cofibration.
 def pair.cofibered : Prop := hep 0 P.incl
 
 lemma pair.empty_cofibered (W : Top) : (pair.empty W).cofibered :=
-have Is_initial_object.{1 0} (pair.empty W).subspace, from
+have Is_initial_object.{0} (pair.empty W).subspace, from
   Top.is_initial_object_of_to_empty _ (by intro p; rcases p with ⟨_,⟨⟩⟩),
 hep_initial_induced 0 this
-  (preserves_initial_object.Is_initial_object_of_Is_initial_object I.{1 0} this)
+  (preserves_initial_object.Is_initial_object_of_Is_initial_object I.{0} this)
 
 def pair.admits_retract : Prop := ∃ r : X ⟶ A', r ∘ P.incl = 𝟙 A'
 

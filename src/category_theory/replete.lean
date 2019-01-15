@@ -5,11 +5,11 @@ open category_theory
 open category_theory.category
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
-universes u v
+universes v u
 
 namespace category_theory
 
-variables (C : Type u) [cat : category.{u v} C]
+variables (C : Type u) [cat : category.{v} C]
 include cat
 
 class wide_subcategory (D : Π {a b : C}, (a ⟶ b) → Prop) : Prop :=
@@ -17,7 +17,7 @@ class wide_subcategory (D : Π {a b : C}, (a ⟶ b) → Prop) : Prop :=
 (mem_comp {} : ∀ {a b c : C} {f : a ⟶ b} {g : b ⟶ c}, D f → D g → D (g ∘ f))
 export wide_subcategory (mem_id mem_comp)
 
-class replete_wide_subcategory D extends wide_subcategory.{u v} C D : Prop :=
+class replete_wide_subcategory D extends wide_subcategory.{v} C D : Prop :=
 (mem_iso {} : ∀ {a b : C} (i : iso a b), D i.hom)
 export replete_wide_subcategory (mem_iso)
 
@@ -26,12 +26,12 @@ variables {C}
 lemma replete_wide_subcategory.mk' {D : Π ⦃a b : C⦄, (a ⟶ b) → Prop}
   (mem_iso : ∀ {a b : C} (i : iso a b), D i.hom)
   (mem_comp : ∀ {a b c : C} {f : a ⟶ b} {g : b ⟶ c}, D f → D g → D (g ∘ f)) :
-  replete_wide_subcategory.{u v} C D :=
+  replete_wide_subcategory.{v} C D :=
 { mem_id := λ a, mem_iso (iso.refl a),
   mem_comp := @mem_comp,
   mem_iso := @mem_iso }
 
-variables {D : Π ⦃a b : C⦄, (a ⟶ b) → Prop} [replete_wide_subcategory.{u v} C D]
+variables {D : Π ⦃a b : C⦄, (a ⟶ b) → Prop} [replete_wide_subcategory.{v} C D]
 
 lemma mem_of_mem_comp_left {a b c : C} {f : a ⟶ b} (i : iso b c)
   (h : D (i.hom ∘ f)) : D f :=

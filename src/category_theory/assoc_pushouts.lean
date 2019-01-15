@@ -13,13 +13,13 @@ local notation f ` ∘ `:80 g:80 := g ≫ f
 
 -/
 
-universes u v
+universes v u
 
 namespace category_theory
 
 section
 
-parameters {C : Type u} [cat : category.{u v} C]
+parameters {C : Type u} [cat : category.{v} C]
 include cat
 
 parameters {a₀ a₁ b₀ b₁ b₂ c₀ c₁ d d' : C}

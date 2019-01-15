@@ -1,7 +1,7 @@
 import data.quot
 import .homotopy_classes
 
-universes u v
+universes v u
 
 open category_theory
 local notation f ` ∘ `:80 g:80 := g ≫ f
@@ -10,8 +10,8 @@ namespace homotopy_theory.cofibrations
 -- Homotopy equivalences as the weak equivalences of an I-category.
 open homotopy_theory.weak_equivalences
 
-variables {C : Type u} [cat : category.{u v} C]
-  [has_initial_object.{u v} C] [has_coproducts.{u v} C] [I_category.{u v} C]
+variables {C : Type u} [cat : category.{v} C]
+  [has_initial_object.{v} C] [has_coproducts.{v} C] [I_category.{v} C]
 include cat
 
 instance homotopy_category.category_with_weak_equivalences :

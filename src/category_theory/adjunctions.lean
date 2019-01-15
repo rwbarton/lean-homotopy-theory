@@ -8,9 +8,9 @@ open category
 local notation f ` ∘ `:80 g:80 := g ≫ f
 local notation F ` ∘ᶠ `:80 G:80 := G.comp F
 
-universes u₁ v₁ u₂ v₂
-variables {C : Type u₁} [catC : category.{u₁ v₁} C]
-variables {D : Type u₂} [catD : category.{u₂ v₂} D]
+universes v₁ v₂ u₁ u₂
+variables {C : Type u₁} [catC : category.{v₁} C]
+variables {D : Type u₂} [catD : category.{v₂} D]
 include catC catD
 
 -- This split apparently helps the elaborator understand that `unit`

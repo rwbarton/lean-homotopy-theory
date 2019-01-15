@@ -1,7 +1,7 @@
 import category_theory.pasting_pushouts
 import .cofibration_category
 
-universes u v
+universes v u
 
 open category_theory
 open category_theory.category
@@ -20,11 +20,11 @@ cofibration-weak equivalence factorization of the fold map.
 
 -/
 
-variables {C : Type u} [cat : category.{u v} C]
+variables {C : Type u} [cat : category.{v} C]
 include cat
 variables [precofibration_category C] [category_with_weak_equivalences C]
-variables [has_initial_object.{u v} C] [all_objects_cofibrant.{u v} C]
-variables [has_coproducts.{u v} C]
+variables [has_initial_object.{v} C] [all_objects_cofibrant.{v} C]
+variables [has_coproducts.{v} C]
 
 section mapping_cylinder
 variables
@@ -86,7 +86,7 @@ def cofibration_category.mk_from_cylinder
   (cylinder : ∀ (a : C), ∃ c (j : a ⊔ a ⟶ c) (g : c ⟶ a),
     is_cof j ∧ is_weq g ∧ g ∘ j = coprod.induced (𝟙 a) (𝟙 a))
   (fibrant_replacement : ∀ (x : C), ∃ rx (j : x ⟶ rx), is_acof j ∧ fibrant rx) :
-  cofibration_category.{u v} C :=
+  cofibration_category.{v} C :=
 { pushout_is_acof := pushout_is_acof,
   fibrant_replacement := @fibrant_replacement,
   factorization := λ a x f,

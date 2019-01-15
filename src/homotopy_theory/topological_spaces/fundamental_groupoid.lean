@@ -21,7 +21,7 @@ induced_groupoid (λ x, (Top.const x : Top.point ⟶ X))
   (homotopy_class_groupoid.groupoid _ _ : groupoid $
     homotopy_class_groupoid
       (all_objects_cofibrant.cofibrant Top.point)
-      (canonical_cylinder.{1 0} Top.point)
+      (canonical_cylinder.{0 1} Top.point)
       (all_objects_fibrant X))
 
 def Pi₁_induced {X Y : Top} (f : X ⟶ Y) : Pi₁_ X ↝ Pi₁_ Y :=

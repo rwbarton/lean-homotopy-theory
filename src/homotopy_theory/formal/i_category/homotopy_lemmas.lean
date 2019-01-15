@@ -2,7 +2,7 @@ import homotopy_theory.formal.cylinder.homotopy
 import .definitions
 import .lemmas
 
-universes u v
+universes v u
 
 open category_theory
 open category_theory.category
@@ -34,8 +34,8 @@ homotopy rel j is an equivalence relation.
 
 -/
 
-parameters {C : Type u} [category.{u v} C] [has_initial_object.{u v} C]
-  [has_coproducts.{u v} C] [Icat : I_category.{u v} C]
+parameters {C : Type u} [category.{v} C] [has_initial_object.{v} C]
+  [has_coproducts.{v} C] [Icat : I_category.{v} C]
 include Icat
 
 parameters {a b : C} (j : a ⟶ b) (hj : is_cof j)
@@ -127,8 +127,8 @@ lemma Eiεvi_ :
   E ∘ i ε.v @> I.obj b ∘ i 0 @> b = f₁ ∧
   E ∘ i ε.v @> I.obj b ∘ i 1 @> b = f₁' :=
 have
-  i.{u v} ε.v @> I.obj b ∘ i 0 @> b = I &> j' ∘ I &> Po.map₀ ∘ i ε.v @> _ ∘ i₀ ∧
-  i.{u v} ε.v @> I.obj b ∘ i 1 @> b = I &> j' ∘ I &> Po.map₀ ∘ i ε.v @> _ ∘ i₁, begin
+  i.{v} ε.v @> I.obj b ∘ i 0 @> b = I &> j' ∘ I &> Po.map₀ ∘ i ε.v @> _ ∘ i₀ ∧
+  i.{v} ε.v @> I.obj b ∘ i 1 @> b = I &> j' ∘ I &> Po.map₀ ∘ i ε.v @> _ ∘ i₁, begin
   split;
   { rw ←I.map_comp, unfold j', simp, erw i_nat_assoc,
     rw ←I.map_comp, dsimp [ii], simp,
@@ -171,8 +171,8 @@ end homotopy_theory.cofibrations
 namespace homotopy_theory.cylinder
 open homotopy_theory.cofibrations
 
-variables {C : Type u} [cat : category.{u v} C]
-  [has_initial_object.{u v} C] [has_coproducts.{u v} C] [I_category.{u v} C]
+variables {C : Type u} [cat : category.{v} C]
+  [has_initial_object.{v} C] [has_coproducts.{v} C] [I_category.{v} C]
 include cat
 variables {a b : C} {j : a ⟶ b} (hj : is_cof j)
 
@@ -196,13 +196,13 @@ lemma homotopic_rel_is_equivalence {x : C} :
 @[symm] lemma homotopic.symm {x : C} {f₀ f₁ : b ⟶ x} (h : f₀ ≃ f₁) : f₁ ≃ f₀ :=
 begin
   rw ←(homotopic_rel_initial Ii_initial (! b)) at ⊢ h,
-  exact homotopic_rel.symm (all_objects_cofibrant.cofibrant.{u v} b) h,
+  exact homotopic_rel.symm (all_objects_cofibrant.cofibrant.{v} b) h,
 end
 
 @[trans] lemma homotopic.trans {x : C} {f₀ f₁ f₂ : b ⟶ x} (h₁ : f₀ ≃ f₁) (h₂ : f₁ ≃ f₂) : f₀ ≃ f₂ :=
 begin
   rw ←(homotopic_rel_initial Ii_initial (! b)) at ⊢ h₁ h₂,
-  exact homotopic_rel.trans (all_objects_cofibrant.cofibrant.{u v} b) h₁ h₂,
+  exact homotopic_rel.trans (all_objects_cofibrant.cofibrant.{v} b) h₁ h₂,
 end
 
 lemma homotopic_is_equivalence {x : C} :

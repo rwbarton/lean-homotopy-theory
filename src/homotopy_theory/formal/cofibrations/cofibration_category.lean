@@ -1,7 +1,7 @@
 import homotopy_theory.formal.weak_equivalences.definitions
 import .precofibration_category
 
-universes u v
+universes v u
 
 open category_theory
 local notation f ` ∘ `:80 g:80 := g ≫ f
@@ -9,7 +9,7 @@ local notation f ` ∘ `:80 g:80 := g ≫ f
 namespace homotopy_theory.cofibrations
 open homotopy_theory.weak_equivalences
 
-variables {C : Type u} [cat : category.{u v} C]
+variables {C : Type u} [cat : category.{v} C]
 include cat
 
 /-
@@ -52,7 +52,7 @@ def fibrant [precofibration_category C] [category_with_weak_equivalences C]
 
 variables (C)
 class cofibration_category extends category_with_weak_equivalences C,
-  precofibration_category.{u v} C :=
+  precofibration_category.{v} C :=
 (pushout_is_acof : ∀ ⦃a b a' b' : C⦄ {f : a ⟶ b} {g : a ⟶ a'} {f' : a' ⟶ b'} {g' : b ⟶ b'},
   Is_pushout f g g' f' → is_acof f → is_acof f')
 (factorization : ∀ {a x : C} (f : a ⟶ x), ∃ b (j : a ⟶ b) (g : b ⟶ x),
@@ -60,7 +60,7 @@ class cofibration_category extends category_with_weak_equivalences C,
 (fibrant_replacement : ∀ (x : C), ∃ rx (j : x ⟶ rx), is_acof j ∧ fibrant rx)
 
 -- Baues' axiom C2(a).
-class left_proper [cofibration_category.{u v} C] : Prop :=
+class left_proper [cofibration_category.{v} C] : Prop :=
 (pushout_weq_by_cof : ∀ ⦃a b a' b' : C⦄ {f : a ⟶ b} {g : a ⟶ a'} {f' : a' ⟶ b'} {g' : b ⟶ b'},
   Is_pushout f g g' f' → is_cof f → is_weq g → is_weq g')
 

@@ -8,7 +8,7 @@ open category_theory.category
 local notation f ` ∘ `:80 g:80 := g ≫ f
 local notation F ` ∘ᶠ `:80 G:80 := G.comp F
 
-universes u v
+universes v u
 
 -- TODO: Move these elsewhere
 notation t ` @> `:90 X:90 := t.app X
@@ -29,14 +29,14 @@ instance : has_one endpoint := ⟨endpoint.one⟩
 --
 -- The standard example is C = Top, IX = X × [0,1], i ε x = (x, ε),
 -- p (x, t) = x.
-class has_cylinder (C : Type u) [category C] :=
+class has_cylinder (C : Type u) [category.{v} C] :=
 (I : C ↝ C)
 (i : endpoint → (functor.id C ⟶ I))
 (p : I ⟶ functor.id C)
 (pi : ∀ ε, p ∘ i ε = nat_trans.id _)
 
 section
-parameters {C : Type u} [cat : category C] [has_cylinder C]
+parameters {C : Type u} [cat : category.{v} C] [has_cylinder.{v} C]
 include cat
 
 def I : C ↝ C :=
@@ -64,7 +64,7 @@ end
 
 
 section boundary
-variables {C : Type u} [cat : category.{u v} C] [has_coproducts.{u v} C]
+variables {C : Type u} [cat : category.{v} C] [has_coproducts.{v} C]
 include cat
 
 -- If C admits coproducts, then we can combine the inclusions `i 0`
@@ -137,7 +137,7 @@ by rw has_cylinder_with_involution.vv; refl
 end
 
 section interchange
-variables (C : Type u) [cat : category.{u v} C] [has_cylinder C]
+variables (C : Type u) [cat : category.{v} C] [has_cylinder C]
 include cat
 local notation `I` := (I : C ↝ C)
 
@@ -148,7 +148,7 @@ class cylinder_has_interchange :=
 (Ti : ∀ ε A, T @> _ ∘ i ε @> I.obj A = I &> (i ε @> A))
 (TIi : ∀ ε A, T @> _ ∘ I &> (i ε @> A) = i ε @> I.obj A)
 
-variables [cylinder_has_interchange.{u v} C]
+variables [cylinder_has_interchange.{v} C]
 variables {C}
 
 @[reducible] def T : I ∘ᶠ I ⟶ I ∘ᶠ I :=

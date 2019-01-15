@@ -57,8 +57,8 @@ local notation f ` ∘ `:80 g:80 := g ≫ f
 namespace category_theory
 section
 
-universes u v
-parameters {C : Type u} [cat : category.{u v} C]
+universes v u
+parameters {C : Type u} [cat : category.{v} C]
 include cat
 
 

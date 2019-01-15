@@ -24,16 +24,16 @@ simple algebraic identities, making proofs about them easy.
 
 -/
 
-universes u v w x
+universes v x u w
 
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
 namespace category_theory
 
-variables {C : Type u} [catC : category.{u v} C]
+variables {C : Type u} [catC : category.{v} C]
 include catC
 
-variables {D : Type w} [catD : category.{w x} D]
+variables {D : Type w} [catD : category.{x} D]
 include catD
 
 -- Proving equality between functors.

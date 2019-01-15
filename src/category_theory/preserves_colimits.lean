@@ -5,18 +5,18 @@ import data.bij_on
 
 open set
 
-universes u₁ v₁ u₂ v₂
+universes v₁ v₂ u₁ u₂
 
 namespace category_theory
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
-variables {C : Type u₁} [catC : category.{u₁ v₁} C]
-variables {D : Type u₂} [catD : category.{u₂ v₂} D]
+variables {C : Type u₁} [catC : category.{v₁} C]
+variables {D : Type u₂} [catD : category.{v₂} D]
 include catC catD
 
 class preserves_initial_object (F : C ↝ D) :=
 (Is_initial_object_of_Is_initial_object :
-  Π {a : C}, Is_initial_object.{u₁ v₁} a → Is_initial_object.{u₂ v₂} (F.obj a))
+  Π {a : C}, Is_initial_object.{v₁} a → Is_initial_object.{v₂} (F.obj a))
 
 class preserves_coproducts (F : C ↝ D) :=
 (Is_coproduct_of_Is_coproduct :

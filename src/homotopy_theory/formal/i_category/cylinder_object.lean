@@ -1,7 +1,7 @@
 import .homotopy_equivalences
 import .lemmas
 
-universes u v
+universes v u
 
 open category_theory
 open category_theory.category
@@ -21,16 +21,16 @@ open category_theory.has_initial_object
 open homotopy_theory.cylinder
 open I_category
 
-parameters {C : Type u} [category.{u v} C] [has_initial_object.{u v} C]
-  [has_coproducts.{u v} C] [Icat : I_category.{u v} C]
+parameters {C : Type u} [category.{v} C] [has_initial_object.{v} C]
+  [has_coproducts.{v} C] [Icat : I_category.{v} C]
 include Icat
 
-lemma cof_ii (a : C) : is_cof (ii.{u v} @> a) :=
+lemma cof_ii (a : C) : is_cof (ii.{v} @> a) :=
 begin
-  convert relative_cylinder' (! a) (all_objects_cofibrant.cofibrant.{u v} a) _ _
+  convert relative_cylinder' (! a) (all_objects_cofibrant.cofibrant.{v} a) _ _
     (Is_pushout_of_isomorphic (Is_pushout.refl (! (∂I.obj a))) _ _
       (coprod_initial_right ∅).symm (iso.refl _)
-      (initial_object.unique Ii_initial (initial_object.{u v} C).is_initial_object)
+      (initial_object.unique Ii_initial (initial_object.{v} C).is_initial_object)
       _ _),
   any_goals { apply coprod.uniqueness; apply initial.uniqueness },
   have : _ = _ ↔ _ = _ ∘ (𝟙 _ ∘ 𝟙 _), by simp, rw this,
@@ -38,9 +38,9 @@ begin
   apply Is_pushout.induced_commutes₀
 end
 
-lemma i₀p {a : C} : i.{u v} 0 @> a ∘ p @> a ≃ 𝟙 (I.obj a) :=
+lemma i₀p {a : C} : i.{v} 0 @> a ∘ p @> a ≃ 𝟙 (I.obj a) :=
 let ⟨J, hJ₁, hJ₂⟩ :=
-  hep_cof (ii.{u v} @> a) (cof_ii a) 0 (I.obj a) (i 0 @> a ∘ p @> a)
+  hep_cof (ii.{v} @> a) (cof_ii a) 0 (I.obj a) (i 0 @> a ∘ p @> a)
     (I_of_coprod_is_coproduct.induced (i 0 @> a ∘ p @> a) (𝟙 (I.obj a))) $ begin
       apply coprod.uniqueness; erw i_nat_assoc; simp,
       rw ←assoc, dsimp, simp
@@ -57,10 +57,10 @@ let ⟨J, hJ₁, hJ₂⟩ :=
     rw [I.map_comp, assoc, hJ₂], simp
   end⟩⟩
 
-lemma heq_p {a : C} : homotopy_equivalence.{u v} (p @> a) :=
+lemma heq_p {a : C} : homotopy_equivalence.{v} (p @> a) :=
 homotopy_equivalence_iff.mpr ⟨i 0 @> a, i₀p, by simp; refl⟩
 
-lemma pii {a : C} : p.{u v} @> a ∘ ii @> a = coprod.fold a :=
+lemma pii {a : C} : p.{v} @> a ∘ ii @> a = coprod.fold a :=
 by apply coprod.uniqueness; simp
 
 end C

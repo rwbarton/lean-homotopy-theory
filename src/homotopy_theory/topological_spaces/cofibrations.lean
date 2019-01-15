@@ -54,7 +54,7 @@ def cofibration {A X : Top} (j : A ⟶ X) : Prop := hep 0 j
 -/
 
 variables {A X : Top} {j : A ⟶ X}
-local notation `i` := i.{1 0}
+local notation `i` := i.{0}
 
 lemma embedding_i {ε} : embedding (i ε @> A) :=
 embedding_of_embedding_comp (p @> A) embedding_id

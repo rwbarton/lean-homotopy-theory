@@ -31,11 +31,11 @@ Top.mk_hom (λ x, pempty.cases_on (λ _, Z) x) (by continuity)
 protected def empty_is_initial_object : Is_initial_object Top.empty :=
 Is_initial_object.mk' Top.empty_induced (assume Z k k', by ext x; cases x)
 
-instance : has_initial_object.{(u+1) u} Top :=
+instance : has_initial_object.{u} Top :=
 ⟨⟨Top.empty, Top.empty_is_initial_object⟩⟩
 
 protected def is_initial_object_of_to_empty (A : Top) (h : A → pempty) :
-  Is_initial_object.{(u+1) u} A :=
+  Is_initial_object.{u} A :=
 have continuous h, begin
   intros u hu,
   have : u = ∅, from set.eq_empty_iff_forall_not_mem.mpr (pempty.rec _),
@@ -86,7 +86,7 @@ Is_coproduct.mk' coproduct_induced
 
 end construction
 
-instance Top.has_coproducts : has_coproducts.{(u+1) u} Top :=
+instance Top.has_coproducts : has_coproducts.{u} Top :=
 ⟨λ X₀ X₁,
   { ob := Top.coproduct_object X₀ X₁,
     map₀ := Top.coproduct_map₀ X₀ X₁,
@@ -139,7 +139,7 @@ Is_coequalizer.mk' coequalizer_commutes coequalizer_induced
 
 end construction
 
-instance Top.has_coequalizers : has_coequalizers.{(u+1) u} Top :=
+instance Top.has_coequalizers : has_coequalizers.{u} Top :=
 ⟨λ X Y f₀ f₁,
   { ob := Top.coequalizer_object f₀ f₁,
     map := Top.coequalizer_map f₀ f₁,
@@ -150,7 +150,7 @@ end coequalizer
 
 section pushout
 
-instance : has_pushouts.{(u+1) u} Top :=
+instance : has_pushouts.{u} Top :=
 has_pushouts_of_has_coequalizers_and_coproducts
 
 end pushout

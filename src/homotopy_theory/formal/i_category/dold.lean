@@ -12,7 +12,7 @@ homotopy equivalence under A.
 
 -/
 
-universes u v
+universes v u
 
 open category_theory
 open category_theory.category
@@ -25,8 +25,8 @@ open homotopy_theory.cylinder
 open precofibration_category
 open I_category
 
-parameters {C : Type u} [category.{u v} C] [has_initial_object.{u v} C]
-  [has_coproducts.{u v} C] [Icat : I_category.{u v} C]
+parameters {C : Type u} [category.{v} C] [has_initial_object.{v} C]
+  [has_coproducts.{v} C] [Icat : I_category.{v} C]
 include Icat
 
 -- [Kamps & Porter, Lemma I.6.4]. Apparently, we already did most of

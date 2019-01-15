@@ -6,7 +6,7 @@ import data.equiv.basic
 -- Transport category/groupoid structures along an isomorphism of
 -- graphs (with same objects).
 
-universes u v v'
+universes v v' u x x' w
 
 namespace category_theory
 open category functor groupoid
@@ -14,10 +14,10 @@ open category functor groupoid
 variables {C : Type u}
 
 section category
-variables (cat : category.{u v} C)
+variables (cat : category.{v} C)
 variables {hom' : Π a b : C, Type v'} (e : Π a b : C, hom a b ≃ hom' a b)
 
-def transported_category : category.{u v'} C :=
+def transported_category : category.{v'} C :=
 { hom := hom',
   id := λ a, e a a (id a),
   comp := λ a b c f g, e a c (comp ((e a b).symm f) ((e b c).symm g)),
@@ -28,10 +28,10 @@ def transported_category : category.{u v'} C :=
 end category
 
 section groupoid
-variables (gpd : groupoid.{u v} C)
+variables (gpd : groupoid.{v} C)
 variables {hom' : Π a b : C, Type v'} (e : Π a b : C, hom a b ≃ hom' a b)
 
-def transported_groupoid : groupoid.{u v'} C :=
+def transported_groupoid : groupoid.{v'} C :=
 { inv := λ a b f, e b a (groupoid.inv ((e a b).symm f)),
   inv_comp' := by intros; dsimp [transported_category]; simp,
   comp_inv' := by intros; dsimp [transported_category]; simp,
@@ -41,9 +41,8 @@ end groupoid
 
 section functor
 -- Many possible setups; this is the one we need.
-universes w x x'
-variables [catC : category.{u v} C]
-variables {D : Type w} [catD : category.{w x} D]
+variables [catC : category.{v} C]
+variables {D : Type w} [catD : category.{x} D]
 variables {hom'C : Π a b : C, Type v'} (eC : Π a b : C, hom a b ≃ hom'C a b)
 variables {hom'D : Π a b : D, Type x'} (eD : Π a b : D, hom a b ≃ hom'D a b)
 variables (F : C ↝ D)

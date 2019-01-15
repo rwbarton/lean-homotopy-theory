@@ -3,7 +3,7 @@ import homotopy_theory.formal.cylinder.definitions
 import homotopy_theory.formal.cylinder.hep
 import homotopy_theory.formal.weak_equivalences.definitions
 
-universes u v
+universes v u
 
 open category_theory
 local notation f ` ∘ `:80 g:80 := g ≫ f
@@ -44,11 +44,11 @@ additional axioms.
 
 -/
 
-variables (C : Type u) [category.{u v} C] [has_initial_object.{u v} C] [has_coproducts.{u v} C]
+variables (C : Type u) [category.{v} C] [has_initial_object.{v} C] [has_coproducts.{v} C]
 
 class I_category extends has_cylinder C, preserves_initial_object (I : C ↝ C),
-  precofibration_category C, all_objects_cofibrant.{u v} C,
-  cylinder_has_interchange.{u v} C :=
+  precofibration_category C, all_objects_cofibrant.{v} C,
+  cylinder_has_interchange.{v} C :=
 (I_preserves_pushout_by_cof :
   Π {a b a' b'} {f : a ⟶ b} {g : a ⟶ a'} {f' : a' ⟶ b'} {g' : b ⟶ b'},
   is_cof f → Is_pushout f g g' f' → Is_pushout (I &> f) (I &> g) (I &> g') (I &> f'))
@@ -64,7 +64,7 @@ variables {C}
 -- Alternate formulation of the relative cylinder axiom, using an
 -- arbitrary pushout rather than the one given by the precofibration
 -- category structure.
-lemma relative_cylinder' [I_category.{u v} C] {a b : C} (j : a ⟶ b) (hj : is_cof j)
+lemma relative_cylinder' [I_category.{v} C] {a b : C} (j : a ⟶ b) (hj : is_cof j)
   {z} (ii' : ∂I.obj b ⟶ z) (jj' : I.obj a ⟶ z) (po : Is_pushout (∂I &> j) (ii @> a) ii' jj') :
   is_cof (po.induced (ii @> b) (I &> j) (ii.naturality _)) :=
 let po' := (pushout_by_cof (∂I &> j) (ii @> a) (cof_coprod hj hj)).is_pushout in

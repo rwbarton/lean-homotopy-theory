@@ -17,24 +17,24 @@ local notation f ` ∘ `:80 g:80 := g ≫ f
 
 namespace category_theory
 
-universes u v
+universes v u
 
 section initial
-variables {C : Type u} [cat : category.{u v} C]
+variables {C : Type u} [cat : category.{v} C]
 include cat
-variable [has_initial_object.{u v} C]
+variable [has_initial_object.{v} C]
 
-def initial : C := (has_initial_object.initial_object.{u v} C).ob
+def initial : C := (has_initial_object.initial_object.{v} C).ob
 
 instance : has_emptyc C := ⟨initial⟩
 
 def initial.induced (a : C) : ∅ ⟶ a :=
-(has_initial_object.initial_object.{u v} C).is_initial_object.induced
+(has_initial_object.initial_object.{v} C).is_initial_object.induced
 
 notation `!` a := initial.induced a
 
 def initial.uniqueness {a : C} (k k' : ∅ ⟶ a) : k = k' :=
-(has_initial_object.initial_object.{u v} C).is_initial_object.uniqueness k k'
+(has_initial_object.initial_object.{v} C).is_initial_object.uniqueness k k'
 
 -- This instance tends not to be very useful because `congr` generates
 -- a congruence lemma which is too general, and does not "know" that
@@ -44,27 +44,27 @@ instance (a : C) : subsingleton (∅ ⟶ a) := ⟨initial.uniqueness⟩
 end initial
 
 section coproduct
-variables {C : Type u} [cat : category.{u v} C]
+variables {C : Type u} [cat : category.{v} C]
 include cat
-variable [has_coproducts.{u v} C]
+variable [has_coproducts.{v} C]
 
 -- The (chosen) coproduct of two objects.
 def coprod (a₀ a₁ : C) :=
-(has_coproducts.coproduct.{u v} a₀ a₁).ob
+(has_coproducts.coproduct.{v} a₀ a₁).ob
 
 notation a₀ ` ⊔ ` a₁ := coprod a₀ a₁
 
 -- The "left" inclusion.
 def i₀ {a₀ a₁ : C} : a₀ ⟶ a₀ ⊔ a₁ :=
-(has_coproducts.coproduct.{u v} a₀ a₁).map₀
+(has_coproducts.coproduct.{v} a₀ a₁).map₀
 
 -- The "right" inclusion.
 def i₁ {a₀ a₁ : C} : a₁ ⟶ a₀ ⊔ a₁ :=
-(has_coproducts.coproduct.{u v} a₀ a₁).map₁
+(has_coproducts.coproduct.{v} a₀ a₁).map₁
 
 -- The map out of a coproduct induced by a map on each summand.
 def coprod.induced {a₀ a₁ b : C} (f₀ : a₀ ⟶ b) (f₁ : a₁ ⟶ b) : a₀ ⊔ a₁ ⟶ b :=
-(has_coproducts.coproduct.{u v} a₀ a₁).is_coproduct.induced f₀ f₁
+(has_coproducts.coproduct.{v} a₀ a₁).is_coproduct.induced f₀ f₁
 
 def coprod.induced_Is_equiv {a₀ a₁ b : C} :
   Is_equiv (λ p : (a₀ ⟶ b) × (a₁ ⟶ b), coprod.induced p.1 p.2) :=
@@ -73,11 +73,11 @@ def coprod.induced_Is_equiv {a₀ a₁ b : C} :
 
 @[simp] lemma coprod.induced_commutes₀ {a₀ a₁ b : C} (f₀ : a₀ ⟶ b) (f₁ : a₁ ⟶ b) :
   coprod.induced f₀ f₁ ∘ i₀ = f₀ :=
-(has_coproducts.coproduct.{u v} a₀ a₁).is_coproduct.induced_commutes₀ f₀ f₁
+(has_coproducts.coproduct.{v} a₀ a₁).is_coproduct.induced_commutes₀ f₀ f₁
 
 @[simp] lemma coprod.induced_commutes₁ {a₀ a₁ b : C} (f₀ : a₀ ⟶ b) (f₁ : a₁ ⟶ b) :
   coprod.induced f₀ f₁ ∘ i₁ = f₁ :=
-(has_coproducts.coproduct.{u v} a₀ a₁).is_coproduct.induced_commutes₁ f₀ f₁
+(has_coproducts.coproduct.{v} a₀ a₁).is_coproduct.induced_commutes₁ f₀ f₁
 
 def coprod.fold (a : C) : a ⊔ a ⟶ a :=
 coprod.induced (𝟙 a) (𝟙 a)
@@ -91,7 +91,7 @@ coprod.induced_commutes₁ _ _
 -- This is a kind of "co-extensionality" lemma; does that count?
 @[extensionality] lemma coprod.uniqueness {a₀ a₁ b : C} {k k' : a₀ ⊔ a₁ ⟶ b}
   (e₀ : k ∘ i₀ = k' ∘ i₀) (e₁ : k ∘ i₁ = k' ∘ i₁) : k = k' :=
-(has_coproducts.coproduct.{u v} a₀ a₁).is_coproduct.uniqueness e₀ e₁
+(has_coproducts.coproduct.{v} a₀ a₁).is_coproduct.uniqueness e₀ e₁
 
 lemma coprod.ext {a₀ a₁ b : C} {k k' : a₀ ⊔ a₁ ⟶ b} :
   k = k' ↔ k ∘ i₀ = k' ∘ i₀ ∧ k ∘ i₁ = k' ∘ i₁ :=
@@ -127,7 +127,7 @@ def coprod_of_isomorphisms {a₀ a₁ b₀ b₁ : C} (j₀ : iso a₀ b₀) (j�
   hom_inv_id' := by apply coprod.uniqueness; rw ←assoc; simp,
   inv_hom_id' := by apply coprod.uniqueness; rw ←assoc; simp }
 
-variables [has_initial_object.{u v} C]
+variables [has_initial_object.{v} C]
 
 def coprod_initial_right (a : C) : a ≅ a ⊔ ∅ :=
 { hom := i₀,
@@ -155,7 +155,7 @@ end coproduct
 
 
 section pushout_induced_eq
-parameters {C : Type u} [cat : category.{u v} C]
+parameters {C : Type u} [cat : category.{v} C]
 include cat
 parameters {a b₀ b₁ c c' : C} {f₀ : a ⟶ b₀} {f₁ : a ⟶ b₁}
 parameters {g₀ : b₀ ⟶ c} {g₁ : b₁ ⟶ c} (po : Is_pushout f₀ f₁ g₀ g₁)
@@ -168,7 +168,7 @@ end pushout_induced_eq
 
 
 section pushout_induced_comp
-parameters {C : Type u} [cat : category.{u v} C]
+parameters {C : Type u} [cat : category.{v} C]
 include cat
 parameters {a b₀ b₁ c c' : C} {f₀ : a ⟶ b₀} {f₁ : a ⟶ b₁}
 parameters {g₀ : b₀ ⟶ c} {g₁ : b₁ ⟶ c} (po : Is_pushout f₀ f₁ g₀ g₁)
@@ -181,7 +181,7 @@ by apply po.uniqueness; rw ←assoc; simp
 end pushout_induced_comp
 
 section pushouts_from_coequalizers
-parameters {C : Type u} [cat : category.{u v} C] [has_coproducts.{u v} C]
+parameters {C : Type u} [cat : category.{v} C] [has_coproducts.{v} C]
 include cat
 
 section construction
@@ -218,8 +218,8 @@ def pushout_of_coequalizer (E : coequalizer (i₀ ∘ f₀) (i₁ ∘ f₁)) : p
 
 end construction
 
-def has_pushouts_of_has_coequalizers_and_coproducts [has_coequalizers.{u v} C] :
-  has_pushouts.{u v} C :=
+def has_pushouts_of_has_coequalizers_and_coproducts [has_coequalizers.{v} C] :
+  has_pushouts.{v} C :=
 { pushout := λ a b₀ b₁ f₀ f₁,
     pushout_of_coequalizer $ has_coequalizers.coequalizer (i₀ ∘ f₀) (i₁ ∘ f₁) }
 
@@ -227,10 +227,10 @@ end pushouts_from_coequalizers
 
 
 section uniqueness_of_initial_objects
-parameters {C : Type u} [cat : category.{u v} C]
+parameters {C : Type u} [cat : category.{v} C]
 include cat
-parameters {a : C} (init : Is_initial_object.{u v} a)
-parameters {a' : C} (init' : Is_initial_object.{u v} a')
+parameters {a : C} (init : Is_initial_object.{v} a)
+parameters {a' : C} (init' : Is_initial_object.{v} a')
 
 def initial_object.unique : iso a a' :=
 { hom := init.induced,
@@ -242,7 +242,7 @@ end uniqueness_of_initial_objects
 
 section uniqueness_of_pushouts
 
-parameters {C : Type u} [cat : category.{u v} C]
+parameters {C : Type u} [cat : category.{v} C]
 include cat
 parameters {a b₀ b₁ c c' : C} {f₀ : a ⟶ b₀} {f₁ : a ⟶ b₁}
 parameters {g₀ : b₀ ⟶ c} {g₁ : b₁ ⟶ c} (po : Is_pushout f₀ f₁ g₀ g₁)
@@ -269,7 +269,7 @@ end uniqueness_of_pushouts
 local notation [parsing_only] a ` ~~ ` b := Bij_on _ a b
 
 section refl
-parameters {C : Type u} [cat : category.{u v} C]
+parameters {C : Type u} [cat : category.{v} C]
 include cat
 parameters {a b : C} (f : a ⟶ b)
 
@@ -286,7 +286,7 @@ end refl
 
 section isomorphic
 
-parameters {C : Type u} [cat : category.{u v} C]
+parameters {C : Type u} [cat : category.{v} C]
 include cat
 
 -- TODO: Move this somewhere?
@@ -337,7 +337,7 @@ end isomorphic
 
 section pushout_tranpose
 
-parameters {C : Type u} [cat : category.{u v} C]
+parameters {C : Type u} [cat : category.{v} C]
 include cat
 parameters {a b₀ b₁ c : C} {f₀ : a ⟶ b₀} {f₁ : a ⟶ b₁}
 parameters {g₀ : b₀ ⟶ c} {g₁ : b₁ ⟶ c} (po : Is_pushout f₀ f₁ g₀ g₁)
@@ -373,14 +373,14 @@ end
 end pushout_tranpose
 
 section pushout_initial
-parameters {C : Type u} [cat : category.{u v} C]
+parameters {C : Type u} [cat : category.{v} C]
 include cat
 parameters {a b₀ b₁ c : C} {f₀ : a ⟶ b₀} {f₁ : a ⟶ b₁}
 parameters {g₀ : b₀ ⟶ c} {g₁ : b₁ ⟶ c}
 
 -- TODO: Somehow prove these two simultaneously?
 def Is_pushout_of_Is_coproduct_of_Is_initial (copr : Is_coproduct g₀ g₁)
-  (h : Is_initial_object.{u v} a) : Is_pushout f₀ f₁ g₀ g₁ :=
+  (h : Is_initial_object.{v} a) : Is_pushout f₀ f₁ g₀ g₁ :=
 Is_pushout.mk $ λ x, calc
   univ ~~ {p : (b₀ ⟶ x) × (b₁ ⟶ x) | true}
        : Bij_on.of_Is_equiv (copr.universal x)
@@ -389,7 +389,7 @@ Is_pushout.mk $ λ x, calc
             simp; apply h.uniqueness
 
 def Is_coproduct_of_Is_pushout_of_Is_initial (po : Is_pushout f₀ f₁ g₀ g₁)
-  (h : Is_initial_object.{u v} a) : Is_coproduct g₀ g₁ :=
+  (h : Is_initial_object.{v} a) : Is_coproduct g₀ g₁ :=
 have _ := λ x, calc
   univ ~~ {p : (b₀ ⟶ x) × (b₁ ⟶ x) | p.1 ∘ f₀ = p.2 ∘ f₁}
        : po.universal x
@@ -404,7 +404,7 @@ end pushout_initial
 
 section coprod_of_pushouts
 
-parameters {C : Type u} [cat : category.{u v} C] [co : has_coproducts.{u v} C]
+parameters {C : Type u} [cat : category.{v} C] [co : has_coproducts.{v} C]
 include cat co
 parameters {a b₀ b₁ c : C} {f₀ : a ⟶ b₀} {f₁ : a ⟶ b₁}
 parameters {g₀ : b₀ ⟶ c} {g₁ : b₁ ⟶ c} (po : Is_pushout f₀ f₁ g₀ g₁)
@@ -465,10 +465,10 @@ end coprod_of_pushouts
 
 section pushout_i
 
-parameters {C : Type u} [cat : category.{u v} C] [co : has_coproducts.{u v} C]
+parameters {C : Type u} [cat : category.{v} C] [co : has_coproducts.{v} C]
 include cat co
 -- Obviously we shouldn't really need C to have an initial object here, but oh well
-parameters [has_initial_object.{u v} C]
+parameters [has_initial_object.{v} C]
 parameters {a b c : C} (f : a ⟶ b)
 
 /-
@@ -496,7 +496,7 @@ by convert Is_pushout_of_isomorphic po f i₁
 end pushout_i
 
 section pushout_swap
-parameters {C : Type u} [cat : category.{u v} C]
+parameters {C : Type u} [cat : category.{v} C]
 include cat
 parameters {a b c : C} {f : a ⟶ b} {g₀ g₁ : b ⟶ c} (po : Is_pushout f f g₀ g₁)
 
@@ -515,7 +515,7 @@ by apply po.uniqueness; unfold Is_pushout.swap; rw ←assoc; simp
 end pushout_swap
 
 section pushout_of_maps
-parameters {C : Type u} [cat : category.{u v} C]
+parameters {C : Type u} [cat : category.{v} C]
 include cat
 variables {a b₀ b₁ c : C} {f₀ : a ⟶ b₀} {f₁ : a ⟶ b₁}
 variables {g₀ : b₀ ⟶ c} {g₁ : b₁ ⟶ c} (po : Is_pushout f₀ f₁ g₀ g₁)

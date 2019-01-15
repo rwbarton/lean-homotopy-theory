@@ -5,7 +5,7 @@ import tactic.slice
 /- Brown factorization, aka "Ken Brown's lemma", and a relative version.
    Following Rădulescu-Banu, Cofibrations in Homotopy Theory, section 1.3. -/
    
-universes u v
+universes v u
 
 namespace homotopy_theory.cofibrations
 open category_theory
@@ -14,8 +14,8 @@ open precofibration_category
 open cofibration_category
 open homotopy_theory.weak_equivalences
 
-variables {C : Type u} [cat : category.{u v} C] [cofibration_category.{u v} C]
-  [has_initial_object.{u v} C]
+variables {C : Type u} [cat : category.{v} C] [cofibration_category.{v} C]
+  [has_initial_object.{v} C]
 include cat
 
 structure brown_factorization {a b : C} (f : a ⟶ b) : Type (max u v) :=

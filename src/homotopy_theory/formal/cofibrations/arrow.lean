@@ -1,12 +1,12 @@
 import .precofibration_category
 
-universes u v
+universes v u
 
 namespace homotopy_theory.cofibrations
 open category_theory category_theory.category
 open precofibration_category
 
-variables {C : Type u} [𝒞 : category.{u v} C] [precofibration_category.{u v} C]
+variables {C : Type u} [𝒞 : category.{v} C] [precofibration_category.{v} C]
 include 𝒞
 
 -- These are the cofibrations in the arrow category of C with the "projective" structure.

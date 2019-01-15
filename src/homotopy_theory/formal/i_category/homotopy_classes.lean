@@ -1,7 +1,7 @@
 import category_theory.congruence
 import .homotopy_lemmas
 
-universes u v
+universes v u
 
 open category_theory
 open category_theory.category
@@ -9,8 +9,8 @@ local notation f ` ∘ `:80 g:80 := g ≫ f
 
 namespace homotopy_theory.cofibrations
 section C
-parameters {C : Type u} [cat : category.{u v} C]
-  [has_initial_object.{u v} C] [has_coproducts.{u v} C] [I_category.{u v} C]
+parameters {C : Type u} [cat : category.{v} C]
+  [has_initial_object.{v} C] [has_coproducts.{v} C] [I_category.{v} C]
 include cat
 
 section

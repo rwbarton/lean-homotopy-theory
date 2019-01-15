@@ -15,7 +15,7 @@ open homotopy_theory.cylinder
 
 -- Top is an I-category with cofibrations the closed cofibrations and
 -- cylinder functor - × [0, 1].
-instance : I_category.{1 0} Top :=
+instance : I_category.{0 1} Top :=
 { I_preserves_pushout_by_cof := λ _ _ _ _ _ _ _ _ _ po,
     preserves_pushouts.Is_pushout_of_Is_pushout I po,
   hep_cof := assume a b j hj, two_sided_hep_iff_hep.mpr hj.1,

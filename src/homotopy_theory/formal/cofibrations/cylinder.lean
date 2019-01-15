@@ -2,7 +2,7 @@ import category_theory.pasting_pushouts
 import homotopy_theory.formal.cylinder.definitions
 import .cofibration_category
 
-universes u v
+universes v u
 
 open category_theory
 open category_theory.category
@@ -14,7 +14,7 @@ open homotopy_theory.weak_equivalences
 open homotopy_theory.weak_equivalences.category_with_weak_equivalences
 open precofibration_category cofibration_category
 
-variables {C : Type u} [cat : category.{u v} C] [cofibration_category.{u v} C]
+variables {C : Type u} [cat : category.{v} C] [cofibration_category.{v} C]
 include cat
 
 variables {a b : C} {j : a ⟶ b} (hj : is_cof j)
@@ -199,7 +199,7 @@ def cylinder_embedding.reverse {c c' : relative_cylinder hj}
 ⟨m.k, m.hk, show m.k ∘ (c.ii ∘ _) = c'.ii ∘ _, by simp [m.hkii], m.hpk⟩
 
 -- TODO: Should really have this `pushout_by_cof` exposed somewhere
-def relative_cylinder.glue (c₀ c₁ : relative_cylinder hj) : relative_cylinder.{u v} hj :=
+def relative_cylinder.glue (c₀ c₁ : relative_cylinder hj) : relative_cylinder.{v} hj :=
 let po := pushout_by_cof c₀.i₁ c₁.i₀ c₀.acof_i₁.1 in
 ⟨po.ob,
  (pushout_by_cof j j hj).is_pushout.induced (po.map₀ ∘ c₀.i₀) (po.map₁ ∘ c₁.i₁) $
@@ -232,8 +232,8 @@ let po := pushout_by_cof c₀.i₁ c₁.i₀ c₀.acof_i₁.1 in
      { rw [←assoc, ←po₀.is_pushout.commutes], simp },
      { rw ←assoc,
        have :
-         po₀.map₁ ∘ (pushout_by_cof.{u v} j j hj).map₁ =
-         f ∘ (pushout_by_cof.{u v} j j hj).map₁, by simp,
+         po₀.map₁ ∘ (pushout_by_cof.{v} j j hj).map₁ =
+         f ∘ (pushout_by_cof.{v} j j hj).map₁, by simp,
        rw this,
        rw [assoc, po₂.commutes, ←assoc],
        change _ = po.map₁ ∘ c₁.i₁, simp }

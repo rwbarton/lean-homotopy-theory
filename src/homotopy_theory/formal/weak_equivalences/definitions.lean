@@ -5,7 +5,7 @@ open category_theory
 open category_theory.category
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
-universes u v
+universes v u
 
 namespace homotopy_theory.weak_equivalences
 
@@ -16,20 +16,20 @@ def is_weq {C : Type u} [category C] [has_weak_equivalences C] ⦃a b : C⦄ (f 
 has_weak_equivalences.is_weq f
 
 -- TODO: should this be a Prop mix-in?
-class category_with_weak_equivalences (C : Type u) [category.{u v} C]
+class category_with_weak_equivalences (C : Type u) [category.{v} C]
   extends has_weak_equivalences C :=
-[weq_replete_wide : replete_wide_subcategory.{u v} C is_weq]
+[weq_replete_wide : replete_wide_subcategory.{v} C is_weq]
 (weq_of_comp_weq_left : ∀ ⦃a b c : C⦄ {f : a ⟶ b} {g : b ⟶ c},
   is_weq f → is_weq (g ∘ f) → is_weq g)
 (weq_of_comp_weq_right : ∀ ⦃a b c : C⦄ {f : a ⟶ b} {g : b ⟶ c},
   is_weq g → is_weq (g ∘ f) → is_weq f)
 
-instance (C : Type u) [category.{u v} C] [category_with_weak_equivalences C] :
-  replete_wide_subcategory.{u v} C is_weq :=
+instance (C : Type u) [category.{v} C] [category_with_weak_equivalences C] :
+  replete_wide_subcategory.{v} C is_weq :=
 category_with_weak_equivalences.weq_replete_wide C
 
 section
-variables {C : Type u} [cat : category.{u v} C] [category_with_weak_equivalences C]
+variables {C : Type u} [cat : category.{v} C] [category_with_weak_equivalences C]
 include cat
 
 lemma weq_id (a : C) : is_weq (𝟙 a) := mem_id a
@@ -49,13 +49,13 @@ end
 end
 
 -- The two-out-of-six property.
-class homotopical_category (C : Type u) [category.{u v} C]
+class homotopical_category (C : Type u) [category.{v} C]
   extends category_with_weak_equivalences C :=
 (two_out_of_six : ∀ ⦃a b c d : C⦄ {f : a ⟶ b} {g : b ⟶ c} {h : c ⟶ d},
   is_weq (h ∘ g) → is_weq (g ∘ f) → is_weq g)
 
 section
-variables {C : Type u} [cat : category.{u v} C] [homotopical_category C]
+variables {C : Type u} [cat : category.{v} C] [homotopical_category C]
 include cat
 
 lemma weq_two_out_of_six_g {a b c d : C} {f : a ⟶ b} {g : b ⟶ c} {h : c ⟶ d}
@@ -74,7 +74,7 @@ category_with_weak_equivalences.weq_of_comp_weq_left wg hg
 end
 
 section isomorphisms
-variables {C : Type u} [cat : category.{u v} C]
+variables {C : Type u} [cat : category.{v} C]
 include cat
 
 def is_iso ⦃a b : C⦄ (f : a ⟶ b) : Prop := ∃ i : a ≅ b, i.hom = f
@@ -106,7 +106,7 @@ assume ⟨i, hi⟩ ⟨j, hj⟩,
    ... = g''             : by rw g'g; simp; refl,
   ⟨⟨g, g', g'g, by rw this; exact gg''⟩, rfl⟩
 
-instance is_iso.replete_wide_subcategory : replete_wide_subcategory.{u v} C is_iso :=
+instance is_iso.replete_wide_subcategory : replete_wide_subcategory.{v} C is_iso :=
 replete_wide_subcategory.mk' iso_iso iso_comp
 
 def isomorphisms_as_weak_equivalences : category_with_weak_equivalences C :=
@@ -122,7 +122,7 @@ end isomorphisms
 
 section preimage
 -- TODO: generalize to different universes?
-variables {C D : Type u} [catC : category.{u v} C] [catD : category.{u v} D]
+variables {C D : Type u} [catC : category.{v} C] [catD : category.{v} D]
 include catC catD
 variables (F : C ↝ D)
 
@@ -130,7 +130,7 @@ def preimage_weq (weqD : has_weak_equivalences D) : has_weak_equivalences C :=
 { is_weq := λ a b f, is_weq (F &> f) }
 
 instance preimage_weq.replete_wide_subcategory [weqD : category_with_weak_equivalences D] :
-  replete_wide_subcategory.{u v} C (preimage_weq F weqD.to_has_weak_equivalences).is_weq :=
+  replete_wide_subcategory.{v} C (preimage_weq F weqD.to_has_weak_equivalences).is_weq :=
 replete_wide_subcategory.mk'
     (λ a b i, weq_iso (F.on_iso i))
     (λ a b c f g hf hg, show is_weq (F &> (g ∘ f)),

@@ -46,12 +46,12 @@ instance : precofibration_category Top :=
   pushout_is_cof := λ _ _ _ _ f g f' g' po ⟨co_f, cl_f⟩,
     ⟨hep_pushout' 0 po co_f, (range_i_closed_iff_range_j_closed po).mp cl_f⟩ }
 
-instance : all_objects_cofibrant.{1 0} Top :=
+instance : all_objects_cofibrant.{0} Top :=
 ⟨assume A,
  ⟨hep_initial_induced 0
    Top.empty_is_initial_object
    (preserves_initial_object.Is_initial_object_of_Is_initial_object
-     I.{1 0} Top.empty_is_initial_object),
+     I.{0} Top.empty_is_initial_object),
   begin
     convert is_closed_empty,
     rw eq_empty_iff_forall_not_mem,

@@ -1,6 +1,6 @@
 import .brown
 
-universes u v
+universes v u
 
 open category_theory
 local notation f ` ∘ `:80 g:80 := g ≫ f
@@ -9,8 +9,8 @@ namespace homotopy_theory.cofibrations
 open precofibration_category cofibration_category
 open homotopy_theory.weak_equivalences
 
-variables {C : Type u} [cat : category.{u v} C] [cofibration_category.{u v} C]
-  [has_initial_object.{u v} C]
+variables {C : Type u} [cat : category.{v} C] [cofibration_category.{v} C]
+  [has_initial_object.{v} C]
 include cat
 
 -- Following Rădulescu-Banu, Cofibrations in Homotopy Theory, Lemma 1.4.1
