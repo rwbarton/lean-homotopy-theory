@@ -122,7 +122,7 @@ begin
     use opens_equiv X ⟨w, wo⟩,
     rw [opens_equiv_nat, ←equiv.eq_symm_apply],
     apply subtype.eq,
-    exact uw.symm },
+    exact uw },
   { -- One inequality is automatic because i is continuous.
     refine le_antisymm _ (continuous_iff_induced_le.mp i.property),
     intros w wo,
@@ -134,7 +134,7 @@ begin
     use (opens_equiv X).symm l,
     refine ⟨((opens_equiv X).symm l).property, _⟩,
     funext a,
-    exact (congr_arg ulift.down (Top.hom_congr hl a)).symm }
+    exact (congr_arg ulift.down (Top.hom_congr hl a)) }
 end
 
 end

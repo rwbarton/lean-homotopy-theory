@@ -1,5 +1,5 @@
 import algebra.module
-import analysis.real
+import topology.instances.real
 import tactic.ring
 
 import .tactic

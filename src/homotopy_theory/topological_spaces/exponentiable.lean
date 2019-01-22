@@ -1,4 +1,4 @@
-import analysis.topology.continuous_map
+import topology.compact_open
 import category_theory.adjunctions
 import for_mathlib
 

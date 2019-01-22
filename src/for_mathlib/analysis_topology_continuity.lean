@@ -1,4 +1,4 @@
-import analysis.topology.continuity
+import topology.continuity
 
 universes u v
 

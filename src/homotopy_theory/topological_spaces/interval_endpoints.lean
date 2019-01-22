@@ -58,18 +58,18 @@ have embedding j, begin
   { refine ⟨{t : I01 | t.val < 1},
       is_open_lt continuous_subtype_val continuous_const, _⟩,
     ext p, split,
-    { intro h, simp at h, subst p, change (0 : ℝ) < 1, norm_num },
     { intro h, rcases p with ⟨⟨⟩⟩|⟨⟨⟩⟩, { simp },
       { change (1 : ℝ) < 1 at h, have : ¬((1 : ℝ) < 1), by norm_num,
-        contradiction } } },
+        contradiction } },
+    { intro h, simp at h, subst p, change (0 : ℝ) < 1, norm_num } },
   { refine ⟨{t : I01 | t.val > 0},
       is_open_lt continuous_const continuous_subtype_val, _⟩,
     ext p, split,
-    { intro h, simp at h, subst p, change (1 : ℝ) > 0, norm_num },
     { intro h, rcases p with ⟨⟨⟩⟩|⟨⟨⟩⟩,
       { change (0 : ℝ) > 0 at h, have : ¬((0 : ℝ) > 0), by norm_num,
         contradiction },
-      { simp } } }
+      { simp } },
+    { intro h, simp at h, subst p, change (1 : ℝ) > 0, norm_num } }
 end,
 (homeomorphism_to_image_of_embedding this).trans
   (subspace_equiv_subspace rj)

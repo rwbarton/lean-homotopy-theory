@@ -1,5 +1,4 @@
-import analysis.topology.topological_space
-import analysis.topology.continuity
+import topology.continuity
 import category_theory.base
 import category_theory.functor_category
 import category_theory.examples.topological_spaces
