@@ -12,7 +12,7 @@ noncomputable theory
 
 open set
 
-open category_theory
+open category_theory (hiding preimage_id)
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
 namespace homotopy_theory.topological_spaces

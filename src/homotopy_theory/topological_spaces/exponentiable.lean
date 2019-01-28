@@ -1,5 +1,5 @@
 import topology.compact_open
-import category_theory.adjunctions
+import category_theory.adjunction
 import for_mathlib
 
 import .category
@@ -7,7 +7,7 @@ import .category
 universe u
 
 open continuous_map
-open category_theory
+open category_theory category_theory.adjunction
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
 namespace homotopy_theory.topological_spaces
@@ -71,15 +71,18 @@ def exponential_functor (A : Top) [exponentiable A] : Top ↝ Top :=
 
 def exponential_adjunction (A : Top) [exponentiable A] :
   adjunction (-× A) (exponential_functor A) :=
+adjunction.mk_of_unit_counit _ _ $
 { unit :=
     { app := λ X, Top.mk_hom (coev A X) (exponentiable.continuous_coev A X) },
   counit :=
     { app := λ X, Top.mk_hom (ev A X) (exponentiable.continuous_ev A X) },
-  left_triangle := by intro X; ext xa; cases xa; refl,
-  right_triangle := by intro X; ext f a; refl }
+  left_triangle' := by ext X xa; cases xa; refl,
+  right_triangle' := by ext X f a; refl }
 
-instance (A : Top) [exponentiable A] : has_right_adjoint (-× A) :=
-{ right_adjoint := exponential_functor A,
+local attribute [class] is_left_adjoint
+
+instance (A : Top) [exponentiable A] : is_left_adjoint (-× A) :=
+{ right := exponential_functor A,
   adj := exponential_adjunction A }
 
 -- Locally compact spaces are exponentiable by equipping A ⟶ X with

@@ -39,7 +39,7 @@ def initial.uniqueness {a : C} (k k' : ∅ ⟶ a) : k = k' :=
 -- This instance tends not to be very useful because `congr` generates
 -- a congruence lemma which is too general, and does not "know" that
 -- the domain is ∅.
-instance (a : C) : subsingleton (∅ ⟶ a) := ⟨initial.uniqueness⟩
+instance initial_hom.subsingleton (a : C) : subsingleton (∅ ⟶ a) := ⟨initial.uniqueness⟩
 
 end initial
 

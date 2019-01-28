@@ -54,7 +54,7 @@ def δ (i : [n+1]) : n ⟶ ((n + 1) : ℕ) :=
   end⟩
 
 /-- The i-th degeneracy map from [n+1] to [n] -/
-def σ (i : [n]) : @category.hom Δ _ ((n + 1) : ℕ) n :=
+def σ (i : [n]) : @has_hom.hom Δ _ ((n + 1) : ℕ) n :=
 ⟨λ a, if h : a.val ≤ i.val
     then ⟨a.val, lt_of_le_of_lt h i.is_lt⟩
     else ⟨a.val.pred,

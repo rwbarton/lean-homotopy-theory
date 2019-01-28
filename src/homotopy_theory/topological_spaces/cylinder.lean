@@ -1,5 +1,5 @@
 import topology.instances.real
-import category_theory.adjunctions
+import category_theory.adjunction
 import tactic.norm_num
 
 import homotopy_theory.formal.cylinder.definitions
@@ -72,7 +72,7 @@ instance : cylinder_has_interchange.{0} Top :=
   Ti := by intros ε X; ext p; refl,
   TIi := by intros ε X; ext p; cases p; refl }
 
-instance I.has_right_adjoint : has_right_adjoint (I : Top ↝ Top) :=
+instance I.is_left_adjoint : adjunction.is_left_adjoint (I : Top ↝ Top) :=
 by unfold I; apply_instance
 
 end homotopy_theory.topological_spaces

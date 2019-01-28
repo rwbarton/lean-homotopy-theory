@@ -23,7 +23,7 @@ congruence.mk' (λ a b, homotopic_is_equivalence)
   (λ a b c f g g', homotopic.congr_right f)
 
 @[reducible] def homotopy_classes (a b : C) : Type v :=
-@hom (category_mod_congruence C homotopy_congruence) _ a b
+@has_hom.hom (category_mod_congruence C homotopy_congruence) _ a b
 
 variables {a b : C} {j : a ⟶ b} (hj : is_cof j) {x : C} (u : a ⟶ x)
 include hj

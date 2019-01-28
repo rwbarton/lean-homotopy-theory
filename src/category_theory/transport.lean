@@ -9,7 +9,7 @@ import data.equiv.basic
 universes v v' u x x' w
 
 namespace category_theory
-open category functor groupoid
+open has_hom category functor groupoid
 
 variables {C : Type u}
 

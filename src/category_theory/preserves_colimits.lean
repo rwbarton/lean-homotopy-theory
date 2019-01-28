@@ -1,6 +1,6 @@
 import category_theory.base
 import category_theory.colimits
-import category_theory.adjunctions
+import category_theory.adjunction
 import data.bij_on
 
 open set
@@ -34,7 +34,7 @@ variables {F : C ↝ D} {G : D ↝ C} (adj : adjunction F G)
 
 def left_adjoint_preserves_initial_object : preserves_initial_object F :=
 ⟨λ a ai, Is_initial_object.mk $ λ x,
-  Is_equiv.mk ((adj.hom_equivalence a x).trans (ai.universal (G.obj x)).e)
+  Is_equiv.mk ((adj.hom_equiv a x).trans (ai.universal (G.obj x)).e)
     (by ext; refl)⟩
 
 -- TODO: show left adjoints preserve coproducts
@@ -46,7 +46,7 @@ def left_adjoint_preserves_pushout : preserves_pushouts F :=
   have _ := calc
     (univ : set (F.obj c ⟶ x))
       ~~ (univ : set (c ⟶ G.obj x))
-      : Bij_on.of_equiv (adj.hom_equivalence c x)
+      : Bij_on.of_equiv (adj.hom_equiv c x)
   ... ~~ {p : (b₀ ⟶ G.obj x) × (b₁ ⟶ G.obj x) | p.1 ∘ f₀ = p.2 ∘ f₁}
       : po.universal (G.obj x)
   ... ~~ {p : (b₀ ⟶ G.obj x) × (b₁ ⟶ G.obj x) | _}
@@ -54,41 +54,47 @@ def left_adjoint_preserves_pushout : preserves_pushouts F :=
   begin
     convert Bij_on.refl _, funext p, cases p with p1 p2,
     change
-      ((adj.hom_equivalence b₀ x).symm p1 ∘ F &> f₀ =
-       (adj.hom_equivalence b₁ x).symm p2 ∘ F &> f₁) =
+      ((adj.hom_equiv b₀ x).symm p1 ∘ F &> f₀ =
+       (adj.hom_equiv b₁ x).symm p2 ∘ F &> f₁) =
       (p1 ∘ f₀ = p2 ∘ f₁),
     transitivity
-      ((adj.hom_equivalence a x).symm (p1 ∘ f₀) =
-       (adj.hom_equivalence a x).symm (p2 ∘ f₁)),
-    { rw adjunction.hom_equivalence_symm_naturality,
-      rw adjunction.hom_equivalence_symm_naturality },
+      ((adj.hom_equiv a x).symm (p1 ∘ f₀) =
+       (adj.hom_equiv a x).symm (p2 ∘ f₁)),
+    { rw adj.hom_equiv_naturality_left_symm,
+      rw adj.hom_equiv_naturality_left_symm },
     { simp }
   end
   ... ~~ {p : (F.obj b₀ ⟶ x) × (F.obj b₁ ⟶ x) | p.1 ∘ (F &> f₀) = p.2 ∘ (F &> f₁)}
       : Bij_on.restrict''
           (Bij_on.prod'
-            (Bij_on.of_equiv (adj.hom_equivalence b₀ x).symm)
-            (Bij_on.of_equiv (adj.hom_equivalence b₁ x).symm))
+            (Bij_on.of_equiv (adj.hom_equiv b₀ x).symm)
+            (Bij_on.of_equiv (adj.hom_equiv b₁ x).symm))
           (λ p, p.1 ∘ (F &> f₀) = p.2 ∘ (F &> f₁)),
   begin
     convert this,
     funext k,
     change (k ∘ F &> g₀, k ∘ F &> g₁) =
-      ((adj.hom_equivalence b₀ x).symm (adj.hom_equivalence c x k ∘ g₀),
-       (adj.hom_equivalence b₁ x).symm (adj.hom_equivalence c x k ∘ g₁)),
-    rw adj.hom_equivalence_symm_naturality,
-    rw adj.hom_equivalence_symm_naturality,
-    simp
+      ((adj.hom_equiv b₀ x).symm (adj.hom_equiv c x k ∘ g₀),
+       (adj.hom_equiv b₁ x).symm (adj.hom_equiv c x k ∘ g₁)),
+    rw adj.hom_equiv_naturality_left_symm,
+    rw adj.hom_equiv_naturality_left_symm,
+    simp, dsimp, simp
   end⟩
 
 end left_adjoint
 
-instance has_right_adjoint.preserves_initial_object (F : C ↝ D) [has_right_adjoint F] :
-  preserves_initial_object F :=
-left_adjoint_preserves_initial_object (has_right_adjoint.adj F)
+local attribute [class] adjunction.is_left_adjoint
 
-instance has_right_adjoint.preserves_pushouts (F : C ↝ D) [has_right_adjoint F] :
+namespace adjunction
+
+instance is_left_adjoint.preserves_initial_object (F : C ↝ D) [h : is_left_adjoint F] :
+  preserves_initial_object F :=
+left_adjoint_preserves_initial_object h.adj
+
+instance is_left_adjoint.preserves_pushouts (F : C ↝ D) [h : is_left_adjoint F] :
   preserves_pushouts F :=
-left_adjoint_preserves_pushout (has_right_adjoint.adj F)
+left_adjoint_preserves_pushout h.adj
+
+end adjunction
 
 end category_theory
