@@ -1,4 +1,4 @@
-import topology.algebra.topological_structures
+import topology.algebra.ring
 import tactic.tidy
 import for_mathlib.tidy
 import for_mathlib.analysis_topology_continuity

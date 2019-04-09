@@ -54,7 +54,7 @@ def is_open_in_pushout (s : set Y) : is_open s ↔ is_open (g ⁻¹' s) ∧ is_o
    let ys := po.induced xs bs
      (by ext a; change (i ≫ g) a ∈ s ↔ (f ≫ j) a ∈ s; rw po.commutes),
    convert ((opens_equiv Y).symm ys).property,
-   rw [←equiv.apply_eq_iff_eq (set_equiv Y), ←forget_open_map, equiv.apply_inverse_apply],
+   rw [←equiv.apply_eq_iff_eq (set_equiv Y), ←forget_open_map, equiv.apply_symm_apply],
    apply po.uniqueness; { rw [set_equiv_nat, ←category.assoc], simp, refl }
  end⟩
 

@@ -153,8 +153,8 @@ def Bij_on.restrict_to_subtype (h : Bij_on f a b) (r : β → Prop) :
        (h.e _).property⟩,
     inv_fun := λ p,
       ⟨⟨h.e.symm ⟨p.val.val, p.property⟩,
-       show ↑(h.e.symm ⟨p.val.val, p.property⟩) ∈ f ⁻¹' r, from
-       by rw [mem_preimage_eq, h.he]; simpa using p.val.property⟩,
+       show ↑(h.e.symm ⟨p.val.val, p.property⟩) ∈ f ⁻¹' r,
+       by rw [mem_preimage_eq, h.he]; simp⟩,
        (h.e.symm _).property⟩,
     left_inv := λ ⟨p, hp⟩, by simp,
     right_inv := λ ⟨p, hp⟩, by simp },
@@ -163,7 +163,7 @@ def Bij_on.restrict_to_subtype (h : Bij_on f a b) (r : β → Prop) :
 -- Bijection between a subtype and a propositionally equal one.
 def Bij_on.congr_subtype {r r' : set α} (h : r = r') :
   Bij_on (λ (x : subtype r), (⟨x, _⟩ : subtype r')) univ univ :=
-Bij_on.of_equiv $ equiv.subtype_congr h
+Bij_on.of_equiv $ equiv.set_congr h
 
 -- TODO: Use this to simplify other colimit lemmas?
 def Bij_on.congr_subset {α : Type*} {r r' : set α} (h : r = r') : Bij_on id r r' :=

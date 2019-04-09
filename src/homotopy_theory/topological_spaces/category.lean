@@ -1,4 +1,4 @@
-import topology.continuity
+import topology.maps
 import category_theory.base
 import category_theory.functor_category
 import category_theory.instances.topological_spaces

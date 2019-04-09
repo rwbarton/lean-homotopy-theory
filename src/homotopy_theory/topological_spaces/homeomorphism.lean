@@ -67,7 +67,7 @@ def homeomorphism.restrict {s : set X} {t : set Y} (hst : s = h.hom ⁻¹' t) :
 { hom := Top.mk_hom (λ p, ⟨h.hom p.val, by simpa [hst] using p.property⟩)
     (by have := h.hom.property; continuity),
   inv := Top.mk_hom (λ p, ⟨h.inv p.val, begin
-      subst s, show h.equiv (h.equiv.symm p.val) ∈ t, simpa using p.property
+      subst s, show h.equiv (h.equiv.symm p.val) ∈ t, simp
     end⟩)
     (by have := h.inv.property; continuity),
   hom_inv_id' := by ext p; exact h.equiv.left_inv p.val,
