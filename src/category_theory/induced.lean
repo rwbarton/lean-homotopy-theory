@@ -64,7 +64,12 @@ lemma induced_functor_comp [catC : category.{v} C]
 begin
   fapply functor.ext,
   { intro a, refl },
-  { intros a b f, dsimp [induced_functor'], simp, refl }
+  { intros a b f,
+    -- This proof mysteriously broke
+    dsimp [induced_functor'],
+    rw category.id_comp,
+    erw category.comp_id,
+    simp, refl }
 end
 
 end category_theory

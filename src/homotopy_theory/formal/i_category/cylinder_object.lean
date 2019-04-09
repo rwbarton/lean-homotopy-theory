@@ -27,15 +27,17 @@ include Icat
 
 lemma cof_ii (a : C) : is_cof (ii.{v} @> a) :=
 begin
-  convert relative_cylinder' (! a) (all_objects_cofibrant.cofibrant.{v} a) _ _
+  let po :=
     (Is_pushout_of_isomorphic (Is_pushout.refl (! (∂I.obj a))) _ _
       (coprod_initial_right ∅).symm (iso.refl _)
       (initial_object.unique Ii_initial (initial_object.{v} C).is_initial_object)
       _ _),
+  convert relative_cylinder' (! a) (all_objects_cofibrant.cofibrant.{v} a) _ _ po,
   any_goals { apply coprod.uniqueness; apply initial.uniqueness },
-  have : _ = _ ↔ _ = _ ∘ (𝟙 _ ∘ 𝟙 _), by simp, rw this,
   symmetry,
-  apply Is_pushout.induced_commutes₀
+  convert ←(po.induced_commutes₀ _ _ _),
+  convert id_comp _ _,
+  simp
 end
 
 lemma i₀p {a : C} : i.{v} 0 @> a ∘ p @> a ≃ 𝟙 (I.obj a) :=

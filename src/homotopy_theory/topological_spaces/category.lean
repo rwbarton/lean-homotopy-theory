@@ -1,7 +1,7 @@
 import topology.continuity
 import category_theory.base
 import category_theory.functor_category
-import category_theory.examples.topological_spaces
+import category_theory.instances.topological_spaces
 
 import .tactic
 
@@ -11,7 +11,7 @@ universe u
 
 namespace homotopy_theory.topological_spaces
 
-export category_theory.examples (Top)
+export category_theory.instances (Top)
 
 namespace Top
 

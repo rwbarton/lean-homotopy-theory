@@ -4,7 +4,7 @@ import category_theory.functor
 import tactic.tidy
 
 -- Set up `tidy` as the tactic to be invoked by `obviously`.
-@[obviously] meta def tidy_1 := tactic.interactive.tidy
+@[obviously] meta def tidy_1 := tactic.tidy -- TODO: can we just delete this?
 
 -- TODO: Notation for composition of functors, etc.?
 

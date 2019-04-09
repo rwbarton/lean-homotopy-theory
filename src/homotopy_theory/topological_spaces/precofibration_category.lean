@@ -62,7 +62,7 @@ instance : all_objects_cofibrant.{0} Top :=
 lemma closed_cofibration_incl_iff {P : pair} :
   closed_cofibration P.incl ↔ P.cofibered ∧ is_closed P.subset :=
 iff.intro
-  (assume ⟨h₁, h₂⟩, ⟨h₁, by convert h₂; exact subtype_val_range.symm⟩)
-  (assume ⟨h₁, h₂⟩, ⟨h₁, by convert h₂; exact subtype_val_range⟩)
+  (assume ⟨h₁, h₂⟩, ⟨h₁, by convert h₂; exact subtype.val_range.symm⟩)
+  (assume ⟨h₁, h₂⟩, ⟨h₁, by convert h₂; exact subtype.val_range⟩)
 
 end homotopy_theory.topological_spaces

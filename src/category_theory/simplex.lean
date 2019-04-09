@@ -79,7 +79,7 @@ def σ (i : [n]) : @has_hom.hom Δ _ ((n + 1) : ℕ) n :=
 lemma simplicial_identity₁ {i j : [n+1]} (H : i ≤ j) : δ i ≫ δ j.succ = δ j ≫ δ i.cast_succ :=
 begin
   rw simplex_category.hom_eq2,
-  dsimp [category.comp, function.comp, δ],
+  dsimp [category_struct.comp, function.comp, δ],
   funext a,
   by_cases hja : (j.val ≤ a.val),
   { have hja' : ((fin.succ j).val ≤ (fin.succ a).val) := by simp; exact nat.succ_le_succ hja,

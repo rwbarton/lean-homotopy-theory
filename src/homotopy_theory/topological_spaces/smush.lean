@@ -19,7 +19,7 @@ the structure and axioms we need on V.
 namespace homotopy_theory.topological_spaces.smush
 
 class admissible (R : out_param Type) [discrete_linear_ordered_field R] (V : Type) extends has_scalar R V :=
-(mul_smul' : ∀r s (x : V), (r * s) • x = r • s • x)
+(mul_smul' : ∀(r s : R) (x : V), (r * s) • x = r • s • x)
 (one_smul' : ∀x : V, (1 : R) • x = x)
 (norm : V → R)
 (norm_nonneg : ∀x : V, 0 ≤ norm x)
@@ -222,7 +222,7 @@ end continuity
 
 instance : admissible' ℝ :=
 { mul_smul' := _root_.mul_smul,
-  one_smul' := _root_.one_smul,
+  one_smul' := _root_.one_smul _,
   norm := abs,
   norm_nonneg := abs_nonneg,
   norm_mul := abs_mul,

@@ -19,8 +19,8 @@ variables {hom' : Π a b : C, Type v'} (e : Π a b : C, hom a b ≃ hom' a b)
 
 def transported_category : category.{v'} C :=
 { hom := hom',
-  id := λ a, e a a (id a),
-  comp := λ a b c f g, e a c (comp ((e a b).symm f) ((e b c).symm g)),
+  id := λ a, e a a (𝟙 a),
+  comp := λ a b c f g, e a c ((e a b).symm f ≫ (e b c).symm g),
   id_comp' := by intros; simp,
   comp_id' := by intros; simp,
   assoc' := by intros; simp }
