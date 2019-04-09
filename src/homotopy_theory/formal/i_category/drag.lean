@@ -10,7 +10,7 @@ namespace homotopy_theory.cofibrations
 open homotopy_theory.cylinder
 
 section C
-parameters {C : Type u} [cat : category.{v} C]
+parameters {C : Type u} [cat : category.{v+1} C]
   [has_initial_object.{v} C] [has_coproducts.{v} C] [I_category.{v} C]
 include cat
 

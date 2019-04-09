@@ -15,14 +15,14 @@ section Cat
 
 structure Cat : Type (u+1) :=
 (carrier : Type u)
-(cat : category.{u u} carrier)
+(cat : category.{u+1 u+1} carrier)
 
 local notation `Cat` := Cat.{u}
 
 instance Cat.to_sort : has_coe_to_sort Cat :=
 { S := Type u, coe := λ X, X.carrier }
 
-instance Cat.as_category (C : Cat) : category.{u u} C.carrier := C.cat
+instance Cat.as_category (C : Cat) : category.{u+1 u+1} C.carrier := C.cat
 
 def Cat.functor (C D : Cat) : Type u := C ↝ D
 
@@ -40,14 +40,14 @@ section Gpd
 
 structure Gpd : Type (u+1) :=
 (carrier : Type u)
-(gpd : groupoid.{u u} carrier)
+(gpd : groupoid.{u+1 u+1} carrier)
 
 local notation `Gpd` := Gpd.{u}
 
 instance Gpd.to_sort : has_coe_to_sort Gpd :=
 { S := Type u, coe := λ X, X.carrier }
 
-instance Gpd.as_groupoid (C : Gpd) : groupoid.{u u} C.carrier := C.gpd
+instance Gpd.as_groupoid (C : Gpd) : groupoid.{u+1 u+1} C.carrier := C.gpd
 
 def Gpd.functor (C D : Gpd) : Type u := C ↝ D
 

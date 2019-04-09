@@ -11,7 +11,7 @@ local notation f ` ∘ `:80 g:80 := g ≫ f
 namespace homotopy_theory.cofibrations
 open precofibration_category cofibration_category
 
-variables {C : Type u} [cat : category.{v} C] [cofibration_category.{v} C]
+variables {C : Type u} [cat : category.{v+1} C] [cofibration_category.{v} C]
 include cat
 
 -- Homotopies in a cofibration category.

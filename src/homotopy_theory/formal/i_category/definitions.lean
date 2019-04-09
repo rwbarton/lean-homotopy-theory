@@ -44,7 +44,7 @@ additional axioms.
 
 -/
 
-variables (C : Type u) [category.{v} C] [has_initial_object.{v} C] [has_coproducts.{v} C]
+variables (C : Type u) [category.{v+1} C] [has_initial_object.{v} C] [has_coproducts.{v} C]
 
 class I_category extends has_cylinder C, preserves_initial_object (I : C ↝ C),
   precofibration_category C, all_objects_cofibrant.{v} C,

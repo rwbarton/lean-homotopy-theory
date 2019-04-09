@@ -15,7 +15,7 @@ open homotopy_theory.weak_equivalences
 open homotopy_theory.weak_equivalences.category_with_weak_equivalences
 open precofibration_category cofibration_category
 
-variables {C : Type u} [cat : category.{v} C] [cofibration_category.{v} C]
+variables {C : Type u} [cat : category.{v+1} C] [cofibration_category.{v} C]
 include cat
 
 -- Tracks, or "homotopies up to homotopy". This notion is a bit tricky

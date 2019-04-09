@@ -9,7 +9,7 @@ local notation f ` ∘ `:80 g:80 := g ≫ f
 
 namespace homotopy_theory.cofibrations
 section C
-parameters {C : Type u} [cat : category.{v} C]
+parameters {C : Type u} [cat : category.{v+1} C]
   [has_initial_object.{v} C] [has_coproducts.{v} C] [I_category.{v} C]
 include cat
 

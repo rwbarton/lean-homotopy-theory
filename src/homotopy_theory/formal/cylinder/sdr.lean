@@ -1,6 +1,6 @@
 import .homotopy
 
-universe u
+universes v u
 
 open category_theory
 open category_theory.category
@@ -8,7 +8,7 @@ local notation f ` ∘ `:80 g:80 := g ≫ f
 
 namespace homotopy_theory.cylinder
 
-variables {C : Type u} [cat : category C] [has_cylinder C]
+variables {C : Type u} [cat : category.{v+1} C] [has_cylinder C]
 include cat
 
 -- A map j : A → X is the inclusion of a strong deformation retract if

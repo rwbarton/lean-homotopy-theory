@@ -11,7 +11,7 @@ universes v u
 
 namespace homotopy_theory.cylinder
 
-variables {C : Type u} [cat : category.{v} C] [has_cylinder C]
+variables {C : Type u} [cat : category.{v+1} C] [has_cylinder C]
 include cat
 
 -- Homotopy with respect to a given cylinder functor.

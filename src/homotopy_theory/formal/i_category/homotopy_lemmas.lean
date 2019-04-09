@@ -34,7 +34,7 @@ homotopy rel j is an equivalence relation.
 
 -/
 
-parameters {C : Type u} [category.{v} C] [has_initial_object.{v} C]
+parameters {C : Type u} [category.{v+1} C] [has_initial_object.{v} C]
   [has_coproducts.{v} C] [Icat : I_category.{v} C]
 include Icat
 
@@ -171,7 +171,7 @@ end homotopy_theory.cofibrations
 namespace homotopy_theory.cylinder
 open homotopy_theory.cofibrations
 
-variables {C : Type u} [cat : category.{v} C]
+variables {C : Type u} [cat : category.{v+1} C]
   [has_initial_object.{v} C] [has_coproducts.{v} C] [I_category.{v} C]
 include cat
 variables {a b : C} {j : a ⟶ b} (hj : is_cof j)
