@@ -1,7 +1,7 @@
 import topology.maps
 import category_theory.base
 import category_theory.functor_category
-import category_theory.instances.topological_spaces
+import category_theory.instances.Top
 
 import .tactic
 

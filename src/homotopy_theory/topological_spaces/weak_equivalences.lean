@@ -20,8 +20,8 @@ is_iso (π₀ &> f) ∧ ∀ n x, is_iso (π_induced n x f)
 
 lemma is_weak_equivalence_iso {X Y : Top} (i : homeomorphism X Y) :
   is_weak_equivalence i.hom :=
-⟨⟨π₀.on_iso i, rfl⟩,
- assume n x, ⟨(π n).on_iso (Top_ptd.mk_iso' i x), rfl⟩⟩
+⟨⟨π₀.map_iso i, rfl⟩,
+ assume n x, ⟨(π n).map_iso (Top_ptd.mk_iso' i x), rfl⟩⟩
 
 lemma is_weak_equivalence_comp {X Y Z : Top} {f : X ⟶ Y} {g : Y ⟶ Z}
   (hf : is_weak_equivalence f) (hg : is_weak_equivalence g) :
@@ -31,6 +31,10 @@ lemma is_weak_equivalence_comp {X Y Z : Top} {f : X ⟶ Y} {g : Y ⟶ Z}
 
 instance : replete_wide_subcategory.{1} Top @is_weak_equivalence :=
 replete_wide_subcategory.mk' @is_weak_equivalence_iso @is_weak_equivalence_comp
+
+-- I don't know why this changed, but `⟦Top.const y⟧` in the proof below
+-- started using `subtype.setoid` and `fun_setoid` (from core) by default.
+local attribute [instance, priority 1000] Hom.setoid
 
 -- I don't know what this means, but lean told me to turn it on
 set_option eqn_compiler.zeta true

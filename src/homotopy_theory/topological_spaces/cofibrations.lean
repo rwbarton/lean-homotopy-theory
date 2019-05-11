@@ -133,7 +133,7 @@ let j_ : homeomorphism A P.subspace :=
   homeomorphism_to_image_of_embedding (embedding_of_cofibration hj) in
 let po := pair.po P I_01 ha I_01.is_closed in
 let po' := Is_pushout_of_isomorphic po.transpose (∂I &> j) (ii @> A)
-  ((∂I.on_iso j_).trans prod_doubleton) prod_doubleton (I.on_iso j_)
+  ((∂I.map_iso j_).trans prod_doubleton) prod_doubleton (I.map_iso j_)
   (by apply coprod.uniqueness; refl)
   (by apply coprod.uniqueness; refl) in
 let ind := po'.induced (ii @> X) (I &> j) (ii.naturality _) in

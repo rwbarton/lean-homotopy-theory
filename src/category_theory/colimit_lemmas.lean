@@ -52,7 +52,7 @@ variable [has_coproducts.{v} C]
 def coprod (a₀ a₁ : C) :=
 (has_coproducts.coproduct.{v} a₀ a₁).ob
 
-notation a₀ ` ⊔ ` a₁ := coprod a₀ a₁
+infix ` ⊔ `:65 := coprod
 
 -- The "left" inclusion.
 def i₀ {a₀ a₁ : C} : a₀ ⟶ a₀ ⊔ a₁ :=

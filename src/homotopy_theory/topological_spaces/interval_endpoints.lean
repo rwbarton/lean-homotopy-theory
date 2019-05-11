@@ -78,7 +78,7 @@ def prod_doubleton {X : Top} : homeomorphism (∂I.obj X) (Top.prod X I01_endpoi
 calc
   ∂I.obj X
     ≅ ∂I.obj (Top.prod X Top.point)
-    : (∂I).on_iso (prod_singleton (by refl))
+    : (∂I).map_iso (prod_singleton (by refl))
 ... ≅ Top.prod X Top.point ⊔ Top.prod X Top.point
     : by refl
 ... ≅ Top.prod X (* ⊔ *)
