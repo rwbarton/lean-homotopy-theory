@@ -69,9 +69,8 @@ def exponential_functor (A : Top) [exponentiable A] : Top ↝ Top :=
   map_id' := by intro X; ext g x; refl,
   map_comp' := by intros X X' X'' f g; refl }
 
-def exponential_adjunction (A : Top) [exponentiable A] :
-  adjunction (-× A) (exponential_functor A) :=
-adjunction.mk_of_unit_counit _ _ $
+def exponential_adjunction (A : Top) [exponentiable A] : (-× A) ⊣ exponential_functor A :=
+adjunction.mk_of_unit_counit $
 { unit :=
     { app := λ X, Top.mk_hom (coev A X) (exponentiable.continuous_coev A X) },
   counit :=

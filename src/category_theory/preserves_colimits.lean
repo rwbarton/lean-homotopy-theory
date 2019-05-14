@@ -30,7 +30,7 @@ class preserves_pushouts (F : C ↝ D) :=
 
 section left_adjoint
 
-variables {F : C ↝ D} {G : D ↝ C} (adj : adjunction F G)
+variables {F : C ↝ D} {G : D ↝ C} (adj : F ⊣ G)
 
 def left_adjoint_preserves_initial_object : preserves_initial_object F :=
 ⟨λ a ai, Is_initial_object.mk $ λ x,
