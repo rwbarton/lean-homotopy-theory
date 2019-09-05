@@ -16,7 +16,7 @@ open category_theory (hiding preimage_id)
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
 namespace homotopy_theory.topological_spaces
-open Top
+open homotopy_theory.topological_spaces.Top
 local notation `Top` := Top.{0}
 
 structure pair :=
@@ -74,14 +74,14 @@ by rw [h.is_of_pairs', h.h.is_closed_iff]; refl
 @[symm] def pair.homeomorphism.symm (h : P ≅ₚ Q) : Q ≅ₚ P :=
 pair.homeomorphism.mk h.h.symm $
   show B = h.h.equiv.symm ⁻¹' A, from
-  by rw [h.is_of_pairs', ←preimage_comp]; simp [preimage_id]
+  by rw [h.is_of_pairs', ←set.preimage_comp]; simp [preimage_id]
 
 include R
 
 @[trans] def pair.homeomorphism.trans (h₁ : P ≅ₚ Q) (h₂ : Q ≅ₚ R) : P ≅ₚ R :=
 pair.homeomorphism.mk (h₁.h.trans h₂.h) $
   show A = (function.comp h₂.h.equiv h₁.h.equiv) ⁻¹' C, from
-  by rw [preimage_comp, h₁.is_of_pairs', h₂.is_of_pairs']
+  by rw [set.preimage_comp, h₁.is_of_pairs', h₂.is_of_pairs']
 
 end homeomorphism
 

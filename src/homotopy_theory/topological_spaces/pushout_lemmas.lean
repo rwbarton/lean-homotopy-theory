@@ -39,7 +39,7 @@ local notation f ` ∘ `:80 g:80 := g ≫ f
 universe u
 
 namespace homotopy_theory.topological_spaces
-open Top
+open homotopy_theory.topological_spaces.Top
 local notation `Top` := Top.{u}
 
 section
@@ -98,7 +98,7 @@ begin
     exact preimage_image_eq _ H },
   { intros a a' haa',
     -- Use lifting property to extend (λ x, x = a') to X.
-    rcases H ⟨λ x, ulift.up (x = a'), continuous_bot⟩ with ⟨l, hl⟩,
+    rcases H ⟨λ x, ulift.up (x = a'), continuous_top⟩ with ⟨l, hl⟩,
     have := Top.hom_congr hl a,
     change l (i a) = _ at this,
     rw haa' at this,
@@ -124,7 +124,7 @@ begin
     apply subtype.eq,
     exact uw },
   { -- One inequality is automatic because i is continuous.
-    refine le_antisymm _ (continuous_iff_induced_le.mp i.property),
+    refine le_antisymm (continuous_iff_le_induced.mp i.property) _,
     intros w wo,
     -- Now we reverse the above argument. w defines a continuous map A → Zind,
     -- which we extend to X using the lifting property to express w as the
@@ -151,12 +151,12 @@ begin
 end
 
 lemma embedding_j_of_embedding_i (h : embedding i) : embedding j :=
-⟨injective_j_of_injective_i h.1,
- begin
-   have := h.2,
+⟨⟨begin
+   have := h.induced,
    erw induced_iff_llp at ⊢ this,
    exact llp_of_pushout po _ this
- end⟩
+  end⟩,
+ injective_j_of_injective_i h.inj⟩
 
 end
 
@@ -269,7 +269,7 @@ factor_through_incl k _ (subset_compl_comm.mp $ subset_compl_iff_disjoint.mpr hi
 theorem comp_embedding_of_embedding_of_disjoint : embedding (g ∘ k) :=
 show embedding (incl _ ∘ g'.hom ∘ k'), from
 have embedding k', from embedding_of_embedding_comp (incl _) hk,
-embedding_compose this (embedding_compose g'.embedding (embedding_incl _))
+(embedding_incl _).comp (g'.embedding.comp this)
 
 end
 

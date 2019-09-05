@@ -10,7 +10,7 @@ def sierpinski : Top := Top.mk_ob (ulift Prop)
 
 def opens_equiv (X : Top) : opens X ≃ (X ⟶ sierpinski) :=
 ⟨λ s, Top.mk_hom (λ x, ⟨x ∈ s.val⟩)
-   (continuous.comp (continuous_Prop.mpr s.property) continuous_up),
+   (continuous.comp continuous_up (continuous_Prop.mpr s.property)),
  λ f, ⟨λ x, (f x).down, continuous_Prop.mp (by continuity)⟩,
  λ s, by ext; refl,
  λ f, by ext; refl⟩
@@ -21,7 +21,7 @@ rfl
 
 --- The two-point space with the indiscrete topology. It represents
 --- the (contravariant) functor taking X to its set of all subsets.
-def prop_indisc := @Top.mk_ob (ulift Prop) ⊥
+def prop_indisc := @Top.mk_ob (ulift Prop) ⊤
 
 def set_equiv (X : Top) : set X ≃ (X ⟶ prop_indisc) :=
 ⟨λ s, Top.mk_hom (λ x, ⟨x ∈ s⟩) (by continuity),

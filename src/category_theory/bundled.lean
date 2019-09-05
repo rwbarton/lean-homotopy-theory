@@ -15,16 +15,17 @@ section Cat
 
 structure Cat : Type (u+1) :=
 (carrier : Type u)
-(cat : category.{u+1 u+1} carrier)
+(cat : small_category carrier)
 
 local notation `Cat` := Cat.{u}
 
 instance Cat.to_sort : has_coe_to_sort Cat :=
 { S := Type u, coe := λ X, X.carrier }
 
-instance Cat.as_category (C : Cat) : category.{u+1 u+1} C.carrier := C.cat
+instance Cat.as_category (C : Cat) : small_category C.carrier := C.cat
 
-def Cat.functor (C D : Cat) : Type u := C ↝ D
+-- FIXME: This is wrong! But functor universe levels can't be fixed, can they?
+def Cat.functor (C D : Cat) : Type (u+1) := C ↝ D
 
 instance Cat.category : category Cat :=
 { hom := Cat.functor,
@@ -40,16 +41,17 @@ section Gpd
 
 structure Gpd : Type (u+1) :=
 (carrier : Type u)
-(gpd : groupoid.{u+1 u+1} carrier)
+(gpd : small_groupoid carrier)
 
 local notation `Gpd` := Gpd.{u}
 
 instance Gpd.to_sort : has_coe_to_sort Gpd :=
 { S := Type u, coe := λ X, X.carrier }
 
-instance Gpd.as_groupoid (C : Gpd) : groupoid.{u+1 u+1} C.carrier := C.gpd
+instance Gpd.as_groupoid (C : Gpd) : small_groupoid C.carrier := C.gpd
 
-def Gpd.functor (C D : Gpd) : Type u := C ↝ D
+-- FIXME: See above
+def Gpd.functor (C D : Gpd) : Type (u+1) := C ↝ D
 
 instance Gpd.category : category Gpd :=
 { hom := Gpd.functor,

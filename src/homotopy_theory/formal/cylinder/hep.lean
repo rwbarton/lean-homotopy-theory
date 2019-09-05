@@ -114,7 +114,7 @@ assume Y f H e,
    by rw ←assoc; simpa using h₁,
    calc
      H₁ ∘ v @> X ∘ I &> j
-       = H₁ ∘ (v @> X ∘ I &> j) : by simp
+       = H₁ ∘ (v @> X ∘ I &> j) : by rw assoc
    ... = H₁ ∘ (I &> j ∘ v @> A) : by erw v.naturality; refl
    ... = (H₁ ∘ I &> j) ∘ v @> A : by simp
    ... = (H ∘ v @> A) ∘ v @> A  : by rw h₂

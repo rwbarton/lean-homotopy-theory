@@ -1,7 +1,7 @@
 import topology.maps
 import category_theory.base
 import category_theory.functor_category
-import category_theory.instances.Top
+import topology.Top.basic
 
 import .tactic
 
@@ -10,8 +10,6 @@ open category_theory
 universe u
 
 namespace homotopy_theory.topological_spaces
-
-export category_theory.instances (Top)
 
 namespace Top
 

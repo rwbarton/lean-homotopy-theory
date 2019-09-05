@@ -11,7 +11,7 @@ local notation f ` ∘ `:80 g:80 := g ≫ f
 namespace homotopy_theory.topological_spaces
 open homotopy_theory.cofibrations
 open homotopy_theory.weak_equivalences
-open Top
+open homotopy_theory.topological_spaces.Top
 local notation `Top` := Top.{0}
 local notation `Set` := Type 0
 
@@ -67,8 +67,8 @@ def Top_weak_equivalences : category_with_weak_equivalences Top :=
         i'.trans (change_of_basepoint n (γ.induced g)),
         show (change_of_basepoint n (γ.induced g)).hom ∘
             i'.hom ∘ (change_of_basepoint n γ).inv =
-          π_induced n y g, from
-        begin rw [hi'], rw ←change_of_basepoint_induced, simp end⟩⟩,
+          π_induced n y g,
+        by rw [hi', ←change_of_basepoint_induced, iso.inv_hom_id_assoc]⟩⟩,
   weq_of_comp_weq_right := assume X Y Z f g hg hgf,
     ⟨iso_of_comp_iso_right hg.1 (by rw ←π₀.map_comp; exact hgf.1),
      assume n x, iso_of_comp_iso_right (hg.2 n (f x))

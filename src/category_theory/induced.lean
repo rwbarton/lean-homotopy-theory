@@ -69,7 +69,8 @@ begin
     dsimp [induced_functor'],
     rw category.id_comp,
     erw category.comp_id,
-    simp, refl }
+    -- FIXME: Why was this lemma removed from simp?
+    simp [eq_to_hom_map], refl }
 end
 
 end category_theory

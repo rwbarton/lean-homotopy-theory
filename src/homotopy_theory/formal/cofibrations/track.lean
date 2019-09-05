@@ -502,8 +502,9 @@ quotient.induction_on₂ h₀ h₁ $ λ h₀ h₁ e, quotient.sound $
   end
 
 variables (c)
+-- FIXME: Why doesn't ≃ work here??
 noncomputable def homotopy_class_equiv_track :
-  homotopy_up_to_homotopy c g₀ g₁ ≃ track hj g₀ g₁ :=
+  equiv (homotopy_up_to_homotopy c g₀ g₁) (track hj g₀ g₁) :=
 equiv.of_bijective ⟨inj hx, surj hx⟩
 
 section

@@ -96,7 +96,7 @@ def path_of_homotopy {X Y : Top} (x : X) {f f' : X ⟶ Y} (H : homotopy f f') :
 H.congr_right (Top.const x)
 
 -- TODO: Move this
-def iso_of_equiv {X Y : Set} (e : X ≃ Y) : X ≅ Y :=
+def iso_of_equiv {X Y : Set} (e : equiv X Y) : X ≅ Y :=
 { hom := e.to_fun,
   inv := e.inv_fun,
   hom_inv_id' := funext e.left_inv,

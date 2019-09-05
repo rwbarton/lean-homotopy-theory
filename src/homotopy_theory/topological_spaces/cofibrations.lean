@@ -17,7 +17,7 @@ local notation f ` ∘ `:80 g:80 := g ≫ f
 open homotopy_theory.cylinder
 
 namespace homotopy_theory.topological_spaces
-open Top
+open homotopy_theory.topological_spaces.Top
 local notation `Top` := Top.{0}
 
 -- The classical definition of a cofibration between topological
@@ -92,8 +92,7 @@ have e_z_ix : embedding k, from
 have e_a_z : embedding (po.map₀ ∘ i 1 @> A), from
   comp_embedding_of_embedding_of_disjoint
     po.is_pushout (or.inl closed_i) embedding_i disjoint_i₀_i₁,
-have embedding (k ∘ (po.map₀ ∘ i 1 @> A)), from
-  embedding_compose e_a_z e_z_ix,
+have embedding (k ∘ (po.map₀ ∘ i 1 @> A)), from e_z_ix.comp e_a_z,
 have embedding (i 1 @> X ∘ j), begin
   convert this using 2,
   transitivity,

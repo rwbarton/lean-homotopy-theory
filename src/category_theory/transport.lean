@@ -11,7 +11,7 @@ universes v v' u x x' w
 namespace category_theory
 open has_hom category functor groupoid
 
-variables {C : Sort u}
+variables {C : Type u}
 
 section category
 variables (cat : category.{v} C)
@@ -42,7 +42,7 @@ end groupoid
 section functor
 -- Many possible setups; this is the one we need.
 variables [catC : category.{v} C]
-variables {D : Sort w} [catD : category.{x} D]
+variables {D : Type w} [catD : category.{x} D]
 variables {hom'C : Π a b : C, Sort v'} (eC : Π a b : C, hom a b ≃ hom'C a b)
 variables {hom'D : Π a b : D, Sort x'} (eD : Π a b : D, hom a b ≃ hom'D a b)
 variables (F : C ↝ D)

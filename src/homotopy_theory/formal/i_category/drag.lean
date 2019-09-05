@@ -105,7 +105,8 @@ assume ⟨f₀, f₁, hf₀, hf₁, ⟨H, h⟩⟩ ⟨f₀', f₁', hf₀', hf₁
 parameters {hj u u'}
 
 -- TODO: General theory of bijective relations
-noncomputable def drag_equiv : [b, x]^u ≃ [b, x]^u' :=
+-- FIXME: collision between homotopy ≃ and equiv ≃
+noncomputable def drag_equiv : equiv ([b, x]^u) ([b, x]^u') :=
 { to_fun := λ g₀, classical.some (drag_rel_homotopy_total₀ g₀),
   inv_fun := λ g₁, classical.some (drag_rel_homotopy_total₁ g₁),
   left_inv := assume g₀,

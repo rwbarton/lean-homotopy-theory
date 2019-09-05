@@ -13,7 +13,7 @@ open set
 open category_theory
 
 namespace homotopy_theory.topological_spaces
-open Top
+open homotopy_theory.topological_spaces.Top
 local notation `Top` := Top.{0}
 
 -- The set of endpoints of the unit interval, as a space.
@@ -22,7 +22,7 @@ instance I01_endpoints.has_zero : has_zero I01_endpoints := ⟨⟨0, by simp⟩�
 instance I01_endpoints.has_one : has_one I01_endpoints := ⟨⟨1, by simp⟩⟩
 
 instance Top.point.discrete_topology : discrete_topology Top.point :=
-⟨eq_top_of_singletons_open (λ ⟨⟩, by convert is_open_univ; ext p; cases p; simp)⟩
+⟨eq_bot_of_singletons_open (λ ⟨⟩, by convert is_open_univ; ext p; cases p; simp)⟩
 
 def two_endpoints : homeomorphism (* ⊔ *) I01_endpoints :=
 let j : * ⊔ * ⟶ I01 :=
@@ -49,11 +49,11 @@ have function.injective j, begin
     simpa using h' }
 end,
 have embedding j, begin
-  refine ⟨this, _⟩,
+  refine ⟨⟨_⟩, this⟩,
   change sum.topological_space = _,
-  refine sum.discrete_topology.eq_top.trans _,
+  refine sum.discrete_topology.eq_bot.trans _,
   symmetry,
-  apply eq_top_of_singletons_open, intro e,
+  apply eq_bot_of_singletons_open, intro e,
   rcases e with ⟨⟨⟩⟩|⟨⟨⟩⟩,
   { refine ⟨{t : I01 | t.val < 1},
       is_open_lt continuous_subtype_val continuous_const, _⟩,

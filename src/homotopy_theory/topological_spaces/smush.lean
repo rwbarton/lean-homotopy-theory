@@ -185,7 +185,7 @@ def v : D × I → D × I := @construction.v ℝ _ V _
 lemma continuous_smul {β : Type*} [topological_space β]
   {f : β → ℝ} {g : β → V} (hf : continuous f) (hg : continuous g) :
   continuous (λx, f x • g x) :=
-(hf.prod_mk hg).comp (admissible'.continuous_smul V)
+(admissible'.continuous_smul V).comp (hf.prod_mk hg)
 
 @[tidy] meta def apply_continuous_smul := `[refine continuous_smul _ _]
 
@@ -197,7 +197,7 @@ lemma continuous_α : continuous α := by unfold α; continuity
 section
 local attribute [elab_simple] continuous.comp
 @[back] lemma continuous_α_inv : continuous (λ p, (α p).val⁻¹) :=
-continuous.comp continuous_α real.continuous_inv'
+continuous.comp real.continuous_inv' continuous_α
 end
 
 lemma continuous_H : continuous H := by unfold H; continuity

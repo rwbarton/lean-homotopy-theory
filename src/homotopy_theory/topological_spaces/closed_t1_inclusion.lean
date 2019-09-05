@@ -7,7 +7,7 @@ universe u
 open category_theory set
 
 namespace homotopy_theory.topological_spaces
-open Top
+open homotopy_theory.topological_spaces.Top
 local notation `Top` := Top.{u}
 
 def closed_t1_inclusion {A X : Top} (i : A ⟶ X) : Prop :=
@@ -22,7 +22,7 @@ lemma closed_t1_inclusion_id {X : Top} : closed_t1_inclusion (𝟙 X) :=
 
 lemma closed_t1_inclusion_comp {X Y Z : Top} {f : X ⟶ Y} {g : Y ⟶ Z}
   (hf : closed_t1_inclusion f) (hg : closed_t1_inclusion g) : closed_t1_inclusion (f ≫ g) :=
-⟨embedding_compose hf.1 hg.1,
+⟨hg.1.comp hf.1,
  by convert embedding_is_closed hg.1 hg.2.1 hf.2.1; apply range_comp,
  λ z hz, if hz' : z ∈ range g
    then let ⟨y, hy⟩ := hz' in
@@ -50,7 +50,7 @@ lemma closed_t1_inclusion_of_pushout (h : closed_t1_inclusion i) : closed_t1_inc
        simp, refl },
      suffices : ∀ x', g x' = y → x' = x.val,
      { ext x',
-       rw [mem_preimage_eq, mem_singleton_iff, mem_singleton_iff],
+       rw [mem_preimage, mem_singleton_iff, mem_singleton_iff],
        refine ⟨this x', _⟩,
        rintro rfl,
        convert Top.hom_congr (complement_homeomorphism_eq po (or.inl h.2.1)).symm x,
@@ -65,7 +65,7 @@ lemma closed_t1_inclusion_of_pushout (h : closed_t1_inclusion i) : closed_t1_inc
      { ext,
        convert ←Top.hom_congr (complement_homeomorphism_eq po (or.inl h.2.1)).symm ⟨x', this⟩ },
      have : g'.hom ⟨x', _⟩ = g'.hom x, from this.trans g'x.symm,
-     exact congr_arg subtype.val ((homeomorphism.embedding g').1 this) },
+     exact congr_arg subtype.val ((homeomorphism.embedding g').inj this) },
    { convert is_closed_empty,
      rw ←preimage_inter_range,
      convert preimage_empty,

@@ -20,7 +20,7 @@ open category_theory
 universe u
 
 namespace homotopy_theory.topological_spaces
-open Top
+open homotopy_theory.topological_spaces.Top
 local notation `Top` := Top.{u}
 
 namespace distrib_private

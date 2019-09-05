@@ -78,12 +78,10 @@ def left_adjoint_preserves_pushout : preserves_pushouts F :=
        (adj.hom_equiv b₁ x).symm (adj.hom_equiv c x k ∘ g₁)),
     rw adj.hom_equiv_naturality_left_symm,
     rw adj.hom_equiv_naturality_left_symm,
-    simp, dsimp, simp
+    simp
   end⟩
 
 end left_adjoint
-
-local attribute [class] adjunction.is_left_adjoint
 
 namespace adjunction
 
