@@ -10,7 +10,7 @@ namespace homotopy_theory.cofibrations
 -- Homotopy equivalences as the weak equivalences of an I-category.
 open homotopy_theory.weak_equivalences
 
-variables {C : Type u} [cat : category.{v+1} C]
+variables {C : Type u} [cat : category.{v} C]
   [has_initial_object.{v} C] [has_coproducts.{v} C] [I_category.{v} C]
 include cat
 

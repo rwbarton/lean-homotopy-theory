@@ -29,7 +29,7 @@ let j : * ⊔ * ⟶ I01 :=
   coprod.induced
     (Top.mk_hom (λ _, 0) (by continuity))
     (Top.mk_hom (λ _, 1) (by continuity)) in
-have rj : range j = {0, 1}, begin
+have rj : range j = ({0, 1} : set I01), begin -- FIXME annotation should be unnecessary
   ext p, split,
   { intro h, rcases h with ⟨⟨⟨⟩⟩|⟨⟨⟩⟩, rfl⟩,
     { change (0 : I01) ∈ _, simp }, { change (1 : I01) ∈ _, simp } },

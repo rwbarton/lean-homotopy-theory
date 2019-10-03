@@ -30,8 +30,9 @@ parameters {X Y Z : Top}
 def YZ := Y ⊔ Z
 def inY : Y ⟶ Y ⊔ Z := i₀
 def inZ : Z ⟶ Y ⊔ Z := i₁
-def Y' := set.range inY
-def Z' := set.range inZ
+-- TODO: These annotations shouldn't really be necessary
+def Y' : set (Y ⊔ Z) := set.range inY
+def Z' : set (Y ⊔ Z) := set.range inZ
 def Y_Y' : homeomorphism Y (Top.mk_ob Y') :=
 homeomorphism_to_image_of_embedding (embedding_inl : embedding inY)
 def Z_Z' : homeomorphism Z (Top.mk_ob Z') :=

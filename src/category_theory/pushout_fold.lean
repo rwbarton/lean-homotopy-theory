@@ -16,7 +16,7 @@ namespace category_theory
 
 section
 
-parameters {C : Type u} [cat : category.{v+1} C] [has_coproducts.{v} C]
+parameters {C : Type u} [cat : category.{v} C] [has_coproducts.{v} C]
 include cat
 
 def with_precomposition_bij {a' a x : C} (f : a' ⟶ a) :

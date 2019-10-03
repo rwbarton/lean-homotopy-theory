@@ -24,7 +24,7 @@ open precofibration_category
 -- cofibrations in which the weak equivalences are the homotopy
 -- equivalences.
 
-variables {C : Type u} [cat : category.{v+1} C]
+variables {C : Type u} [cat : category.{v} C]
   [has_initial_object.{v} C] [has_coproducts.{v} C] [I_category.{v} C]
 include cat
 

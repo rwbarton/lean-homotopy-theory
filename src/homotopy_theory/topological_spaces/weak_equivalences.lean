@@ -29,7 +29,7 @@ lemma is_weak_equivalence_comp {X Y Z : Top} {f : X ⟶ Y} {g : Y ⟶ Z}
 ⟨by rw π₀.map_comp; exact iso_comp hf.1 hg.1,
  assume n x, by rw π_induced_comp; exact iso_comp (hf.2 n x) (hg.2 n (f x))⟩
 
-instance : replete_wide_subcategory.{1} Top @is_weak_equivalence :=
+instance : replete_wide_subcategory.{0} Top @is_weak_equivalence :=
 replete_wide_subcategory.mk' @is_weak_equivalence_iso @is_weak_equivalence_comp
 
 -- I don't know why this changed, but `⟦Top.const y⟧` in the proof below

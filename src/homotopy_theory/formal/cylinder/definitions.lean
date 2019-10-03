@@ -29,14 +29,14 @@ instance : has_one endpoint := ⟨endpoint.one⟩
 --
 -- The standard example is C = Top, IX = X × [0,1], i ε x = (x, ε),
 -- p (x, t) = x.
-class has_cylinder (C : Type u) [category.{v+1} C] :=
+class has_cylinder (C : Type u) [category.{v} C] :=
 (I : C ↝ C)
 (i : endpoint → (functor.id C ⟶ I))
 (p : I ⟶ functor.id C)
 (pi : ∀ ε, p ∘ i ε = nat_trans.id _)
 
 section
-parameters {C : Type u} [cat : category.{v+1} C] [has_cylinder.{v} C]
+parameters {C : Type u} [cat : category.{v} C] [has_cylinder.{v} C]
 include cat
 
 def I : C ↝ C :=
@@ -64,7 +64,7 @@ end
 
 
 section boundary
-variables {C : Type u} [cat : category.{v+1} C] [has_coproducts.{v} C]
+variables {C : Type u} [cat : category.{v} C] [has_coproducts.{v} C]
 include cat
 
 -- If C admits coproducts, then we can combine the inclusions `i 0`
@@ -120,7 +120,7 @@ class has_cylinder_with_involution (C : Type u) [category C]
 (pv : p ∘ v = p)
 
 section
-parameters {C : Type u} [cat : category.{v+1} C] [has_cylinder_with_involution C]
+parameters {C : Type u} [cat : category.{v} C] [has_cylinder_with_involution C]
 include cat
 
 @[reducible] def v : I ⟶ I :=
@@ -137,7 +137,7 @@ by rw has_cylinder_with_involution.vv; refl
 end
 
 section interchange
-variables (C : Type u) [cat : category.{v+1} C] [has_cylinder C]
+variables (C : Type u) [cat : category.{v} C] [has_cylinder C]
 include cat
 local notation `I` := (I : C ↝ C)
 

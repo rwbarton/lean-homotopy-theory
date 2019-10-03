@@ -69,7 +69,8 @@ lemma closed_t1_inclusion_of_pushout (h : closed_t1_inclusion i) : closed_t1_inc
    { convert is_closed_empty,
      rw ←preimage_inter_range,
      convert preimage_empty,
-     rwa singleton_inter_eq_empty }
+     -- FIXME: Used to be `rwa singleton_inter_eq_empty`
+     exact singleton_inter_eq_empty.mpr hy }
  end⟩
 
 end

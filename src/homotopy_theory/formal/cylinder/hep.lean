@@ -15,7 +15,7 @@ namespace homotopy_theory.cylinder
 
 section hep
 
-variables {C : Type u} [category.{v+1} C] [inst1 : has_cylinder C] [inst2 : has_cylinder_with_involution C]
+variables {C : Type u} [category.{v} C] [inst1 : has_cylinder C] [inst2 : has_cylinder_with_involution C]
 
 include inst1
 
@@ -41,7 +41,7 @@ assume Y k H e,
   let ⟨K, Ke₁, Ke₂⟩ := hg Y k J Je₁.symm in
   ⟨K, Ke₁, by rw [I.map_comp, assoc, Ke₂, Je₂]⟩
 
-instance hep_replete (ε) : replete_wide_subcategory.{v+1} C (λ a b, hep ε) :=
+instance hep_replete (ε) : replete_wide_subcategory.{v} C (λ a b, hep ε) :=
 replete_wide_subcategory.mk' (λ a b, hep_of_isomorphism ε) (λ a b c f g, hep_comp ε)
 
 lemma hep_pushout (ε) {A B A' B' : C} {f : A ⟶ B} {g : A ⟶ A'} {f' : A' ⟶ B'} {g' : B ⟶ B'}

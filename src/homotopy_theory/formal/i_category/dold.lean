@@ -25,7 +25,7 @@ open homotopy_theory.cylinder
 open precofibration_category
 open I_category
 
-parameters {C : Type u} [category.{v+1} C] [has_initial_object.{v} C]
+parameters {C : Type u} [category.{v} C] [has_initial_object.{v} C]
   [has_coproducts.{v} C] [Icat : I_category.{v} C]
 include Icat
 

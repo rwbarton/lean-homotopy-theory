@@ -36,15 +36,15 @@ purposes? Useful?
 
 -/
 
-class precofibration_category (C : Type u) [category.{v+1} C]
-  extends has_cofibrations C, wide_subcategory.{v+1} C is_cof :=
+class precofibration_category (C : Type u) [category.{v} C]
+  extends has_cofibrations C, wide_subcategory.{v} C is_cof :=
 (pushout_by_cof : Π ⦃a b a' : C⦄ (f : a ⟶ b) (g : a ⟶ a'), is_cof f → pushout f g)
 (pushout_is_cof : ∀ ⦃a b a' b' : C⦄ {f : a ⟶ b} {g : a ⟶ a'} {f' : a' ⟶ b'} {g' : b ⟶ b'},
   Is_pushout f g g' f' → is_cof f → is_cof f')
 
 open precofibration_category
 
-variables {C : Type u} [cat : category.{v+1} C] [precofibration_category C]
+variables {C : Type u} [cat : category.{v} C] [precofibration_category C]
 include cat
 lemma cof_id (a : C) : is_cof (𝟙 a) := mem_id a
 lemma cof_comp {a b c : C} {f : a ⟶ b} {g : b ⟶ c} :
@@ -52,8 +52,8 @@ lemma cof_comp {a b c : C} {f : a ⟶ b} {g : b ⟶ c} :
 omit cat
 
 instance precofibration_category.replete
-  (C : Type u) [category.{v+1} C] [p : precofibration_category.{v} C] :
-  replete_wide_subcategory.{v+1} C is_cof :=
+  (C : Type u) [category.{v} C] [p : precofibration_category.{v} C] :
+  replete_wide_subcategory.{v} C is_cof :=
 { mem_iso := assume a b i,
     pushout_is_cof
       (by convert Is_pushout_of_isomorphic' (Is_pushout.refl (𝟙 a)) i; simp; refl)

@@ -29,7 +29,7 @@ instance {m n : Δ} : has_coe_to_fun (order_preserving_map m n) :=
 instance : category Δ :=
 { hom := order_preserving_map, --λ m n : Δ, {f : m → n // monotone f},
   id := λ X, ⟨id, monotone_id⟩,
-  comp := λ _ _ _ f g, ⟨g.val ∘ f.val, monotone_comp f.2 g.2⟩ }
+  comp := λ _ _ _ f g, ⟨g.val ∘ f.val, g.2.comp f.2⟩ }
 
 namespace simplex_category
 

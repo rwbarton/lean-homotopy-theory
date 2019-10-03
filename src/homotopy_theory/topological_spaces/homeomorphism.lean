@@ -87,8 +87,10 @@ def subspace_equiv_subspace {X : Top} {A A' : set X} (h : A = A') :
 -- unavailable at runtime.
 
 -- Hopefully it's okay to use let inside a definition like this
+
+-- TODO: `: set X` should be unnecessary
 noncomputable def homeomorphism_to_image_of_embedding {A X : Top} {j : A ⟶ X}
-  (h : embedding j) : homeomorphism A (Top.mk_ob (range j)) :=
+  (h : embedding j) : homeomorphism A (Top.mk_ob (range j : set X)) :=
 let j' := Top.factor_through_incl j (range j) (subset.refl _),
     e := (equiv.set.range j h.inj).replace_to_fun j' (by funext p; simp; refl) in
 homeomorphism.of_equiv e j'.property

@@ -24,8 +24,7 @@ instance Cat.to_sort : has_coe_to_sort Cat :=
 
 instance Cat.as_category (C : Cat) : small_category C.carrier := C.cat
 
--- FIXME: This is wrong! But functor universe levels can't be fixed, can they?
-def Cat.functor (C D : Cat) : Type (u+1) := C ↝ D
+def Cat.functor (C D : Cat) : Type u := C ↝ D
 
 instance Cat.category : category Cat :=
 { hom := Cat.functor,
@@ -50,8 +49,7 @@ instance Gpd.to_sort : has_coe_to_sort Gpd :=
 
 instance Gpd.as_groupoid (C : Gpd) : small_groupoid C.carrier := C.gpd
 
--- FIXME: See above
-def Gpd.functor (C D : Gpd) : Type (u+1) := C ↝ D
+def Gpd.functor (C D : Gpd) : Type u := C ↝ D
 
 instance Gpd.category : category Gpd :=
 { hom := Gpd.functor,
