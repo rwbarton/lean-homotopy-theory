@@ -15,7 +15,7 @@ variables {C : Type u}
 
 section category
 variables (cat : category.{v} C)
-variables {hom' : Π a b : C, Sort v'} (e : Π a b : C, hom a b ≃ hom' a b)
+variables {hom' : Π a b : C, Type v'} (e : Π a b : C, hom a b ≃ hom' a b)
 
 def transported_category : category.{v'} C :=
 { hom := hom',
@@ -29,7 +29,7 @@ end category
 
 section groupoid
 variables (gpd : groupoid.{v} C)
-variables {hom' : Π a b : C, Sort v'} (e : Π a b : C, hom a b ≃ hom' a b)
+variables {hom' : Π a b : C, Type v'} (e : Π a b : C, hom a b ≃ hom' a b)
 
 def transported_groupoid : groupoid.{v'} C :=
 { inv := λ a b f, e b a (groupoid.inv ((e a b).symm f)),
@@ -43,8 +43,8 @@ section functor
 -- Many possible setups; this is the one we need.
 variables [catC : category.{v} C]
 variables {D : Type w} [catD : category.{x} D]
-variables {hom'C : Π a b : C, Sort v'} (eC : Π a b : C, hom a b ≃ hom'C a b)
-variables {hom'D : Π a b : D, Sort x'} (eD : Π a b : D, hom a b ≃ hom'D a b)
+variables {hom'C : Π a b : C, Type v'} (eC : Π a b : C, hom a b ≃ hom'C a b)
+variables {hom'D : Π a b : D, Type x'} (eD : Π a b : D, hom a b ≃ hom'D a b)
 variables (F : C ↝ D)
 
 def transported_functor :
