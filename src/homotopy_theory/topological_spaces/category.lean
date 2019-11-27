@@ -18,7 +18,7 @@ local notation `Top` := Top.{u}
 protected def mk_ob (α : Type u) [t : topological_space α] : Top := ⟨α, t⟩
 protected def mk_hom {X Y : Top} (f : X → Y) (hf : continuous f . continuity') : X ⟶ Y :=
 subtype.mk f hf
-@[extensionality] protected def hom_eq {X Y : Top} {f g : X ⟶ Y} (h : ∀ x, f x = g x) : f = g :=
+@[ext] protected def hom_eq {X Y : Top} {f g : X ⟶ Y} (h : ∀ x, f x = g x) : f = g :=
 subtype.eq (funext h)
 protected lemma hom_eq2 {X Y : Top} {f g : X ⟶ Y} : f = g ↔ f.val = g.val := by cases f; cases g; simp
 protected def hom_congr {X Y : Top} {f g : X ⟶ Y} : f = g → ∀ x, f x = g x :=

@@ -68,7 +68,7 @@ do cs ← attribute.get_instances `back',
                     return ("apply " ++ n.to_string)
    end
 
-attribute [extensionality] subtype.eq
+attribute [ext] subtype.eq
 
 -- TODO should `apply_instance` be in tidy? If so, these shouldn't be needed.
 @[back] definition decidable_true  : decidable true  := is_true  dec_trivial

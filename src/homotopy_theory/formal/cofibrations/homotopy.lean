@@ -23,7 +23,7 @@ structure homotopy_on (c : relative_cylinder hj) {x : C} (f₀ f₁ : b ⟶ x) :
 (Hi₀ : H ∘ c.i₀ = f₀)
 (Hi₁ : H ∘ c.i₁ = f₁)
 
-@[extensionality] lemma homotopy_on.ext (c : relative_cylinder hj) {x : C} (f₀ f₁ : b ⟶ x)
+@[ext] lemma homotopy_on.ext (c : relative_cylinder hj) {x : C} (f₀ f₁ : b ⟶ x)
   (H H' : homotopy_on c f₀ f₁) (e : H.H = H'.H) : H = H' :=
 by cases H; cases H'; simpa
 
