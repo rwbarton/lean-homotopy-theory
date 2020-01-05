@@ -87,7 +87,7 @@ begin
   cases le_total (2 * norm x.val) (2 + -t.val) with h1 h2,
   { rw max_eq_right h1,
     convert max_eq_right _ using 1,
-    { ring, ring },             -- ??
+    { ring },
     { exact calc
         2 * (abs ((2 + -t.val)⁻¹ * (1 + t.val)) * norm (x.val))
           = (2 * norm x.val) * abs ((2 + -t.val)⁻¹ * (1 + t.val))  : by ac_refl

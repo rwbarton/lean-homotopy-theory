@@ -89,7 +89,7 @@ coprod.induced_commutes₀ _ _
 coprod.induced_commutes₁ _ _
 
 -- This is a kind of "co-extensionality" lemma; does that count?
-@[extensionality] lemma coprod.uniqueness {a₀ a₁ b : C} {k k' : a₀ ⊔ a₁ ⟶ b}
+@[ext] lemma coprod.uniqueness {a₀ a₁ b : C} {k k' : a₀ ⊔ a₁ ⟶ b}
   (e₀ : k ∘ i₀ = k' ∘ i₀) (e₁ : k ∘ i₁ = k' ∘ i₁) : k = k' :=
 (has_coproducts.coproduct.{v} a₀ a₁).is_coproduct.uniqueness e₀ e₁
 
