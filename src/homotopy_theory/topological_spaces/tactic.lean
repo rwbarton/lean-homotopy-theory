@@ -34,14 +34,13 @@ attribute [back]
 -- correct number of goals specified explicitly.
 @[tidy] meta def apply_continuous_subtype_mk := `[refine continuous_subtype_mk _ _]
 @[tidy] meta def apply_continuous.prod_mk := `[refine continuous.prod_mk _ _]
-@[tidy] meta def apply_continuous_min := `[refine continuous_min _ _]
-@[tidy] meta def apply_continuous_max := `[refine continuous_max _ _]
-@[tidy] meta def apply_continuous_neg' := `[exact continuous_neg']
-@[tidy] meta def apply_continuous_add := `[refine continuous_add _ _]
-@[tidy] meta def apply_continuous_sub := `[refine continuous_sub _ _]
-@[tidy] meta def apply_continuous_mul := `[refine continuous_mul _ _]
+@[tidy] meta def apply_continuous_min := `[refine continuous.min _ _]
+@[tidy] meta def apply_continuous_max := `[refine continuous.max _ _]
+@[tidy] meta def apply_continuous_neg' := `[exact continuous_neg]
+@[tidy] meta def apply_continuous_add := `[refine continuous.add _ _]
+@[tidy] meta def apply_continuous_sub := `[refine continuous.sub _ _]
+@[tidy] meta def apply_continuous_mul := `[refine continuous.mul _ _]
 @[tidy] meta def apply_continuous_const := `[exact continuous_const]
-
 
 open tactic
 

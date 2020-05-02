@@ -63,7 +63,7 @@ instance : has_cylinder_with_involution Top :=
   vv := begin
     ext X p, { refl },
     { rcases p with ⟨x, t, h⟩,
-      change subtype.mk (1 - (1 - t)) _ = subtype.mk t _, simp }
+      change subtype.mk (1 - (1 - t)) _ = subtype.mk t _, simp [sub_sub_self] }
   end,
   pv := rfl }
 

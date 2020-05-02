@@ -30,13 +30,13 @@ begin
   let po :=
     (Is_pushout_of_isomorphic (Is_pushout.refl (! (∂I.obj a))) _ _
       (coprod_initial_right ∅).symm (iso.refl _)
-      (initial_object.unique Ii_initial (initial_object.{v} C).is_initial_object)
+      (initial_object.unique Ii_initial has_initial_object.initial_object.is_initial_object)
       _ _),
   convert relative_cylinder' (! a) (all_objects_cofibrant.cofibrant.{v} a) _ _ po,
   any_goals { apply coprod.uniqueness; apply initial.uniqueness },
   symmetry,
   convert ←(po.induced_commutes₀ _ _ _),
-  convert id_comp _ _,
+  convert id_comp _,
   simp
 end
 

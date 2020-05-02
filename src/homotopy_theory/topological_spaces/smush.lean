@@ -84,10 +84,10 @@ let ⟨x, t⟩ := p in
 begin
   dsimp [H, v, α, -smul_eq_mul],
   rw norm_mul,
-  cases le_total (2 * norm x.val) (2 + -t.val) with h1 h2,
+  cases le_total (2 * norm x.val) (2 - t.val) with h1 h2,
   { rw max_eq_right h1,
     convert max_eq_right _ using 1,
-    { ring, ring },             -- ??
+    { ring },
     { exact calc
         2 * (abs ((2 + -t.val)⁻¹ * (1 + t.val)) * norm (x.val))
           = (2 * norm x.val) * abs ((2 + -t.val)⁻¹ * (1 + t.val))  : by ac_refl
@@ -110,7 +110,7 @@ begin
           = (2 * norm x.val) * (2 * norm x.val)⁻¹ * (1 + t.val) : begin
               rw [mul_inv_cancel, one_mul],
               refine ne_of_gt (lt_of_lt_of_le _ h2),
-              rw [←sub_eq_add_neg, sub_pos],
+              rw [sub_pos],
               exact lt_of_le_of_lt t.property.right (by norm_num)
             end
       ... = _ : by ring,
@@ -119,7 +119,7 @@ begin
     },
     rw this,
     apply max_eq_left,
-    rw [←sub_eq_add_neg, iff.intro sub_le_of_sub_le sub_le_of_sub_le] at h2,
+    rw [iff.intro sub_le_of_sub_le sub_le_of_sub_le] at h2,
     apply le_add_of_sub_left_le,
     convert h2 using 1, ring }
 end
@@ -185,19 +185,19 @@ def v : D × I → D × I := @construction.v ℝ _ V _
 lemma continuous_smul {β : Type*} [topological_space β]
   {f : β → ℝ} {g : β → V} (hf : continuous f) (hg : continuous g) :
   continuous (λx, f x • g x) :=
-(admissible'.continuous_smul V).comp (hf.prod_mk hg)
+(admissible'.continuous_smul).comp (hf.prod_mk hg)
 
 @[tidy] meta def apply_continuous_smul := `[refine continuous_smul _ _]
 
 @[back] lemma continuous_norm : continuous (admissible.norm : V → ℝ) :=
-admissible'.continuous_norm V
+admissible'.continuous_norm
 
 lemma continuous_α : continuous α := by unfold α; continuity
 
 section
 local attribute [elab_simple] continuous.comp
 @[back] lemma continuous_α_inv : continuous (λ p, (α p).val⁻¹) :=
-continuous.comp real.continuous_inv' continuous_α
+continuous.comp real.continuous_inv continuous_α
 end
 
 lemma continuous_H : continuous H := by unfold H; continuity
@@ -227,7 +227,7 @@ instance : admissible' ℝ :=
   norm_nonneg := abs_nonneg,
   norm_mul := abs_mul,
 
-  continuous_smul := continuous_mul',
+  continuous_smul := continuous_mul,
   continuous_norm := real.continuous_abs }
 
 end homotopy_theory.topological_spaces.smush

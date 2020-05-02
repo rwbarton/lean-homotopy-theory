@@ -26,7 +26,7 @@ class category_with_weak_equivalences (C : Type u) [category.{v} C]
 
 instance (C : Type u) [category.{v} C] [category_with_weak_equivalences C] :
   replete_wide_subcategory.{v} C is_weq :=
-category_with_weak_equivalences.weq_replete_wide C
+category_with_weak_equivalences.weq_replete_wide
 
 section
 variables {C : Type u} [cat : category.{v} C] [category_with_weak_equivalences C]

@@ -56,7 +56,7 @@ def canonical_cylinder (b : C) :
        (category_theory.initial.uniqueness _ _),
      c : Is_coproduct po.map₀ po.map₁ :=
        Is_coproduct_of_Is_pushout_of_Is_initial po.is_pushout
-         (has_initial_object.initial_object.{v} C).is_initial_object,
+         has_initial_object.initial_object.is_initial_object,
      j : iso (b ⊔ b) po.ob := isomorphic_coprod_of_Is_coproduct c in
  have ii' ∘ j.hom = ii @> b, begin
    dsimp [j, isomorphic_coprod_of_Is_coproduct];

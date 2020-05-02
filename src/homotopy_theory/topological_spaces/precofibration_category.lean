@@ -50,8 +50,7 @@ instance : all_objects_cofibrant.{0} Top :=
 ⟨assume A,
  ⟨hep_initial_induced 0
    Top.empty_is_initial_object
-   (preserves_initial_object.Is_initial_object_of_Is_initial_object
-     I.{0} Top.empty_is_initial_object),
+   (preserves_initial_object.Is_initial_object_of_Is_initial_object Top.empty_is_initial_object),
   begin
     convert is_closed_empty,
     rw eq_empty_iff_forall_not_mem,

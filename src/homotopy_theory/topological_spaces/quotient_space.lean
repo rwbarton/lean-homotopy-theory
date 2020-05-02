@@ -311,7 +311,7 @@ def quotient_space : Top := XmodA i
 def quotient_space.map : X ⟶ quotient_space i := q i
 
 -- The base point of X/A.
-def quotient_space.pt : quotient_space i := quotient.mk (Xplus.pt i)
+def quotient_space.pt : quotient_space i := quotient.mk Xplus.pt
 
 @[reducible] def quotient_space.singleton_pt : set (quotient_space i) :=
 {quotient_space.pt i}

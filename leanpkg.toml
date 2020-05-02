@@ -1,8 +1,8 @@
 [package]
 name = "lean-homotopy-theory"
 version = "0.1"
-lean_version = "3.4.2"
+lean_version = "leanprover-community/lean:3.9.0"
 path = "src"
 
 [dependencies]
-mathlib = {git = "https://github.com/leanprover/mathlib", rev = "4bb8d4475f897c8997100d31fe84b33050444374"}
+mathlib = {git = "https://github.com/leanprover/mathlib", rev = "1cc83e9c8aa10d608cab96b01050e4f9932b0251"}

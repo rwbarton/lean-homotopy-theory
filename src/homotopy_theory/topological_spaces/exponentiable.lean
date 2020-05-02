@@ -52,7 +52,7 @@ class exponentiable (A : Top) :=
 
 instance exponentiable.topological_space (A X : Top) [exponentiable A] :
   topological_space (A ⟶ X) :=
-exponentiable.exponential A X
+exponentiable.exponential X
 
 -- Now we can define the exponential functor [A, -] and show that it
 -- is right adjoint to - × A.
@@ -61,7 +61,7 @@ Top.mk_ob (A ⟶ X)
 
 def exponential_induced (A : Top) [exponentiable A] (X X' : Top) (g : X ⟶ X')
   : exponential A X ⟶ exponential A X' :=
-Top.mk_hom (induced A g) (exponentiable.functorial A X X' g)
+Top.mk_hom (induced A g) (exponentiable.functorial X X' g)
 
 def exponential_functor (A : Top) [exponentiable A] : Top ↝ Top :=
 { obj := exponential A,
@@ -72,9 +72,9 @@ def exponential_functor (A : Top) [exponentiable A] : Top ↝ Top :=
 def exponential_adjunction (A : Top) [exponentiable A] : (-× A) ⊣ exponential_functor A :=
 adjunction.mk_of_unit_counit $
 { unit :=
-    { app := λ X, Top.mk_hom (coev A X) (exponentiable.continuous_coev A X) },
+    { app := λ X, Top.mk_hom (coev A X) (exponentiable.continuous_coev X) },
   counit :=
-    { app := λ X, Top.mk_hom (ev A X) (exponentiable.continuous_ev A X) },
+    { app := λ X, Top.mk_hom (ev A X) (exponentiable.continuous_ev X) },
   left_triangle' := by ext X xa; cases xa; refl,
   right_triangle' := by ext X f a; refl }
 

@@ -40,13 +40,13 @@ parameters {C : Type u} [cat : category.{v} C] [has_cylinder.{v} C]
 include cat
 
 def I : C ↝ C :=
-has_cylinder.I C
+has_cylinder.I
 
 @[reducible] def i : Π ε, functor.id C ⟶ I :=
-has_cylinder.i C
+has_cylinder.i
 
 @[reducible] def p : I ⟶ functor.id C :=
-has_cylinder.p C
+has_cylinder.p
 
 @[simp] lemma pi_components (ε) {A : C} : p.app A ∘ (i ε).app A = 𝟙 A :=
 show (p ∘ (i ε)).app A = 𝟙 A,
@@ -122,9 +122,10 @@ class has_cylinder_with_involution (C : Type u) [category C]
 section
 parameters {C : Type u} [cat : category.{v} C] [has_cylinder_with_involution C]
 include cat
+local notation `I` := (I : C ↝ C)
 
 @[reducible] def v : I ⟶ I :=
-has_cylinder_with_involution.v C
+has_cylinder_with_involution.v
 
 @[simp] lemma vi_components {A : C} (ε) : v @> A ∘ i ε @> A = i ε.v @> A :=
 show (v ∘ i ε) @> A = (i ε.v) @> A,
@@ -152,7 +153,7 @@ variables [cylinder_has_interchange.{v} C]
 variables {C}
 
 @[reducible] def T : I ∘ᶠ I ⟶ I ∘ᶠ I :=
-cylinder_has_interchange.T C
+cylinder_has_interchange.T
 
 end interchange
 

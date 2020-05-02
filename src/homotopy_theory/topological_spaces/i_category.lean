@@ -17,7 +17,7 @@ open homotopy_theory.cylinder
 -- cylinder functor - × [0, 1].
 instance : I_category.{0 1} Top :=
 { I_preserves_pushout_by_cof := λ _ _ _ _ _ _ _ _ _ po,
-    preserves_pushouts.Is_pushout_of_Is_pushout I po,
+    preserves_pushouts.Is_pushout_of_Is_pushout po,
   hep_cof := assume a b j hj, two_sided_hep_iff_hep.mpr hj.1,
   relative_cylinder := assume a b j hj,
     let po := pushout_by_cof (∂I &> j) (ii @> a) (cof_coprod hj hj) in

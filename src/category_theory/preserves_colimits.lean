@@ -62,7 +62,7 @@ def left_adjoint_preserves_pushout : preserves_pushouts F :=
        (adj.hom_equiv a x).symm (p2 ∘ f₁)),
     { rw adj.hom_equiv_naturality_left_symm,
       rw adj.hom_equiv_naturality_left_symm },
-    { simp }
+    { rw equiv.apply_eq_iff_eq }
   end
   ... ~~ {p : (F.obj b₀ ⟶ x) × (F.obj b₁ ⟶ x) | p.1 ∘ (F &> f₀) = p.2 ∘ (F &> f₁)}
       : Bij_on.restrict''

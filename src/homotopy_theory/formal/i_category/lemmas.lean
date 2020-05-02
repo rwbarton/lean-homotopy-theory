@@ -18,14 +18,14 @@ variables {C : Type u} [category.{v} C] [has_initial_object.{v} C]
 include Icat
 
 def Ii_initial : Is_initial_object.{v} (I.obj ∅ : C) :=
-Is_initial_object_of_Is_initial_object.{v} I
-  (initial_object.{v} C).is_initial_object
+Is_initial_object_of_Is_initial_object
+  has_initial_object.initial_object.is_initial_object
 
 def I_preserves_coproducts : preserves_coproducts (I : C ↝ C) :=
 ⟨λ a₀ a₁ b f₀ f₁ copr,
   let po : Is_pushout (! a₀) (! a₁) f₀ f₁ :=
     Is_pushout_of_Is_coproduct_of_Is_initial copr
-      (initial_object.{v} C).is_initial_object in
+      has_initial_object.initial_object.is_initial_object in
   Is_coproduct_of_Is_pushout_of_Is_initial
     (I_preserves_pushout_by_cof (all_objects_cofibrant.cofibrant a₀) po) Ii_initial⟩
 

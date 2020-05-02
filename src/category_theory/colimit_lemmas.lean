@@ -24,17 +24,17 @@ variables {C : Type u} [cat : category.{v} C]
 include cat
 variable [has_initial_object.{v} C]
 
-def initial : C := (has_initial_object.initial_object.{v} C).ob
+def initial : C := has_initial_object.initial_object.{v}.ob
 
 instance : has_emptyc C := ⟨initial⟩
 
 def initial.induced (a : C) : ∅ ⟶ a :=
-(has_initial_object.initial_object.{v} C).is_initial_object.induced
+has_initial_object.initial_object.is_initial_object.induced
 
 notation `!` a := initial.induced a
 
 def initial.uniqueness {a : C} (k k' : ∅ ⟶ a) : k = k' :=
-(has_initial_object.initial_object.{v} C).is_initial_object.uniqueness k k'
+has_initial_object.initial_object.is_initial_object.uniqueness k k'
 
 -- This instance tends not to be very useful because `congr` generates
 -- a congruence lemma which is too general, and does not "know" that
@@ -89,7 +89,7 @@ coprod.induced_commutes₀ _ _
 coprod.induced_commutes₁ _ _
 
 -- This is a kind of "co-extensionality" lemma; does that count?
-@[extensionality] lemma coprod.uniqueness {a₀ a₁ b : C} {k k' : a₀ ⊔ a₁ ⟶ b}
+@[ext] lemma coprod.uniqueness {a₀ a₁ b : C} {k k' : a₀ ⊔ a₁ ⟶ b}
   (e₀ : k ∘ i₀ = k' ∘ i₀) (e₁ : k ∘ i₁ = k' ∘ i₁) : k = k' :=
 (has_coproducts.coproduct.{v} a₀ a₁).is_coproduct.uniqueness e₀ e₁
 
@@ -313,7 +313,7 @@ Is_pushout.mk $ λ x,
   ...  ~~ {p : (b₀ ⟶ x) × (b₁ ⟶ x) | (p.1 ∘ j₀.hom) ∘ f'₀ = (p.2 ∘ j₁.hom) ∘ f'₁}
        : begin
            convert Bij_on.refl _, funext p, apply propext,
-           rw [←assoc, ←assoc, ←e₀, ←e₁], simp
+           rw [←assoc, ←assoc, ←e₀, ←e₁], simp [cancel_epi],
          end
   ...  ~~ {p : (b'₀ ⟶ x) × (b'₁ ⟶ x) | p.1 ∘ f'₀ = p.2 ∘ f'₁}
        : Bij_on.restrict''

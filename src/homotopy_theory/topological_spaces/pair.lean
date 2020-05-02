@@ -227,7 +227,7 @@ lemma pair.empty_cofibered (W : Top) : (pair.empty W).cofibered :=
 have Is_initial_object.{0} (pair.empty W).subspace, from
   Top.is_initial_object_of_to_empty _ (by intro p; rcases p with ⟨_,⟨⟩⟩),
 hep_initial_induced 0 this
-  (preserves_initial_object.Is_initial_object_of_Is_initial_object I.{0} this)
+  (preserves_initial_object.Is_initial_object_of_Is_initial_object this)
 
 def pair.admits_retract : Prop := ∃ r : X ⟶ A', r ∘ P.incl = 𝟙 A'
 

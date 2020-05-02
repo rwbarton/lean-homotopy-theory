@@ -70,8 +70,8 @@ def homeomorphism.restrict {s : set X} {t : set Y} (hst : s = h.hom ⁻¹' t) :
       subst s, show h.equiv (h.equiv.symm p.val) ∈ t, simp
     end⟩)
     (by have := h.inv.property; continuity),
-  hom_inv_id' := by ext p; exact h.equiv.left_inv p.val,
-  inv_hom_id' := by ext p; exact h.equiv.right_inv p.val }
+  hom_inv_id' := by { ext p, exact h.equiv.left_inv p.val },
+  inv_hom_id' := by { ext p, exact h.equiv.right_inv p.val } }
 
 lemma homeomorphism.restriction_commutes {s : set X} {t : set Y} (hst : s = h.hom ⁻¹' t) :
   incl t ∘ (h.restrict hst).hom = h.hom ∘ incl s :=
