@@ -14,9 +14,8 @@ open precofibration_category
 open cofibration_category
 open homotopy_theory.weak_equivalences
 
-variables {C : Type u} [cat : category.{v} C] [cofibration_category.{v} C]
+variables {C : Type u} [category.{v} C] [cofibration_category.{v} C]
   [has_initial_object.{v} C]
-include cat
 
 structure brown_factorization {a b : C} (f : a ⟶ b) : Type (max u v) :=
 -- ab represents a coproduct of a and b, used to formulate the condition on f' + s

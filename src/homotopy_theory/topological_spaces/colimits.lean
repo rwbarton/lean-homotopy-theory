@@ -28,7 +28,7 @@ section initial_object
 protected def empty : Top := Top.mk_ob pempty
 protected def empty_induced (Z : Top) : Top.empty ⟶ Z :=
 Top.mk_hom (λ x, pempty.cases_on (λ _, Z) x) (by continuity)
-protected def empty_is_initial_object : Is_initial_object Top.empty :=
+protected def empty_is_initial_object : Is_initial_object.{u u+1} Top.empty :=
 Is_initial_object.mk' Top.empty_induced (assume Z k k', by ext x; cases x)
 
 instance : has_initial_object.{u} Top :=

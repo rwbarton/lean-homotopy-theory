@@ -6,8 +6,7 @@ universes v u
 namespace category_theory
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
-variables {C : Type u} [cat : category.{v} C]
-include cat
+variables {C : Type u} [category.{v} C]
 
 class congruence (r : Π ⦃a b : C⦄, (a ⟶ b) → (a ⟶ b) → Prop) :=
 (is_equiv : ∀ {a b}, equivalence (@r a b))

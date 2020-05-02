@@ -20,8 +20,7 @@ namespace category_theory
 universes v u
 
 section initial
-variables {C : Type u} [cat : category.{v} C]
-include cat
+variables {C : Type u} [category.{v} C]
 variable [has_initial_object.{v} C]
 
 def initial : C := has_initial_object.initial_object.{v}.ob
@@ -44,8 +43,7 @@ instance initial_hom.subsingleton (a : C) : subsingleton (∅ ⟶ a) := ⟨initi
 end initial
 
 section coproduct
-variables {C : Type u} [cat : category.{v} C]
-include cat
+variables {C : Type u} [category.{v} C]
 variable [has_coproducts.{v} C]
 
 -- The (chosen) coproduct of two objects.
@@ -155,8 +153,7 @@ end coproduct
 
 
 section pushout_induced_eq
-parameters {C : Type u} [cat : category.{v} C]
-include cat
+parameters {C : Type u} [category.{v} C]
 parameters {a b₀ b₁ c c' : C} {f₀ : a ⟶ b₀} {f₁ : a ⟶ b₁}
 parameters {g₀ : b₀ ⟶ c} {g₁ : b₁ ⟶ c} (po : Is_pushout f₀ f₁ g₀ g₁)
 
@@ -168,8 +165,7 @@ end pushout_induced_eq
 
 
 section pushout_induced_comp
-parameters {C : Type u} [cat : category.{v} C]
-include cat
+parameters {C : Type u} [category.{v} C]
 parameters {a b₀ b₁ c c' : C} {f₀ : a ⟶ b₀} {f₁ : a ⟶ b₁}
 parameters {g₀ : b₀ ⟶ c} {g₁ : b₁ ⟶ c} (po : Is_pushout f₀ f₁ g₀ g₁)
 
@@ -181,8 +177,7 @@ by apply po.uniqueness; rw ←assoc; simp
 end pushout_induced_comp
 
 section pushouts_from_coequalizers
-parameters {C : Type u} [cat : category.{v} C] [has_coproducts.{v} C]
-include cat
+parameters {C : Type u} [category.{v} C] [has_coproducts.{v} C]
 
 section construction
 parameters {a b₀ b₁ b c : C} {f₀ : a ⟶ b₀} {f₁ : a ⟶ b₁} {g₀ : b₀ ⟶ c} {g₁ : b₁ ⟶ c}
@@ -227,8 +222,7 @@ end pushouts_from_coequalizers
 
 
 section uniqueness_of_initial_objects
-parameters {C : Type u} [cat : category.{v} C]
-include cat
+parameters {C : Type u} [category.{v} C]
 parameters {a : C} (init : Is_initial_object.{v} a)
 parameters {a' : C} (init' : Is_initial_object.{v} a')
 
@@ -242,8 +236,7 @@ end uniqueness_of_initial_objects
 
 section uniqueness_of_pushouts
 
-parameters {C : Type u} [cat : category.{v} C]
-include cat
+parameters {C : Type u} [category.{v} C]
 parameters {a b₀ b₁ c c' : C} {f₀ : a ⟶ b₀} {f₁ : a ⟶ b₁}
 parameters {g₀ : b₀ ⟶ c} {g₁ : b₁ ⟶ c} (po : Is_pushout f₀ f₁ g₀ g₁)
 parameters {g'₀ : b₀ ⟶ c'} {g'₁ : b₁ ⟶ c'} (po' : Is_pushout f₀ f₁ g'₀ g'₁)
@@ -269,8 +262,7 @@ end uniqueness_of_pushouts
 local notation [parsing_only] a ` ~~ ` b := Bij_on _ a b
 
 section refl
-parameters {C : Type u} [cat : category.{v} C]
-include cat
+parameters {C : Type u} [category.{v} C]
 parameters {a b : C} (f : a ⟶ b)
 
 def Is_pushout.refl : Is_pushout f (𝟙 a) (𝟙 b) f :=
@@ -286,8 +278,7 @@ end refl
 
 section isomorphic
 
-parameters {C : Type u} [cat : category.{v} C]
-include cat
+parameters {C : Type u} [category.{v} C]
 
 -- TODO: Move this somewhere?
 def precomposition_bij {a' a x : C} (i : iso a' a) :
@@ -337,8 +328,7 @@ end isomorphic
 
 section pushout_tranpose
 
-parameters {C : Type u} [cat : category.{v} C]
-include cat
+parameters {C : Type u} [category.{v} C]
 parameters {a b₀ b₁ c : C} {f₀ : a ⟶ b₀} {f₁ : a ⟶ b₁}
 parameters {g₀ : b₀ ⟶ c} {g₁ : b₁ ⟶ c} (po : Is_pushout f₀ f₁ g₀ g₁)
 
@@ -373,8 +363,7 @@ end
 end pushout_tranpose
 
 section pushout_initial
-parameters {C : Type u} [cat : category.{v} C]
-include cat
+parameters {C : Type u} [category.{v} C]
 parameters {a b₀ b₁ c : C} {f₀ : a ⟶ b₀} {f₁ : a ⟶ b₁}
 parameters {g₀ : b₀ ⟶ c} {g₁ : b₁ ⟶ c}
 
@@ -404,8 +393,7 @@ end pushout_initial
 
 section coprod_of_pushouts
 
-parameters {C : Type u} [cat : category.{v} C] [co : has_coproducts.{v} C]
-include cat co
+parameters {C : Type u} [category.{v} C] [has_coproducts.{v} C]
 parameters {a b₀ b₁ c : C} {f₀ : a ⟶ b₀} {f₁ : a ⟶ b₁}
 parameters {g₀ : b₀ ⟶ c} {g₁ : b₁ ⟶ c} (po : Is_pushout f₀ f₁ g₀ g₁)
 parameters {a' b₀' b₁' c' : C} {f₀' : a' ⟶ b₀'} {f₁' : a' ⟶ b₁'}
@@ -465,8 +453,7 @@ end coprod_of_pushouts
 
 section pushout_i
 
-parameters {C : Type u} [cat : category.{v} C] [co : has_coproducts.{v} C]
-include cat co
+parameters {C : Type u} [category.{v} C] [has_coproducts.{v} C]
 -- Obviously we shouldn't really need C to have an initial object here, but oh well
 parameters [has_initial_object.{v} C]
 parameters {a b c : C} (f : a ⟶ b)
@@ -496,8 +483,7 @@ by convert Is_pushout_of_isomorphic po f i₁
 end pushout_i
 
 section pushout_swap
-parameters {C : Type u} [cat : category.{v} C]
-include cat
+parameters {C : Type u} [category.{v} C]
 parameters {a b c : C} {f : a ⟶ b} {g₀ g₁ : b ⟶ c} (po : Is_pushout f f g₀ g₁)
 
 def Is_pushout.swap : c ⟶ c := po.induced g₁ g₀ po.commutes.symm
@@ -515,8 +501,7 @@ by apply po.uniqueness; unfold Is_pushout.swap; rw ←assoc; simp
 end pushout_swap
 
 section pushout_of_maps
-parameters {C : Type u} [cat : category.{v} C]
-include cat
+parameters {C : Type u} [category.{v} C]
 variables {a b₀ b₁ c : C} {f₀ : a ⟶ b₀} {f₁ : a ⟶ b₁}
 variables {g₀ : b₀ ⟶ c} {g₁ : b₁ ⟶ c} (po : Is_pushout f₀ f₁ g₀ g₁)
 variables {a' b₀' b₁' c' : C} {f₀' : a' ⟶ b₀'} {f₁' : a' ⟶ b₁'}

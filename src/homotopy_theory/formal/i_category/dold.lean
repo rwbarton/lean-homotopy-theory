@@ -26,8 +26,7 @@ open precofibration_category
 open I_category
 
 parameters {C : Type u} [category.{v} C] [has_initial_object.{v} C]
-  [has_coproducts.{v} C] [Icat : I_category.{v} C]
-include Icat
+  [has_coproducts.{v} C] [I_category.{v} C]
 
 -- [Kamps & Porter, Lemma I.6.4]. Apparently, we already did most of
 -- the hard work.

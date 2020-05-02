@@ -14,8 +14,7 @@ open homotopy_theory.cylinder
 open I_category
 
 variables {C : Type u} [category.{v} C] [has_initial_object.{v} C]
-  [has_coproducts.{v} C] [Icat : I_category.{v} C]
-include Icat
+  [has_coproducts.{v} C] [I_category.{v} C]
 
 def Ii_initial : Is_initial_object.{v} (I.obj ∅ : C) :=
 Is_initial_object_of_Is_initial_object

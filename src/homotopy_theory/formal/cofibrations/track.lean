@@ -15,8 +15,7 @@ open homotopy_theory.weak_equivalences
 open homotopy_theory.weak_equivalences.category_with_weak_equivalences
 open precofibration_category cofibration_category
 
-variables {C : Type u} [cat : category.{v} C] [cofibration_category.{v} C]
-include cat
+variables {C : Type u} [category.{v} C] [cofibration_category.{v} C]
 
 -- Tracks, or "homotopies up to homotopy". This notion is a bit tricky
 -- because there is no canonical choice of cylinder object on which to

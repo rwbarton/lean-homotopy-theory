@@ -20,8 +20,7 @@ cofibration-weak equivalence factorization of the fold map.
 
 -/
 
-variables {C : Type u} [cat : category.{v} C]
-include cat
+variables {C : Type u} [category.{v} C]
 variables [precofibration_category C] [category_with_weak_equivalences C]
 variables [has_initial_object.{v} C] [all_objects_cofibrant.{v} C]
 variables [has_coproducts.{v} C]

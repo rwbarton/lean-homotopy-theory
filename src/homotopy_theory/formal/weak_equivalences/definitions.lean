@@ -29,8 +29,7 @@ instance (C : Type u) [category.{v} C] [category_with_weak_equivalences C] :
 category_with_weak_equivalences.weq_replete_wide
 
 section
-variables {C : Type u} [cat : category.{v} C] [category_with_weak_equivalences C]
-include cat
+variables {C : Type u} [category.{v} C] [category_with_weak_equivalences C]
 
 lemma weq_id (a : C) : is_weq (𝟙 a) := mem_id a
 lemma weq_comp {a b c : C} {f : a ⟶ b} {g : b ⟶ c} :
@@ -55,8 +54,7 @@ class homotopical_category (C : Type u) [category.{v} C]
   is_weq (h ∘ g) → is_weq (g ∘ f) → is_weq g)
 
 section
-variables {C : Type u} [cat : category.{v} C] [homotopical_category C]
-include cat
+variables {C : Type u} [category.{v} C] [homotopical_category C]
 
 lemma weq_two_out_of_six_g {a b c d : C} {f : a ⟶ b} {g : b ⟶ c} {h : c ⟶ d}
   (hg : is_weq (h ∘ g)) (gf : is_weq (g ∘ f)) : is_weq g :=
@@ -74,8 +72,7 @@ category_with_weak_equivalences.weq_of_comp_weq_left wg hg
 end
 
 section isomorphisms
-variables {C : Type u} [cat : category.{v} C]
-include cat
+variables {C : Type u} [category.{v} C]
 
 def is_iso ⦃a b : C⦄ (f : a ⟶ b) : Prop := ∃ i : a ≅ b, i.hom = f
 
@@ -122,8 +119,7 @@ end isomorphisms
 
 section preimage
 -- TODO: generalize to different universes?
-variables {C D : Type u} [catC : category.{v} C] [catD : category.{v} D]
-include catC catD
+variables {C D : Type u} [category.{v} C] [category.{v} D]
 variables (F : C ↝ D)
 
 def preimage_weq (weqD : has_weak_equivalences D) : has_weak_equivalences C :=

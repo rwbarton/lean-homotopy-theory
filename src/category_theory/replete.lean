@@ -9,8 +9,7 @@ universes v u
 
 namespace category_theory
 
-variables (C : Type u) [cat : category.{v} C]
-include cat
+variables (C : Type u) [category.{v} C]
 
 class wide_subcategory (D : Π {a b : C}, (a ⟶ b) → Prop) : Prop :=
 (mem_id {} : ∀ (a : C), D (𝟙 a))

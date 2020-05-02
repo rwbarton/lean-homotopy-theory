@@ -12,8 +12,7 @@ namespace category_theory
 
 section
 
-parameters {C : Type u} [cat : category.{v} C]
-include cat
+parameters {C : Type u} [category.{v} C]
 
 parameters {a a' a'' : C} {f : a ⟶ a'} {g : a' ⟶ a''}
 parameters {b b' b'' : C} {f' : b ⟶ b'} {g' : b' ⟶ b''}

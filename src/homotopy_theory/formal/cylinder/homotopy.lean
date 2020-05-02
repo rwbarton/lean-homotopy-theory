@@ -11,8 +11,7 @@ universes v u
 
 namespace homotopy_theory.cylinder
 
-variables {C : Type u} [cat : category.{v} C] [has_cylinder C]
-include cat
+variables {C : Type u} [category.{v} C] [has_cylinder C]
 
 -- Homotopy with respect to a given cylinder functor.
 structure homotopy {x y : C} (f₀ f₁ : x ⟶ y) :=

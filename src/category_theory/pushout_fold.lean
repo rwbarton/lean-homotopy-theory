@@ -16,8 +16,7 @@ namespace category_theory
 
 section
 
-parameters {C : Type u} [cat : category.{v} C] [has_coproducts.{v} C]
-include cat
+parameters {C : Type u} [category.{v} C] [has_coproducts.{v} C]
 
 def with_precomposition_bij {a' a x : C} (f : a' ⟶ a) :
   Bij_on (λ (k : a ⟶ x), (k, k ∘ f)) univ {p | p.2 = p.1 ∘ f} :=

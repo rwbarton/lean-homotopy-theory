@@ -6,8 +6,7 @@ namespace homotopy_theory.cofibrations
 open category_theory category_theory.category
 open precofibration_category
 
-variables {C : Type u} [𝒞 : category.{v} C] [precofibration_category.{v} C]
-include 𝒞
+variables {C : Type u} [category.{v} C] [precofibration_category.{v} C]
 
 -- These are the cofibrations in the arrow category of C with the "projective" structure.
 structure cof_square {a₁ a₂ b₁ b₂ : C} (a : a₁ ⟶ a₂) (b : b₁ ⟶ b₂) : Type (max u v) :=

@@ -58,8 +58,7 @@ namespace category_theory
 section
 
 universes v u
-parameters {C : Type u} [cat : category.{v} C]
-include cat
+parameters {C : Type u} [category.{v} C]
 
 
 section initial_object

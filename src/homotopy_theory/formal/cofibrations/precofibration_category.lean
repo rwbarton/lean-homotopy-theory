@@ -44,12 +44,10 @@ class precofibration_category (C : Type u) [category.{v} C]
 
 open precofibration_category
 
-variables {C : Type u} [cat : category.{v} C] [precofibration_category C]
-include cat
+variables {C : Type u} [category.{v} C] [precofibration_category C]
 lemma cof_id (a : C) : is_cof (𝟙 a) := mem_id a
 lemma cof_comp {a b c : C} {f : a ⟶ b} {g : b ⟶ c} :
   is_cof f → is_cof g → is_cof (g ∘ f) := mem_comp
-omit cat
 
 instance precofibration_category.replete
   (C : Type u) [category.{v} C] [p : precofibration_category.{v} C] :
@@ -59,7 +57,6 @@ instance precofibration_category.replete
       (by convert Is_pushout_of_isomorphic' (Is_pushout.refl (𝟙 a)) i; simp; refl)
       (cof_id a) }
 
-include cat
 lemma cof_iso {a b : C} (i : a ≅ b) : is_cof i.hom := mem_iso i
 
 -- The coproduct of cofibrations is a cofibration.

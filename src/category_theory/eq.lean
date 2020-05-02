@@ -30,11 +30,8 @@ local notation f ` ∘ `:80 g:80 := g ≫ f
 
 namespace category_theory
 
-variables {C : Type u} [catC : category.{v} C]
-include catC
-
-variables {D : Type w} [catD : category.{x} D]
-include catD
+variables {C : Type u} [category.{v} C]
+variables {D : Type w} [category.{x} D]
 
 -- Proving equality between functors.
 lemma functor.hext {F G : C ↝ D}

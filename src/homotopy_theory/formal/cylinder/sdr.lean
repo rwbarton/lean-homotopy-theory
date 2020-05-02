@@ -8,8 +8,7 @@ local notation f ` ∘ `:80 g:80 := g ≫ f
 
 namespace homotopy_theory.cylinder
 
-variables {C : Type u} [cat : category.{v} C] [has_cylinder C]
-include cat
+variables {C : Type u} [category.{v} C] [has_cylinder C]
 
 -- A map j : A → X is the inclusion of a strong deformation retract if
 -- it admits a retraction r : X → A for which j ∘ r is homotopic to

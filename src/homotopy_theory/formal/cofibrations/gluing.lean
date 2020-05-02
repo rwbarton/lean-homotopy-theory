@@ -9,9 +9,8 @@ namespace homotopy_theory.cofibrations
 open precofibration_category cofibration_category
 open homotopy_theory.weak_equivalences
 
-variables {C : Type u} [cat : category.{v} C] [cofibration_category.{v} C]
+variables {C : Type u} [category.{v} C] [cofibration_category.{v} C]
   [has_initial_object.{v} C]
-include cat
 
 -- Following Rădulescu-Banu, Cofibrations in Homotopy Theory, Lemma 1.4.1
 

@@ -36,8 +36,7 @@ class has_cylinder (C : Type u) [category.{v} C] :=
 (pi : ∀ ε, p ∘ i ε = nat_trans.id _)
 
 section
-parameters {C : Type u} [cat : category.{v} C] [has_cylinder.{v} C]
-include cat
+parameters {C : Type u} [category.{v} C] [has_cylinder.{v} C]
 
 def I : C ↝ C :=
 has_cylinder.I
@@ -64,8 +63,7 @@ end
 
 
 section boundary
-variables {C : Type u} [cat : category.{v} C] [has_coproducts.{v} C]
-include cat
+variables {C : Type u} [category.{v} C] [has_coproducts.{v} C]
 
 -- If C admits coproducts, then we can combine the inclusions `i 0`
 -- and `i 1` into a single natural transformation `∂I ⟶ I`, where `∂I`
@@ -120,8 +118,7 @@ class has_cylinder_with_involution (C : Type u) [category C]
 (pv : p ∘ v = p)
 
 section
-parameters {C : Type u} [cat : category.{v} C] [has_cylinder_with_involution C]
-include cat
+parameters {C : Type u} [category.{v} C] [has_cylinder_with_involution C]
 local notation `I` := (I : C ↝ C)
 
 @[reducible] def v : I ⟶ I :=
@@ -139,7 +136,9 @@ end
 
 section interchange
 variables (C : Type u) [cat : category.{v} C] [has_cylinder C]
-include cat
+include cat -- This one is still necessary because of some weird interaction
+-- between the "local notation `I`" and "variables {C}" below.
+
 local notation `I` := (I : C ↝ C)
 
 -- Interchange of two applications of the cylinder functor. The

@@ -10,9 +10,8 @@ universes v₁ v₂ u₁ u₂
 namespace category_theory
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
-variables {C : Type u₁} [catC : category.{v₁} C]
-variables {D : Type u₂} [catD : category.{v₂} D]
-include catC catD
+variables {C : Type u₁} [category.{v₁} C]
+variables {D : Type u₂} [category.{v₂} D]
 
 class preserves_initial_object (F : C ↝ D) :=
 (Is_initial_object_of_Is_initial_object :
