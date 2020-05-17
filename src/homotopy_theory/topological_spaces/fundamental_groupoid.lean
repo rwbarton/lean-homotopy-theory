@@ -25,7 +25,7 @@ induced_groupoid (λ x, (Top.const x : Top.point ⟶ X))
       (all_objects_fibrant X))
 
 def Pi₁_induced {X Y : Top} (f : X ⟶ Y) : Pi₁_ X ↝ Pi₁_ Y :=
-induced_functor_gpd _ _
+induced_functor' _ _
   (homotopy_class_functor (all_objects_fibrant X) (all_objects_fibrant Y) f)
   f
   (by intros; refl)
@@ -38,7 +38,7 @@ def Pi₁ : Top ↝ Gpd :=
     apply induced_functor_id
   end,
   map_comp' := λ X Y Z f g, begin
-    dsimp [Gpd.mk_hom, Pi₁_induced, induced_functor_gpd, Gpd.category],
+    dsimp [Gpd.mk_hom, Pi₁_induced, induced_functor, Gpd.category],
     have : ∀ W : Top, fibrant W := all_objects_fibrant,
     simp only [homotopy_class_functor.map_comp
       (all_objects_fibrant X) (all_objects_fibrant Y) _

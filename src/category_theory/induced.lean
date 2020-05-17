@@ -1,6 +1,7 @@
 import category_theory.base
 import category_theory.eq_to_hom
 import category_theory.groupoid
+import category_theory.full_subcategory
 
 universes v x z u u' w w' y y'
 
@@ -10,39 +11,32 @@ namespace category_theory
 
 variables {C : Type u} {C' : Type u'} (k : C' → C)
 
--- TODO: reconcile with category_theory.full_subcategory
+-- TODO: merge with category_theory.full_subcategory
 
-def induced_category' (cat : category.{v} C) : category.{v} C' :=
-{ hom := λ X Y, k X ⟶ k Y,
-  id := λ X, 𝟙 (k X),
-  comp := λ _ _ _ f g, f ≫ g }
+local attribute [simps] induced_category.category
 
 def induced_groupoid (gpd : groupoid.{v} C) : groupoid.{v} C' :=
 { inv := λ X Y f, groupoid.inv f,
-  inv_comp' := by dsimp [induced_category']; simp,
-  comp_inv' := by dsimp [induced_category']; simp,
-  .. induced_category' k gpd.to_category }
+  .. induced_category.category k }
+
+instance induced_category.groupoid [i : groupoid.{v} C] : groupoid.{v} (induced_category C k) :=
+induced_groupoid k i
 
 variables {D : Type w} {D' : Type w'} (l : D' → D)
 
-def induced_functor' [catC : category.{v} C] [catD : category.{x} D] (F : C ↝ D)
+def induced_functor' {catC : category.{v} C} {catD : category.{x} D} (F : C ↝ D)
   (F' : C' → D') (e : ∀ a, F.obj (k a) = l (F' a)) :
-  @functor C' (induced_category' k catC) D' (induced_category' l catD) :=
+  induced_category C k ↝ induced_category D l :=
 { obj := F',
   map := λ X Y f,
     show l (F' X) ⟶ l (F' Y), from
     eq_to_hom (e Y) ∘ (F &> f) ∘ eq_to_hom (e X).symm,
-  map_id' := λ X, by dsimp [induced_category']; rw F.map_id; simp,
-  map_comp' := λ X Y Z f g, by dsimp [induced_category']; rw F.map_comp; simp }
-
-def induced_functor_gpd [gpdC : groupoid.{v} C] [gpdD : groupoid.{x} D] (F : C ↝ D)
-  (F' : C' → D') (e : ∀ a, F.obj (k a) = l (F' a)) :
-  @functor C' (induced_groupoid k gpdC).to_category D' (induced_groupoid l gpdD).to_category :=
-induced_functor' k l F F' e
+  map_id' := λ X, by dsimp; rw F.map_id; simp,
+  map_comp' := λ X Y Z f g, by dsimp; rw F.map_comp; simp }
 
 lemma induced_functor_id [catC : category.{v} C] :
   induced_functor' k k (functor.id C) id (λ a, rfl) =
-  @functor.id C' (induced_category' k catC) :=
+  functor.id (induced_category C k) :=
 begin
   fapply functor.ext,
   { intro a, refl },
@@ -56,11 +50,7 @@ lemma induced_functor_comp [catC : category.{v} C]
   {G : D ↝ E} {G' : D' → E'} (eG : ∀ a, G.obj (l a) = m (G' a)) :
   induced_functor' k m (F.comp G) (function.comp G' F')
     (by intro a; change G.obj (F.obj (k a)) = _; rw [eF, eG]) =
-  @functor.comp
-    C' (induced_category' k catC)
-    D' (induced_category' l catD)
-    E' (induced_category' m catE)
-    (induced_functor' k l F F' eF) (induced_functor' l m G G' eG) :=
+    induced_functor' k l F F' eF ⋙ induced_functor' l m G G' eG :=
 begin
   fapply functor.ext,
   { intro a, refl },
