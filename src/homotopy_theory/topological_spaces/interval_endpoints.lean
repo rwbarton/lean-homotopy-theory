@@ -33,10 +33,10 @@ have rj : range j = ({0, 1} : set I01), begin -- FIXME annotation should be unne
   ext p, split,
   { intro h, rcases h with ⟨⟨⟨⟩⟩|⟨⟨⟩⟩, rfl⟩,
     { change (0 : I01) ∈ _, simp }, { change (1 : I01) ∈ _, simp } },
-  { intro h, have : p = 1 ∨ p = 0, by simp at h; exact h,
+  { intro h, have : p = 0 ∨ p = 1, by simp at h; exact h,
     cases this,
-    { subst this, exact ⟨sum.inr punit.star, rfl⟩ },
-    { subst this, exact ⟨sum.inl punit.star, rfl⟩ } }
+    { subst this, exact ⟨sum.inl punit.star, rfl⟩ },
+    { subst this, exact ⟨sum.inr punit.star, rfl⟩ } }
 end,
 have function.injective j, begin
   intros a b h, rcases a with ⟨⟨⟩⟩|⟨⟨⟩⟩; rcases b with ⟨⟨⟩⟩|⟨⟨⟩⟩,

@@ -165,6 +165,9 @@ local notation `XY` := Top.prod X Y
 
 -- Establish an isomorphism to the intersection-union pushout square
 -- of subspaces of X × Y.
+
+-- The next few definitions are very slow to compile! Was it always this way?
+
 protected def pair.k : homeomorphism (Top.prod A' B') (Top.mk_ob {p : XY | p.1 ∈ A ∧ p.2 ∈ B}) :=
 { hom :=
     Top.mk_hom
@@ -371,10 +374,10 @@ pair.homeomorphism.mk
   begin
     apply pair.homeomorphism.is_of_pairs.mk',
     { intros a ha, change a ∈ {(0 : I01), (1 : I01)} at ha,
-      have ha' : a = (1 : I01) ∨ a = (0 : I01) := by simp at ha; exact ha,
+      have ha' : a = (0 : I01) ∨ a = (1 : I01) := by simp at ha; exact ha,
       cases ha' with ha' ha',
-      { subst ha', change abs (2 * (1 : ℝ) - 1) = 1, norm_num },
-      { subst ha', change abs (2 * (0 : ℝ) - 1) = 1, norm_num } },
+      { subst ha', change abs (2 * (0 : ℝ) - 1) = 1, norm_num },
+      { subst ha', change abs (2 * (1 : ℝ) - 1) = 1, norm_num } },
     { intros b hb, cases b with b hb', change abs b = 1 at hb,
       rw abs_eq at hb, swap, exact zero_le_one,
       cases hb with hb hb; change subtype.mk _ _ ∈ I_01.subset,
