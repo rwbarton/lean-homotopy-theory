@@ -1,7 +1,6 @@
 import topology.algebra.ring
 import tactic.tidy
 import for_mathlib.tidy
-import for_mathlib.analysis_topology_continuity
 
 attribute [back]
   continuous_id
@@ -9,7 +8,7 @@ attribute [back]
   continuous_fst continuous_snd
   continuous_inl continuous_inr continuous_sum_rec
   continuous_top continuous_bot
-  continuous_up continuous_down
+  continuous_ulift_up continuous_ulift_down
 
 -- Applying continuous.comp is not always a good idea, so we have some
 -- extra logic here to try to avoid bad cases.

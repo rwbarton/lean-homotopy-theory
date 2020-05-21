@@ -9,19 +9,11 @@ local notation f ` ∘ `:80 g:80 := g ≫ f
 
 namespace category_theory
 
-variables {C : Type u} {C' : Type u'} (k : C' → C)
-
 -- TODO: merge with category_theory.full_subcategory
 
 local attribute [simps] induced_category.category
 
-def induced_groupoid (gpd : groupoid.{v} C) : groupoid.{v} C' :=
-{ inv := λ X Y f, groupoid.inv f,
-  .. induced_category.category k }
-
-instance induced_category.groupoid [i : groupoid.{v} C] : groupoid.{v} (induced_category C k) :=
-induced_groupoid k i
-
+variables {C : Type u} {C' : Type u'} (k : C' → C)
 variables {D : Type w} {D' : Type w'} (l : D' → D)
 
 def induced_functor' {catC : category.{v} C} {catD : category.{x} D} (F : C ↝ D)

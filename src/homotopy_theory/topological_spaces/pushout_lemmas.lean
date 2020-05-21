@@ -4,7 +4,6 @@ import .quotient_space
 import .sierpinski
 import .subspace
 import category_theory.pasting_pushouts
-import for_mathlib.analysis_topology_continuity
 
 /-
 

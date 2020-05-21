@@ -10,7 +10,7 @@ def sierpinski : Top := Top.mk_ob (ulift Prop)
 
 def opens_equiv (X : Top) : opens X ≃ (X ⟶ sierpinski) :=
 ⟨λ s, Top.mk_hom (λ x, ⟨x ∈ s.val⟩)
-   (continuous.comp continuous_up (continuous_Prop.mpr s.property)),
+   (continuous.comp continuous_ulift_up (continuous_Prop.mpr s.property)),
  λ f, ⟨λ x, (f x).down, continuous_Prop.mp (by continuity)⟩,
  λ s, by ext; refl,
  λ f, by ext; refl⟩

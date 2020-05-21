@@ -17,12 +17,14 @@ local notation `Top` := Top.{0}
 def Pi₁_ (X : Top) : Type := X
 
 instance {X : Top} : groupoid (Pi₁_ X) :=
-induced_groupoid (λ x, (Top.const x : Top.point ⟶ X))
-  (homotopy_class_groupoid.groupoid _ _ : groupoid $
-    homotopy_class_groupoid
+show groupoid
+  (induced_category
+    (homotopy_class_groupoid
       (all_objects_cofibrant.cofibrant Top.point)
       (canonical_cylinder.{0 1} Top.point)
       (all_objects_fibrant X))
+    (λ x, (Top.const x : Top.point ⟶ X))),
+by apply_instance
 
 def Pi₁_induced {X Y : Top} (f : X ⟶ Y) : Pi₁_ X ↝ Pi₁_ Y :=
 induced_functor' _ _
