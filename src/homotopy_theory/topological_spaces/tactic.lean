@@ -1,14 +1,29 @@
+import topology.algebra.ordered
 import topology.algebra.ring
 import tactic.tidy
 import for_mathlib.tidy
 
-attribute [back]
+open tactic
+
+@[user_attribute]
+meta def continuity_attr : user_attribute :=
+{ name := `continuity,
+  descr := "lemmas usable to prove continuity" }
+
+attribute [continuity]
   continuous_id
   continuous_subtype_val
   continuous_fst continuous_snd
   continuous_inl continuous_inr continuous_sum_rec
   continuous_top continuous_bot
   continuous_ulift_up continuous_ulift_down
+  continuous_subtype_mk
+  continuous_quot_mk continuous_quot_lift
+  continuous.prod_mk
+  continuous.min continuous.max
+  continuous_neg
+  continuous.add continuous.sub continuous.mul
+  continuous_const
 
 -- Applying continuous.comp is not always a good idea, so we have some
 -- extra logic here to try to avoid bad cases.
@@ -23,37 +38,24 @@ attribute [back]
 -- and produce new goals `continuous (λ x, x)`, `continuous f`. We
 -- detect this by failing if a new goal can be closed by applying
 -- continuous_id.
-@[tidy] meta def apply_continuous.comp :=
+meta def apply_continuous.comp : tactic unit :=
 `[fail_if_success { exact continuous_const };
   refine continuous.comp _ _;
   fail_if_success { exact continuous_id }]
 
--- `apply` is often not smart enough to guess how many auxiliary goals
--- to add when that number is not 1. We add tidy tactics with the
--- correct number of goals specified explicitly.
-@[tidy] meta def apply_continuous_subtype_mk := `[refine continuous_subtype_mk _ _]
-@[tidy] meta def apply_continuous.prod_mk := `[refine continuous.prod_mk _ _]
-@[tidy] meta def apply_continuous_min := `[refine continuous.min _ _]
-@[tidy] meta def apply_continuous_max := `[refine continuous.max _ _]
-@[tidy] meta def apply_continuous_neg' := `[exact continuous_neg]
-@[tidy] meta def apply_continuous_add := `[refine continuous.add _ _]
-@[tidy] meta def apply_continuous_sub := `[refine continuous.sub _ _]
-@[tidy] meta def apply_continuous_mul := `[refine continuous.mul _ _]
-@[tidy] meta def apply_continuous_const := `[exact continuous_const]
-
-open tactic
-
 meta def continuity_tactics : list (tactic string) :=
 [
-  backwards_reasoning,
+  `[apply_rules continuity]            >> pure "apply_rules continuity",
   auto_cases,
-  tactic.interactive.apply_assumption    >> pure "apply_assumption",
-  tidy.run_tactics
+  tactic.interactive.apply_assumption  >> pure "apply_assumption",
+  apply_continuous.comp                >> pure "refine continuous.comp _ _"
 ]
 
 meta def continuity (cfg : tidy.cfg := {}) : tactic unit :=
-let cfg' := { tactics := continuity_tactics, ..cfg } in
-tidy cfg'
+let cfg' := { tactics := continuity_tactics, ..cfg } in do
+  set_basic_attribute `irreducible `continuous,
+  tidy cfg',
+  set_basic_attribute `semireducible `continuous
 
 -- For use with auto_param
 meta def continuity' : tactic unit := continuity

@@ -59,6 +59,14 @@ local notation `X₊` := Xplus
 instance Xplus.topological_space : topological_space X₊ :=
 X.str.coinduced k
 
+@[continuity] lemma continuous_k : continuous k :=
+continuous_id
+
+@[continuity] lemma continuous_rec_on {β : Type*} [topological_space β]
+  (y : β) {g : X → β} (hg : continuous g) :
+  continuous (show X₊ → β, from λ p, p.rec_on y g) :=
+hg
+
 def Aplus : set X₊ := insert pt (range (k ∘ i))
 local notation `A₊` := Aplus
 
@@ -88,7 +96,7 @@ local notation `X/A` := XmodA
 
 local notation `t` := Top.point_induced A
 
-def q : X ⟶ X/A := Top.mk_hom (quotient.mk ∘ k)
+def q : X ⟶ X/A := Top.mk_hom (quotient.mk ∘ k) (by continuity)
 def j : * ⟶ X/A := Top.mk_hom (λ _, quotient.mk pt) (by continuity)
 
 lemma qi : q ∘ i = j ∘ t :=
@@ -227,15 +235,7 @@ lemma q'_val (x : X-A) : (q'_equiv x).val = q x := rfl
 
 -- Now we want to show that q' is a homeomorphism.
 
--- TODO: `continuity` doesn't directly work here because we need to
--- apply continuous.comp to break down the goal, but then one of the
--- new subgoals is `continuous q`, which is solved by applying
--- `continuous_id`! Maybe `apply_continuous.comp` should only fail if
--- `continuous_id` solves the first new goal?
-lemma continuous_q' : continuous q' :=
-begin
-  continuity, apply continuous.comp; continuity
-end
+lemma continuous_q' : continuous q' := by continuity
 
 -- For continuity of q'_inv we need a hypothesis: A is open or closed.
 

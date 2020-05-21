@@ -47,10 +47,10 @@ protected def prod (X Y : Top) : Top :=
 Top.mk_ob (X.α × Y.α)
 
 protected def pr₁ {X Y : Top} : Top.prod X Y ⟶ X :=
-Top.mk_hom (λ p, p.1)
+Top.mk_hom (λ p, p.1) (by continuity)
 
 protected def pr₂ {X Y : Top} : Top.prod X Y ⟶ Y :=
-Top.mk_hom (λ p, p.2)
+Top.mk_hom (λ p, p.2) (by continuity)
 
 -- TODO: The (by continuity) argument ought to be supplied
 -- automatically by auto_param, but for some reason elaboration goes
