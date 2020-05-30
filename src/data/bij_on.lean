@@ -41,7 +41,7 @@ h.he ⟨x, hx⟩
 instance (f : α → β) (a : set α) (b : set β) :
   subsingleton (Bij_on f a b) :=
 ⟨assume ⟨e, he⟩ ⟨e', he'⟩,
- have e = e', from eq_of_to_fun_eq
+ have e = e', from coe_fn_injective
    (by funext x; apply subtype.eq; exact (he x).symm.trans (he' x)),
  by cc⟩
 

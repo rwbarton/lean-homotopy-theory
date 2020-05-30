@@ -12,7 +12,7 @@ instance (f : α → β) : subsingleton (Is_equiv f) :=
 ⟨begin
   intros e e',
   cases e with ee eh, cases e' with e'e e'h,
-  have : ee = e'e, from equiv.eq_of_to_fun_eq (by cc),
+  have : ee = e'e, from equiv.coe_fn_injective (by cc),
   cc
 end⟩
 
