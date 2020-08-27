@@ -88,7 +88,7 @@ instance (A : Top) [exponentiable A] : is_left_adjoint (-× A) :=
 -- the compact-open topology.
 instance (A : Top) [locally_compact_space A] : exponentiable A :=
 { exponential := λ _, continuous_map.compact_open,
-  functorial := assume X X' g, continuous_induced g.property,
+  functorial := assume X X' g, continuous_induced g.2,
   continuous_ev := assume X, continuous_ev,
   continuous_coev := assume X, continuous_coev }
 

@@ -2,8 +2,6 @@ import algebra.module
 import topology.instances.real
 import tactic.ring
 
-import .tactic
-
 /-
 
 Construction of a homeomorphism of pairs
@@ -58,7 +56,7 @@ max_le
 def H : D × I → D × I :=
 λ p, begin
   refine (⟨((α p).val⁻¹ * (1 + p.2.val)) • p.1.val, _⟩, ⟨2 - (α p).val, _⟩),
-  { rw [norm_mul, abs_of_nonneg, mul_assoc, ←div_eq_inv_mul, div_le_one_iff_le, α],
+  { rw [norm_mul, abs_of_nonneg, mul_assoc, ←div_eq_inv_mul, div_le_one, α],
     exact calc
       (1 + p.2.val) * norm p.1.val
         ≤ (1 + 1) * norm p.1.val    : mul_le_mul_of_nonneg_right (add_le_add_left p.2.property.right _) (norm_nonneg _)
@@ -82,7 +80,7 @@ def v : D × I → D × I :=
 lemma αvH (p : D × I) : (α (v (H p))).val = 1 + p.2.val :=
 let ⟨x, t⟩ := p in
 begin
-  dsimp [H, v, α, -smul_eq_mul],
+  dsimp only [H, v, α, -smul_eq_mul],
   rw norm_mul,
   cases le_total (2 * norm x.val) (2 - t.val) with h1 h2,
   { rw max_eq_right h1,
@@ -128,8 +126,8 @@ lemma vHvH (p : D × I) : v (H (v (H p))) = p :=
 begin
   rw [H] { occs := occurrences.pos [1] },
   rw [v] { occs := occurrences.pos [1] },
-  apply prod.ext; apply subtype.eq; dsimp; rw αvH p,
-  { rw [H, v], dsimp,
+  apply prod.ext; apply subtype.eq; dsimp only []; rw αvH p,
+  { rw [H, v], dsimp only [],
     transitivity ((1 + (p.snd).val)⁻¹ * (1 + (p.snd).val)) • ((α p).val * ((α p).val)⁻¹) • (p.fst).val,
     { rw [←admissible.mul_smul', ←admissible.mul_smul'], congr' 1, ring },
     { rw [mul_inv_cancel, inv_mul_cancel, admissible.one_smul', admissible.one_smul'],
@@ -192,7 +190,7 @@ def v : D × I → D × I := @construction.v ℝ _ V _
 @[continuity] lemma continuous_norm : continuous (admissible.norm : V → ℝ) :=
 admissible'.continuous_norm
 
-lemma continuous_α : continuous α := by unfold α; continuity
+lemma continuous_α : continuous α := by continuity!
 
 section
 local attribute [elab_simple] continuous.comp
@@ -200,9 +198,9 @@ local attribute [elab_simple] continuous.comp
 continuous.comp real.continuous_inv continuous_α
 end
 
-lemma continuous_H : continuous H := by unfold H; continuity
+lemma continuous_H : continuous H := by continuity!
 
-lemma continuous_v : continuous v := by unfold v; continuity
+lemma continuous_v : continuous v := by continuity!
 
 lemma continuous_vHv : continuous (v ∘ H ∘ v) :=
 continuous_v.comp (continuous_H.comp continuous_v)

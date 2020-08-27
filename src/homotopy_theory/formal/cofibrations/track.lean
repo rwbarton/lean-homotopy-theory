@@ -1,5 +1,5 @@
 import category_theory.assoc_pushouts
-import category_theory.eq
+import category_theory.eq_to_hom
 import category_theory.groupoid
 import category_theory.transport
 import .homotopy
@@ -504,7 +504,7 @@ variables (c)
 -- FIXME: Why doesn't ≃ work here??
 noncomputable def homotopy_class_equiv_track :
   equiv (homotopy_up_to_homotopy c g₀ g₁) (track hj g₀ g₁) :=
-equiv.of_bijective ⟨inj hx, surj hx⟩
+equiv.of_bijective _ ⟨inj hx, surj hx⟩
 
 section
 variables (hj hx)

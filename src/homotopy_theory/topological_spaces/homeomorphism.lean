@@ -48,9 +48,9 @@ embedding_of_embedding_comp h.inv
   (by convert embedding_id; change function.comp h.equiv.symm h.equiv = id; simp)
 
 lemma homeomorphism.is_open_iff (s : set Y) : is_open s ↔ is_open (h.hom ⁻¹' s) :=
-iff.intro (h.hom.property s) $
+iff.intro (h.hom.2 s) $
   have is_open (h.hom ⁻¹' s) → is_open (h.equiv.symm ⁻¹' (h.equiv ⁻¹' s)), from
-    h.inv.property _,
+    h.inv.2 _,
   begin
     intro H,
     convert this H,
@@ -65,11 +65,11 @@ by rw [is_closed, is_closed, h.is_open_iff, set.preimage_compl]
 def homeomorphism.restrict {s : set X} {t : set Y} (hst : s = h.hom ⁻¹' t) :
   homeomorphism (Top.mk_ob s) (Top.mk_ob t) :=
 { hom := Top.mk_hom (λ p, ⟨h.hom p.val, by simpa [hst] using p.property⟩)
-    (by have := h.hom.property; continuity),
+    (by continuity!),
   inv := Top.mk_hom (λ p, ⟨h.inv p.val, begin
       subst s, show h.equiv (h.equiv.symm p.val) ∈ t, simp
     end⟩)
-    (by have := h.inv.property; continuity),
+    (by continuity!),
   hom_inv_id' := by { ext p, exact h.equiv.left_inv p.val },
   inv_hom_id' := by { ext p, exact h.equiv.right_inv p.val } }
 
@@ -93,7 +93,7 @@ noncomputable def homeomorphism_to_image_of_embedding {A X : Top} {j : A ⟶ X}
   (h : embedding j) : homeomorphism A (Top.mk_ob (range j : set X)) :=
 let j' := Top.factor_through_incl j (range j) (subset.refl _),
     e := (equiv.set.range j h.inj).replace_to_fun j' (by funext p; simp; refl) in
-homeomorphism.of_equiv e j'.property
+homeomorphism.of_equiv e j'.2
   (h.continuous_iff.mpr $ begin
     convert continuous_subtype_val using 1, funext p,
     exact congr_arg subtype.val (e.right_inv p)
@@ -127,14 +127,14 @@ def prod_singleton (h : * ≃ Y) : homeomorphism X (Top.prod X Y) :=
   end }
 
 def prod_comm {X Y : Top} : homeomorphism (Top.prod X Y) (Top.prod Y X) :=
-{ hom := Top.mk_hom (λ p, (p.2, p.1)) (by continuity),
-  inv := Top.mk_hom (λ p, (p.2, p.1)) (by continuity),
+{ hom := Top.mk_hom (λ p, (p.2, p.1)) (by continuity!),
+  inv := Top.mk_hom (λ p, (p.2, p.1)) (by continuity!),
   hom_inv_id' := by ext xy; cases xy; refl,
   inv_hom_id' := by ext xy; cases xy; refl }
 
 def prod_assoc {X Y Z : Top} : homeomorphism (Top.prod (Top.prod X Y) Z) (Top.prod X (Top.prod Y Z)) :=
-{ hom := Top.mk_hom (λ p, (p.1.1, (p.1.2, p.2))) (by continuity),
-  inv := Top.mk_hom (λ p, ((p.1, p.2.1), p.2.2)) (by continuity),
+{ hom := Top.mk_hom (λ p, (p.1.1, (p.1.2, p.2))) (by continuity!),
+  inv := Top.mk_hom (λ p, ((p.1, p.2.1), p.2.2)) (by continuity!),
   hom_inv_id' := by ext xyz; rcases xyz with ⟨⟨x, y⟩, z⟩; refl,
   inv_hom_id' := by ext xyz; rcases xyz with ⟨x, ⟨y, z⟩⟩; refl }
 

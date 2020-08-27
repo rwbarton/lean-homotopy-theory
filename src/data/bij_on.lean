@@ -49,7 +49,7 @@ lemma Bij_on.maps_to (h : Bij_on f a b) : maps_to f a b :=
 assume x hx, show f x ∈ b, by rw h.he' hx; exact (h.e _).property
 
 lemma Bij_on.inj_on (h : Bij_on f a b) : inj_on f a :=
-assume x x' hx hx' hh, begin
+assume x hx x' hx' hh, begin
   rw [h.he' hx, h.he' hx'] at hh,
   have := subtype.eq hh,
   simpa using this
@@ -158,7 +158,7 @@ def Bij_on.restrict_to_subtype (h : Bij_on f a b) (r : β → Prop) :
        (h.e.symm _).property⟩,
     left_inv := λ ⟨p, hp⟩, by simp,
     right_inv := λ ⟨p, hp⟩, by simp },
-  he := λ ⟨p, hp⟩, by apply subtype.eq; change f p = _; rw h.he'; simpa }
+  he := λ ⟨p, hp⟩, by apply subtype.eq; change f p = _; rw h.he'; refl }
 
 -- Bijection between a subtype and a propositionally equal one.
 def Bij_on.congr_subtype {r r' : set α} (h : r = r') :

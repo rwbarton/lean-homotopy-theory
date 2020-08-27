@@ -99,7 +99,7 @@ instance Set.mk_ob.topological_space (α : Type*) [t : topological_space α] :
 
 lemma continuous_iff {Z : Top} (k : A → Z) :
   continuous k ↔ continuous (k ∘ j'₀) ∧ continuous (k ∘ j'₁) :=
-iff.intro (assume h, ⟨by continuity, by continuity⟩)
+iff.intro (assume h, ⟨by continuity!, by continuity!⟩)
   (assume ⟨h₀, h₁⟩,
     let c : bool → set A := λ i, bool.rec_on i {a | a.val ∈ A₀} {a | a.val ∈ A₁} in
     have h_lf : locally_finite c :=
@@ -122,13 +122,24 @@ variables (A₀ A₁)
 include A₀ A₁
 noncomputable def Is_pushout_inter_union : Is_pushout i₀ i₁ j₀ j₁ :=
 Is_pushout.mk $ λ Z, calc
-  univ ~~ {k : {k : A → Z // continuous (k ∘ j'₀) ∧ continuous (k ∘ j'₁)} | true}
+  univ ~~ {k : {k : A → Z // continuous k} | true}
+       : Bij_on.of_equiv (Top.hom_equiv_subtype (Top.mk_ob A) Z)
+   ... ~~ {k : {k : A → Z // continuous (k ∘ j'₀) ∧ continuous (k ∘ j'₁)} | true}
        : Bij_on.congr_subtype (ext (continuous_iff ha₀ ha₁))
    ... ~~ {p : {p : (A₀ → Z) × (A₁ → Z) // continuous p.1 ∧ continuous p.2} | p.val.1 ∘ i'₀ = p.val.2 ∘ i'₁}
        : ((Set.Is_pushout_inter_union A₀ A₁).universal Z).restrict_to_subtype (λ p, continuous p.1 ∧ continuous p.2)
+   ... ~~ {p : {f₀ : Top.mk_ob A₀ → Z // continuous f₀} ×
+               {f₁ : Top.mk_ob A₁ → Z // continuous f₁} |
+           (Top.hom_equiv_subtype _ _).symm p.1 ∘ i₀ = (Top.hom_equiv_subtype _ _).symm p.2 ∘ i₁}
+       : by { convert Bij_on.restrict_equiv equiv.subtype_prod_subtype_equiv_subtype.symm _,
+              ext, simp only [Top.hom_eq2], refl }
    ... ~~ {p : (Top.mk_ob A₀ ⟶ Z) × (Top.mk_ob A₁ ⟶ Z) | p.1 ∘ i₀ = p.2 ∘ i₁}
-       : by convert Bij_on.restrict_equiv equiv.subtype_prod_subtype_equiv_subtype.symm _;
-            ext; simp only [Top.hom_eq2]; refl
+       : by {
+           convert Bij_on.restrict_equiv
+             ((Top.hom_equiv_subtype (Top.mk_ob A₀) Z).prod_congr
+              (Top.hom_equiv_subtype (Top.mk_ob A₁) Z)).symm
+             _,
+           ext ⟨_, _⟩, refl }
 
 local notation `k₀` := incl A₀
 local notation `k₁` := incl A₁

@@ -45,7 +45,7 @@ def I01_of_endpoint : endpoint → I01
 def I01.v : I01 ⟶ I01 :=
 Top.mk_hom
   (λ t, ⟨1 - t.val, sub_nonneg_of_le t.property.right, sub_le_self 1 t.property.left⟩)
-  (by continuity)
+  (by continuity!)
 
 instance : has_cylinder_with_involution Top :=
 { I := -×I01,
@@ -68,7 +68,7 @@ instance : has_cylinder_with_involution Top :=
   pv := rfl }
 
 instance : cylinder_has_interchange.{0} Top :=
-{ T := { app := λ X, Top.mk_hom (λ q, ((q.1.1, q.2), q.1.2)) (by continuity) },
+{ T := { app := λ X, Top.mk_hom (λ q, ((q.1.1, q.2), q.1.2)) (by continuity!) },
   Ti := by intros ε X; ext p; refl,
   TIi := by intros ε X; ext p; cases p; refl }
 

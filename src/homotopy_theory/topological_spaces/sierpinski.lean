@@ -16,7 +16,7 @@ def opens_equiv (X : Top) : opens X ≃ (X ⟶ sierpinski) :=
  λ f, by ext; refl⟩
 
 lemma opens_equiv_nat {X Y : Top} (f : X ⟶ Y) (s : opens Y) :
-  f ≫ opens_equiv Y s = opens_equiv X ⟨f ⁻¹' s, f.property s.val s.property⟩ :=
+  f ≫ opens_equiv Y s = opens_equiv X ⟨f ⁻¹' s, f.2 s.val s.property⟩ :=
 rfl
 
 --- The two-point space with the indiscrete topology. It represents

@@ -46,7 +46,7 @@ lemma closed_t1_inclusion_of_pushout (h : closed_t1_inclusion i) : closed_t1_inc
      { rw this, apply h.2.2 x.val x.property },
      have g'x : g'.hom x = ⟨y, hy⟩,
      { ext,
-       change (g'.inv ≫ g'.hom ≫ incl _).val ⟨y, hy⟩ = y,
+       change (g'.inv ≫ g'.hom ≫ incl _) ⟨y, hy⟩ = y,
        simp, refl },
      suffices : ∀ x', g x' = y → x' = x.val,
      { ext x',

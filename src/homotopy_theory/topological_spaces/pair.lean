@@ -148,18 +148,18 @@ variables (ha : is_closed A) (hb : is_closed B)
 
 -- TODO: product bifunctor
 protected def pair.i₀ : Top.prod A' B' ⟶ Top.prod A' Y :=
-Top.mk_hom (λ p, (p.1, p.2.val)) (by continuity)
+Top.mk_hom (λ p, (p.1, p.2.val)) (by continuity!)
 
 protected def pair.i₁ : Top.prod A' B' ⟶ Top.prod X B' :=
-Top.mk_hom (λ p, (p.1.val, p.2)) (by continuity)
+Top.mk_hom (λ p, (p.1.val, p.2)) (by continuity!)
 
 protected def pair.j₀ : Top.prod A' Y ⟶ (P ⊗ Q).subspace :=
 Top.mk_hom (λ p, ⟨(p.1.val, p.2), or.inl p.1.property⟩)
-  (by continuity)
+  (by continuity!)
 
 protected def pair.j₁ : Top.prod X B' ⟶ (P ⊗ Q).subspace :=
 Top.mk_hom (λ p, ⟨(p.1, p.2.val), or.inr p.2.property⟩)
-  (by continuity)
+  (by continuity!)
 
 local notation `XY` := Top.prod X Y
 
@@ -172,23 +172,23 @@ protected def pair.k : homeomorphism (Top.prod A' B') (Top.mk_ob {p : XY | p.1 �
 { hom :=
     Top.mk_hom
       (λ p, ⟨(p.1.val, p.2.val), ⟨p.1.property, p.2.property⟩⟩)
-      (by continuity),
+      (by continuity!),
   inv :=
     Top.mk_hom
       (λ p, (⟨p.val.1, p.property.left⟩, ⟨p.val.2, p.property.right⟩))
-      (by continuity),
+      (by continuity!),
   hom_inv_id' := by ext p; rcases p with ⟨⟨a, ha⟩, ⟨b, hb⟩⟩; refl,
   inv_hom_id' := by ext p; rcases p with ⟨⟨a, b⟩, ⟨ha, hb⟩⟩; refl }
 
 protected def pair.l1 : homeomorphism (Top.prod A' Y) (Top.mk_ob {p : XY | p.1 ∈ A}) :=
-{ hom := Top.mk_hom (λ p, ⟨(p.1.val, p.2), p.1.property⟩) (by continuity),
-  inv := Top.mk_hom (λ p, (⟨p.val.1, p.property⟩, p.val.2)) (by continuity),
+{ hom := Top.mk_hom (λ p, ⟨(p.1.val, p.2), p.1.property⟩) (by continuity!),
+  inv := Top.mk_hom (λ p, (⟨p.val.1, p.property⟩, p.val.2)) (by continuity!),
   hom_inv_id' := by ext p; rcases p with ⟨⟨a, ha⟩, y⟩; refl,
   inv_hom_id' := by ext p; rcases p with ⟨⟨a, y⟩, ha⟩; refl }
 
 protected def pair.l2 : homeomorphism (Top.prod X B') (Top.mk_ob {p : XY | p.2 ∈ B}) :=
-{ hom := Top.mk_hom (λ p, ⟨(p.1, p.2.val), p.2.property⟩) (by continuity),
-  inv := Top.mk_hom (λ p, (p.val.1, ⟨p.val.2, p.property⟩)) (by continuity),
+{ hom := Top.mk_hom (λ p, ⟨(p.1, p.2.val), p.2.property⟩) (by continuity!),
+  inv := Top.mk_hom (λ p, (p.val.1, ⟨p.val.2, p.property⟩)) (by continuity!),
   hom_inv_id' := by ext p; rcases p with ⟨x, ⟨b, hb⟩⟩; refl,
   inv_hom_id' := by ext p; rcases p with ⟨⟨x, b⟩, hb⟩; refl }
 
@@ -330,7 +330,7 @@ def unit_disk_sphere : pair :=
 pair.mk (unit_disk V) {v | smush.admissible.norm v.val = (1 : ℝ)}
 
 lemma unit_disk_sphere.is_closed : is_closed (unit_disk_sphere V).subset :=
-is_closed_eq (by continuity) continuous_const
+is_closed_eq (by continuity!) continuous_const
 
 def smush : unit_disk_sphere V ⊗ I_0 ≅ₚ pair.empty (unit_disk V) ⊗ I_0 :=
 pair.homeomorphism.mk
@@ -341,7 +341,7 @@ pair.homeomorphism.mk
       (smush.H V) ⁻¹' {p : unit_disk V × I01 | p.1 ∈ ∅ ∨ p.2 ∈ ({0} : set I01)},
     convert smush.Ht0 V;
     { ext p, change _ ∨ _ ↔ _ ∨ _, apply or_congr (iff.refl _),
-      rw mem_singleton_iff, apply subtype.ext },
+      rw mem_singleton_iff, apply subtype.ext_iff },
   end)
 
 lemma prod_disk_sphere_cofibered (ha : is_closed A) :
@@ -356,11 +356,11 @@ pair.homeomorphism.mk
   { hom :=
       Top.mk_hom
         (λ t, ⟨2 * t.val - 1, by cases t.property; erw abs_le; split; linarith⟩)
-        (by continuity),
+        (by continuity!),
     inv :=
       Top.mk_hom
         (λ t, by refine ⟨(1 / 2) * (t.val + 1), _, _⟩; cases abs_le.mp t.property; linarith)
-        (by continuity),
+        (by continuity!),
     hom_inv_id' := begin
       ext t,
       change (1 / 2) * ((2 * t.val - 1) + 1) = t.val,

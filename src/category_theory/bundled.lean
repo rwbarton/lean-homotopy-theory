@@ -1,4 +1,4 @@
-import category_theory.eq
+import category_theory.base
 import category_theory.functor
 import category_theory.groupoid
 

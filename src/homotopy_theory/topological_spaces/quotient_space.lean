@@ -96,8 +96,8 @@ local notation `X/A` := XmodA
 
 local notation `t` := Top.point_induced A
 
-def q : X ⟶ X/A := Top.mk_hom (quotient.mk ∘ k) (by continuity)
-def j : * ⟶ X/A := Top.mk_hom (λ _, quotient.mk pt) (by continuity)
+def q : X ⟶ X/A := Top.mk_hom (quotient.mk ∘ k) (by continuity!)
+def j : * ⟶ X/A := Top.mk_hom (λ _, quotient.mk pt) (by continuity!)
 
 lemma qi : q ∘ i = j ∘ t :=
 by ext; funext a; apply quotient.sound; simp
@@ -105,7 +105,7 @@ by ext; funext a; apply quotient.sound; simp
 section pushout
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
-lemma commutes : q ∘ i = j ∘ t := subtype.eq qi
+lemma commutes : q ∘ i = j ∘ t := Top.hom_eq2.mpr qi
 
 section induced
 parameters (Z : Top) (h₀ : X ⟶ Z) (h₁ : * ⟶ Z) (e : h₀ ∘ i = h₁ ∘ t)
@@ -126,7 +126,7 @@ begin
 end
 
 def induced : X/A ⟶ Z :=
-Top.mk_hom (λ p, quotient.lift induced' induced'_ok p) (by continuity)
+Top.mk_hom (λ p, quotient.lift induced' induced'_ok p) (by continuity!)
 
 lemma induced_commutes₀ : induced ∘ q = h₀ :=
 by ext; refl
@@ -167,14 +167,14 @@ by rw A_is_preimage_of_base_point; refl
 lemma A_open_iff : is_open (range i) ↔ is_open ({*} : set X/A) :=
 by rw A_is_preimage_of_base_point; refl
 
-def XminusA : set X := - range i
+def XminusA : set X := (range i)ᶜ
 local notation `X-A` := XminusA
 
-def XmodAminus : set X/A := - {*}
+def XmodAminus : set X/A := {*}ᶜ
 local notation `X/A₋` := XmodAminus
 
 def q' : X-A → X/A₋ :=
-assume x, ⟨q x.val, have x.val ∈ - range i := x.property,
+assume x, ⟨q x.val, have x.val ∈ (range i)ᶜ := x.property,
   by rw A_is_preimage_of_base_point at this; simpa [XmodAminus]⟩
 
 section q'_inv
@@ -235,7 +235,7 @@ lemma q'_val (x : X-A) : (q'_equiv x).val = q x := rfl
 
 -- Now we want to show that q' is a homeomorphism.
 
-lemma continuous_q' : continuous q' := by continuity
+lemma continuous_q' : continuous q' := by continuity!
 
 -- For continuity of q'_inv we need a hypothesis: A is open or closed.
 
@@ -252,7 +252,7 @@ begin
   apply subset.antisymm,
   { intros x h, rcases h with ⟨x', ⟨x'', h₁, h₂⟩, h₃⟩, refine ⟨x'', h₁, _⟩, subst x',
     have x''_x : Xplus_rel _ (k x''.val) (k x) := quotient.exact h₃, cases x''_x,
-    { injections },
+    { exact construction.Xplus.k.inj x''_x },
     { -- This case is impossible: x'' ∈ X-A but k x''.val ∈ A₊
       cases x''_x.left with h h, { simpa using h },
       { cases h with a h, have : i a = x''.val, by simpa using h,
@@ -269,8 +269,8 @@ suffices is_open (subtype.val '' (q' '' u)), from
     continuous_subtype_val _ this,
   by rwa preimage_image_eq _ subtype.val_injective at this,
 show is_open (q ⁻¹' (subtype.val '' (q' '' u))), from
-suffices is_open (subtype.val '' u), by simpa,
-embedding_open embedding_subtype_val (by simpa using ha) hu
+suffices is_open (subtype.val '' u), by rwa ugly_lemma,
+embedding_open embedding_subtype_coe (by rwa subtype.range_val) hu
 
 lemma q'_closed_of_A_open (ha : is_open (range i)) {u : set X-A} (hu : is_closed u) :
   is_closed (q' '' u) :=
@@ -280,9 +280,9 @@ suffices is_closed (subtype.val '' (q' '' u)), from
     continuous_iff_is_closed.mp continuous_subtype_val _ this,
   by rwa preimage_image_eq _ subtype.val_injective at this,
 show is_closed (q ⁻¹' (subtype.val '' (q' '' u))), from
-suffices is_closed (subtype.val '' u), by simpa,
+suffices is_closed (subtype.val '' u), by rwa ugly_lemma,
 have is_closed X-A := is_closed_compl_iff.mpr ha,
-embedding_is_closed embedding_subtype_val (by simpa using this) hu
+embedding_is_closed embedding_subtype_coe (by rwa subtype.range_val) hu
 
 lemma continuous_q'_inv_of_A_closed (ha : is_closed (range i)) : continuous q'_inv :=
 assume u hu,

@@ -47,7 +47,7 @@ parameter (po : Is_pushout i f g j)
 include po
 
 def is_open_in_pushout (s : set Y) : is_open s ↔ is_open (g ⁻¹' s) ∧ is_open (j ⁻¹' s) :=
-⟨λ hs, ⟨g.property s hs, j.property s hs⟩, λ ⟨gs, js⟩, begin
+⟨λ hs, ⟨g.2 s hs, j.2 s hs⟩, λ ⟨gs, js⟩, begin
    let xs := (opens_equiv X) ⟨g ⁻¹' s, gs⟩,
    let bs := (opens_equiv B) ⟨j ⁻¹' s, js⟩,
    let ys := po.induced xs bs
@@ -58,7 +58,7 @@ def is_open_in_pushout (s : set Y) : is_open s ↔ is_open (g ⁻¹' s) ∧ is_o
  end⟩
 
 def is_closed_in_pushout (s : set Y) : is_closed s ↔ is_closed (g ⁻¹' s) ∧ is_closed (j ⁻¹' s) :=
-is_open_in_pushout (-s)
+is_open_in_pushout (sᶜ)
 
 end
 
@@ -123,7 +123,7 @@ begin
     apply subtype.eq,
     exact uw },
   { -- One inequality is automatic because i is continuous.
-    refine le_antisymm (continuous_iff_le_induced.mp i.property) _,
+    refine le_antisymm (continuous_iff_le_induced.mp i.2) _,
     intros w wo,
     -- Now we reverse the above argument. w defines a continuous map A → Zind,
     -- which we extend to X using the lifting property to express w as the
@@ -239,10 +239,10 @@ local notation `Y/B₋` := YmodBminus
 
 def h' : homeomorphism X/A₋ Y/B₋ :=
 h.restrict $ calc
-    _ = - {ptX}             : rfl
-  ... = - (h.hom ⁻¹' {ptY}) : by rw hpt'
-  ... = h.hom ⁻¹' (- {ptY}) : set.preimage_compl
-  ... = _                   : rfl
+    _ = {ptX}ᶜ             : rfl
+  ... = (h.hom ⁻¹' {ptY})ᶜ : by rw hpt'
+  ... = h.hom ⁻¹' ({ptY}ᶜ) : set.preimage_compl
+  ... = _                  : rfl
 
 local notation a ` ≅ ` b := homeomorphism a b
 

@@ -9,9 +9,6 @@ Construction of the basic finite colimits in Top.
 
 -/
 
--- TODO: Move this instance to mathlib? But pempty is not from there!
-instance : topological_space pempty := ⊥
-
 open category_theory
 local notation f ` ∘ `:80 g:80 := g ≫ f
 
@@ -61,7 +58,7 @@ protected def coproduct_map₁ : X₁ ⟶ coproduct_object := Top.mk_hom sum.inr
 
 variables ⦃Z : Top⦄ (h₀ : X₀ ⟶ Z) (h₁ : X₁ ⟶ Z)
 protected def coproduct_induced : coproduct_object ⟶ Z :=
-Top.mk_hom (λ x, sum.cases_on x h₀ h₁) (by continuity)
+Top.mk_hom (λ x, sum.cases_on x h₀ h₁) (by continuity!)
 
 protected def coproduct_induced_commutes₀ : coproduct_induced h₀ h₁ ∘ coproduct_map₀ = h₀ :=
 by ext; refl

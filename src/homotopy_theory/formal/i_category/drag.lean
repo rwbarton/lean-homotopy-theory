@@ -170,7 +170,7 @@ quotient.induction_on f $ λ f, begin
   split, exact rfl,
   split, exact rfl,
   existsi h.congr_right f.val,
-  dsimp [homotopy.congr_right],
+  dsimp only [homotopy.congr_right],
   rw [←assoc, ←I.map_comp, f.property]
 end
 

@@ -27,7 +27,7 @@ def ptd_map (X Y : Top_ptd) : Type u :=
 { f : X.space ⟶ Y.space // (f : X.space ⟶ Y.space) X.pt = Y.pt }
 
 instance {X Y : Top_ptd} : has_coe_to_fun (ptd_map X Y) :=
-{ F := λ _, X → Y, coe := λ f, f.val.val }
+{ F := λ _, X → Y, coe := λ f, f.val.1 }
 
 instance : category Top_ptd :=
 { hom := ptd_map,

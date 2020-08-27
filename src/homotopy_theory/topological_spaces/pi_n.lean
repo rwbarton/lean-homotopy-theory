@@ -27,7 +27,10 @@ local notation `[` A `, ` X `]` := homotopy_classes A X
 -- corepresented on the homotopy category by *.
 
 def π₀ : Top ↝ Set :=
-{ obj := λ X, [*, X], map := λ X Y f x, ⟦f⟧ ∘ x }
+{ obj := λ X, [*, X], map := λ X Y f x, ⟦f⟧ ∘ x,
+  -- We have to write this proof by hand
+  -- because `continuous_map` isn't handled by `auto_cases`
+  map_id' := by { intros X, ext ⟨x⟩, cases x, refl } }
 
 -- The "based n-sphere" is the quotient of D[n] by its boundary S[n-1].
 def based_sphere (n : ℕ) : Top :=
